@@ -6,6 +6,14 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		C9641A412CC8602300A998FE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C9641A3A2CC8602300A998FE /* Assets.xcassets */; };
+		C9641A4C2CC8629F00A998FE /* Dependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9641A482CC8629F00A998FE /* Dependencies.swift */; };
+		C9641A4D2CC8629F00A998FE /* GameModeType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9641A4A2CC8629F00A998FE /* GameModeType.swift */; };
+		C9641A4E2CC8629F00A998FE /* GameType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9641A4B2CC8629F00A998FE /* GameType.swift */; };
+		C9641A4F2CC8629F00A998FE /* GameContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9641A492CC8629F00A998FE /* GameContext.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		C91B30332CBE250300ACDF61 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -27,6 +35,16 @@
 		C91B30212CBE250100ACDF61 /* nutty_jump.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = nutty_jump.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C91B30322CBE250300ACDF61 /* nutty_jumpTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = nutty_jumpTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C91B303C2CBE250300ACDF61 /* nutty_jumpUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = nutty_jumpUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C9641A3A2CC8602300A998FE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C9641A482CC8629F00A998FE /* Dependencies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dependencies.swift; sourceTree = "<group>"; };
+		C9641A492CC8629F00A998FE /* GameContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameContext.swift; sourceTree = "<group>"; };
+		C9641A4A2CC8629F00A998FE /* GameModeType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameModeType.swift; sourceTree = "<group>"; };
+		C9641A4B2CC8629F00A998FE /* GameType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameType.swift; sourceTree = "<group>"; };
+		C9641A622CC86BA100A998FE /* NJGameContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NJGameContext.swift; sourceTree = "<group>"; };
+		C9641A632CC86BC400A998FE /* NJGameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NJGameScene.swift; sourceTree = "<group>"; };
+		C9641A642CC86CBA00A998FE /* NJLayoutInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NJLayoutInfo.swift; sourceTree = "<group>"; };
+		C9641A652CC86CDA00A998FE /* NJGameInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NJGameInfo.swift; sourceTree = "<group>"; };
+		C9641A672CC86D3300A998FE /* NJGameIdleState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NJGameIdleState.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -75,6 +93,9 @@
 		C91B30182CBE250100ACDF61 = {
 			isa = PBXGroup;
 			children = (
+				C9641A512CC862B500A998FE /* Assets */,
+				C9641A522CC862BE00A998FE /* Base */,
+				C9641A502CC862AA00A998FE /* Code */,
 				C91B30232CBE250100ACDF61 /* nutty_jump */,
 				C91B30352CBE250300ACDF61 /* nutty_jumpTests */,
 				C91B303F2CBE250300ACDF61 /* nutty_jumpUITests */,
@@ -90,6 +111,69 @@
 				C91B303C2CBE250300ACDF61 /* nutty_jumpUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		C9641A502CC862AA00A998FE /* Code */ = {
+			isa = PBXGroup;
+			children = (
+				C9641A662CC86D2700A998FE /* States */,
+				C9641A682CC86DBD00A998FE /* Nodes */,
+				C9641A692CC86DD900A998FE /* Models */,
+				C9641A602CC8667500A998FE /* Helpers */,
+				C9641A632CC86BC400A998FE /* NJGameScene.swift */,
+				C9641A622CC86BA100A998FE /* NJGameContext.swift */,
+			);
+			path = Code;
+			sourceTree = "<group>";
+		};
+		C9641A512CC862B500A998FE /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				C9641A3A2CC8602300A998FE /* Assets.xcassets */,
+			);
+			path = Assets;
+			sourceTree = "<group>";
+		};
+		C9641A522CC862BE00A998FE /* Base */ = {
+			isa = PBXGroup;
+			children = (
+				C9641A482CC8629F00A998FE /* Dependencies.swift */,
+				C9641A492CC8629F00A998FE /* GameContext.swift */,
+				C9641A4A2CC8629F00A998FE /* GameModeType.swift */,
+				C9641A4B2CC8629F00A998FE /* GameType.swift */,
+			);
+			path = Base;
+			sourceTree = "<group>";
+		};
+		C9641A602CC8667500A998FE /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				C9641A652CC86CDA00A998FE /* NJGameInfo.swift */,
+				C9641A642CC86CBA00A998FE /* NJLayoutInfo.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		C9641A662CC86D2700A998FE /* States */ = {
+			isa = PBXGroup;
+			children = (
+				C9641A672CC86D3300A998FE /* NJGameIdleState.swift */,
+			);
+			path = States;
+			sourceTree = "<group>";
+		};
+		C9641A682CC86DBD00A998FE /* Nodes */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Nodes;
+			sourceTree = "<group>";
+		};
+		C9641A692CC86DD900A998FE /* Models */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -212,6 +296,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C9641A412CC8602300A998FE /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -236,6 +321,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C9641A4C2CC8629F00A998FE /* Dependencies.swift in Sources */,
+				C9641A4D2CC8629F00A998FE /* GameModeType.swift in Sources */,
+				C9641A4E2CC8629F00A998FE /* GameType.swift in Sources */,
+				C9641A4F2CC8629F00A998FE /* GameContext.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
