@@ -7,6 +7,6 @@
 
 import Foundation
 
-struct TTGameInfo {
+struct NJGameInfo {
     var score = 0
 }

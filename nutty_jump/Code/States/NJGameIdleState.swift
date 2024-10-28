@@ -7,11 +7,11 @@
 
 import GameplayKit
 
-class TTGameIdleState: GKState {
-    weak var scene: TTGameScene?
-    weak var context: TTGameContext?
+class NJGameIdleState: GKState {
+    weak var scene: NJGameScene?
+    weak var context: NJGameContext?
     
-    init(scene: TTGameScene, context: TTGameContext) {
+    init(scene: NJGameScene, context: NJGameContext) {
         self.scene = scene
         self.context = context
         super.init()
@@ -23,4 +23,22 @@ class TTGameIdleState: GKState {
     override func didEnter(from previousState: GKState?) {
         print("did enter idle state")
     }
+    
+    func handleTouch(_ touch: UITouch) {
+        guard let scene, let context else { return }
+        print("touched \(touch)")
+        let touchLocation = touch.location(in: scene)
+        let newBoxPos = CGPoint(x: touchLocation.x - context.layoutInfo.boxSize.width / 2.0,
+                                y: touchLocation.y - context.layoutInfo.boxSize.height / 2.0)
+        scene.box?.position = newBoxPos
+    }
+    
+    func handleTouchMoved(_ touch: UITouch) {
+        guard let scene, let context else { return }
+        let touchLocation = touch.location(in: scene)
+        let newBoxPos = CGPoint(x: touchLocation.x - context.layoutInfo.boxSize.width / 2.0,
+                                y: touchLocation.y - context.layoutInfo.boxSize.height / 2.0)
+        scene.box?.position = newBoxPos
+    }
+    //....
 }

@@ -8,28 +8,32 @@
 import Combine
 import GameplayKit
 
-class TTGameContext: GameContext {
-    var gameScene: TTGameScene? {
-        scene as? TTGameScene
+class NJGameContext: GameContext {
+    var gameScene: NJGameScene? {
+        scene as? NJGameScene
     }
     let gameMode: GameModeType
-    let gameInfo: TTGameInfo
-    var layoutInfo: TTLayoutInfo = .init(screenSize: .zero)
+    let gameInfo: NJGameInfo
+    var layoutInfo: NJLayoutInfo = .init(screenSize: .zero)
     
     private(set) var stateMachine: GKStateMachine?
     
     init(dependencies: Dependencies, gameMode: GameModeType) {
-        self.gameInfo = TTGameInfo()
+        self.gameInfo = NJGameInfo()
         self.gameMode = gameMode
         super.init(dependencies: dependencies)
+    }
+    
+    func updateLayoutInfo(withScreenSize size: CGSize) {
+        layoutInfo = NJLayoutInfo(screenSize: size)
     }
     
     func configureStates() {
         guard let gameScene else { return }
         print("did configure states")
         stateMachine = GKStateMachine(states: [
-            TTGameIdleState(scene: gameScene, context: self)
+            NJGameIdleState(scene: gameScene, context: self)
         ])
     }
-
 }
+
