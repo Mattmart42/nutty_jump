@@ -31,9 +31,14 @@ class NJGameContext: GameContext {
     func configureStates() {
         guard let gameScene else { return }
         print("did configure states")
-        stateMachine = GKStateMachine(states: [
-            NJGameIdleState(scene: gameScene, context: self)
-        ])
+        stateMachine = GKStateMachine(
+            states: [
+            NJGameIdleState(scene: gameScene, context: self),
+            NJRunningState(scene: gameScene, context: self),
+            NJJumpingState(scene: gameScene, context: self),
+            NJFallingState(scene: gameScene, context: self)
+            ]
+        )
     }
 }
 

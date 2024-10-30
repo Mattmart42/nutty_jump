@@ -7,6 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6BE49A062CD17DF4000DB8DF /* NJGameContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9641A622CC86BA100A998FE /* NJGameContext.swift */; };
+		6BE49A072CD17E07000DB8DF /* NJGameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9641A632CC86BC400A998FE /* NJGameScene.swift */; };
+		6BE49A082CD17E3E000DB8DF /* NJLayoutInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9641A642CC86CBA00A998FE /* NJLayoutInfo.swift */; };
+		6BE49A092CD17E44000DB8DF /* NJGameInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9641A652CC86CDA00A998FE /* NJGameInfo.swift */; };
+		6BE49A0A2CD17E4A000DB8DF /* NJGameIdleState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9641A672CC86D3300A998FE /* NJGameIdleState.swift */; };
+		6BE49A4D2CD18198000DB8DF /* NJRunningState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BE49A4C2CD1818D000DB8DF /* NJRunningState.swift */; };
+		6BE49A4F2CD181AA000DB8DF /* NJJumpingState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BE49A4E2CD181A5000DB8DF /* NJJumpingState.swift */; };
+		6BE49A512CD181B6000DB8DF /* NJFallingState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BE49A502CD181AF000DB8DF /* NJFallingState.swift */; };
+		6BE49A532CD18660000DB8DF /* NJWallNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BE49A522CD18660000DB8DF /* NJWallNode.swift */; };
+		6BE49A552CD18A4D000DB8DF /* NJPlayerNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BE49A542CD18A4D000DB8DF /* NJPlayerNode.swift */; };
 		C9641A412CC8602300A998FE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C9641A3A2CC8602300A998FE /* Assets.xcassets */; };
 		C9641A4C2CC8629F00A998FE /* Dependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9641A482CC8629F00A998FE /* Dependencies.swift */; };
 		C9641A4D2CC8629F00A998FE /* GameModeType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9641A4A2CC8629F00A998FE /* GameModeType.swift */; };
@@ -32,6 +42,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		6BE49A4C2CD1818D000DB8DF /* NJRunningState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NJRunningState.swift; sourceTree = "<group>"; };
+		6BE49A4E2CD181A5000DB8DF /* NJJumpingState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NJJumpingState.swift; sourceTree = "<group>"; };
+		6BE49A502CD181AF000DB8DF /* NJFallingState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NJFallingState.swift; sourceTree = "<group>"; };
+		6BE49A522CD18660000DB8DF /* NJWallNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NJWallNode.swift; path = Code/NJWallNode.swift; sourceTree = SOURCE_ROOT; };
+		6BE49A542CD18A4D000DB8DF /* NJPlayerNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NJPlayerNode.swift; path = Code/NJPlayerNode.swift; sourceTree = SOURCE_ROOT; };
 		C91B30212CBE250100ACDF61 /* nutty_jump.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = nutty_jump.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C91B30322CBE250300ACDF61 /* nutty_jumpTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = nutty_jumpTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C91B303C2CBE250300ACDF61 /* nutty_jumpUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = nutty_jumpUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -157,6 +172,9 @@
 		C9641A662CC86D2700A998FE /* States */ = {
 			isa = PBXGroup;
 			children = (
+				6BE49A4C2CD1818D000DB8DF /* NJRunningState.swift */,
+				6BE49A4E2CD181A5000DB8DF /* NJJumpingState.swift */,
+				6BE49A502CD181AF000DB8DF /* NJFallingState.swift */,
 				C9641A672CC86D3300A998FE /* NJGameIdleState.swift */,
 			);
 			path = States;
@@ -165,6 +183,8 @@
 		C9641A682CC86DBD00A998FE /* Nodes */ = {
 			isa = PBXGroup;
 			children = (
+				6BE49A522CD18660000DB8DF /* NJWallNode.swift */,
+				6BE49A542CD18A4D000DB8DF /* NJPlayerNode.swift */,
 			);
 			path = Nodes;
 			sourceTree = "<group>";
@@ -321,10 +341,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6BE49A062CD17DF4000DB8DF /* NJGameContext.swift in Sources */,
+				6BE49A512CD181B6000DB8DF /* NJFallingState.swift in Sources */,
+				6BE49A092CD17E44000DB8DF /* NJGameInfo.swift in Sources */,
+				6BE49A532CD18660000DB8DF /* NJWallNode.swift in Sources */,
 				C9641A4C2CC8629F00A998FE /* Dependencies.swift in Sources */,
 				C9641A4D2CC8629F00A998FE /* GameModeType.swift in Sources */,
+				6BE49A4F2CD181AA000DB8DF /* NJJumpingState.swift in Sources */,
+				6BE49A552CD18A4D000DB8DF /* NJPlayerNode.swift in Sources */,
+				6BE49A4D2CD18198000DB8DF /* NJRunningState.swift in Sources */,
+				6BE49A072CD17E07000DB8DF /* NJGameScene.swift in Sources */,
 				C9641A4E2CC8629F00A998FE /* GameType.swift in Sources */,
 				C9641A4F2CC8629F00A998FE /* GameContext.swift in Sources */,
+				6BE49A082CD17E3E000DB8DF /* NJLayoutInfo.swift in Sources */,
+				6BE49A0A2CD17E4A000DB8DF /* NJGameIdleState.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
