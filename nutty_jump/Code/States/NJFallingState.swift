@@ -21,6 +21,6 @@ class NJFallingState: GKState {
     }
     
     override func didEnter(from previousState: GKState?) {
-        print("did enter idle state")
+        print("did enter falling state")
     }
 }

@@ -24,13 +24,14 @@ class NJRunningState: GKState {
     }
     
     override func didEnter(from previousState: GKState?) {
-        print("did enter idle state")
+        print("did enter running state")
     }
     
     func handleTouch(_ touch: UITouch) {
-        guard let scene, let context else { return }
+        guard let scene else { return }
         let currentPlayerPos = scene.player?.position ?? .zero
         scene.togglePlayerLocation(currentPlayerPos: currentPlayerPos)
+        print("Handled touch in NJRunningState")
     }
     
     

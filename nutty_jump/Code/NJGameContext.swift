@@ -33,7 +33,7 @@ class NJGameContext: GameContext {
         print("did configure states")
         stateMachine = GKStateMachine(
             states: [
-            NJGameIdleState(scene: gameScene, context: self),
+            //NJGameIdleState(scene: gameScene, context: self),
             NJRunningState(scene: gameScene, context: self),
             NJJumpingState(scene: gameScene, context: self),
             NJFallingState(scene: gameScene, context: self)

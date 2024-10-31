@@ -8,10 +8,12 @@
 import SpriteKit
 import GameplayKit
 
-class NJGameScene: SKScene {
+class NJGameScene: SKScene, SKPhysicsContactDelegate {
     weak var context: NJGameContext?
     
     var player: NJPlayerNode?
+    let scoreNode = NJScoreNode()
+    var score = 0
     
     let leftWallPlayerPos: CGPoint
     let rightWallPlayerPos: CGPoint
@@ -33,30 +35,35 @@ class NJGameScene: SKScene {
         guard let context else {
             return
         }
+        physicsWorld.contactDelegate = self
+        scoreNode.setup(screenSize: size)
+        addChild(scoreNode)
         
-        
-        
-        let wallWidth: CGFloat = 40
-        let wallHeight: CGFloat = size.height
-        
-        let leftWall = NJWallNode(size: CGSize(width: wallWidth, height: wallHeight),
-                                     position: CGPoint(x: wallWidth / 2, y: 0))
-        let leftWall2 = GreenWallNode(size: CGSize(width: wallWidth, height: wallHeight),
-                                position: CGPoint(x: wallWidth / 2, y: size.height))
-        addChild(leftWall)
-        addChild(leftWall2)
-        
-        let rightWall = NJWallNode(size: CGSize(width: wallWidth, height: wallHeight),
-                                     position: CGPoint(x: size.width - wallWidth / 2, y: 0))
-        let rightWall2 = GreenWallNode(size: CGSize(width: wallWidth, height: wallHeight),
-                                position: CGPoint(x: size.width - wallWidth / 2, y: size.height))
-        addChild(rightWall)
-        addChild(rightWall2)
+        prepareWallNodes(screenSize: size)
         
         prepareGameContext()
         prepareStartNodes()
         
-        context.stateMachine?.enter(NJGameIdleState.self)
+        context.stateMachine?.enter(NJRunningState.self)
+    }
+    
+    func prepareWallNodes(screenSize: CGSize) {
+        let width: CGFloat = (40 / 393) * screenSize.width
+        let height: CGFloat = screenSize.height
+        
+        let leftWallTop = NJWallNode(size: CGSize(width: width, height: height),
+                                     position: CGPoint(x: width / 2, y: 0))
+        let leftWallBot = GreenWallNode(size: CGSize(width: width, height: height),
+                                position: CGPoint(x: width / 2, y: height))
+        addChild(leftWallTop)
+        addChild(leftWallBot)
+        
+        let rightWallTop = NJWallNode(size: CGSize(width: width, height: height),
+                                     position: CGPoint(x: size.width - width / 2, y: 0))
+        let rightWallBot = GreenWallNode(size: CGSize(width: width, height: height),
+                                position: CGPoint(x: size.width - width / 2, y: height))
+        addChild(rightWallTop)
+        addChild(rightWallBot)
     }
     
     func prepareGameContext() {
@@ -73,10 +80,10 @@ class NJGameScene: SKScene {
         guard let context else {
             return
         }
-        let rightWallPlayerPos = CGPoint(x: size.width - 40 * 1.5,
+        let rightWallPlayerPos = CGPoint(x: size.width - 40,
                              y: size.height / 2.0)
         
-        let leftWallPlayerPos = CGPoint(x: 40 * 1.5,
+        let leftWallPlayerPos = CGPoint(x: 40,
                              y: size.height / 2.0)
         let player = NJPlayerNode(size: context.layoutInfo.boxSize, position: rightWallPlayerPos)
         addChild(player)
@@ -84,6 +91,7 @@ class NJGameScene: SKScene {
     }
     
     override func update(_ currentTime: TimeInterval) {
+        print(size.height, size.width)
         //let's check for
         children
             .compactMap { $0 as? NJWallNode }
@@ -106,6 +114,10 @@ class NJGameScene: SKScene {
                     wallNode.position.y += wallNode.size.height * 2
                 }
             }
+        
+        score += 1
+        scoreNode.updateScore(with: score)
+        
             
 
     }
@@ -113,16 +125,21 @@ class NJGameScene: SKScene {
     func togglePlayerLocation(currentPlayerPos: CGPoint) {
         let rightWallPlayerPos = CGPoint(x: size.width - 40 * 1.5,
                              y: size.height / 2.0)
-        
         let leftWallPlayerPos = CGPoint(x: 40 * 1.5,
                              y: size.height / 2.0)
         
-        if currentPlayerPos == rightWallPlayerPos {
-            player?.position = leftWallPlayerPos
+        let targetPos: CGPoint
+        if Int(currentPlayerPos.x) == Int(rightWallPlayerPos.x) {
+            targetPos = leftWallPlayerPos
+        } else if Int(currentPlayerPos.x) == Int(leftWallPlayerPos.x) {
+            targetPos = rightWallPlayerPos
+        } else {
+            return
         }
-        if currentPlayerPos == leftWallPlayerPos {
-            player?.position = rightWallPlayerPos
-        }
+        
+        let moveAction = SKAction.move(to: targetPos, duration: 0.3) // Adjust duration for speed
+            moveAction.timingMode = .easeInEaseOut // Smooth start and stop for the animation
+            player?.run(moveAction)
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -130,10 +147,26 @@ class NJGameScene: SKScene {
               stateMachine.currentState is NJRunningState else {
             return // Ignore touch if not in running state
         }
-        
+        print("Tapped while in NJRunningState")
         // Get the first touch (since we're only handling single taps)
+        stateMachine.enter(NJJumpingState.self)
         if let touch = touches.first {
-            (stateMachine.currentState as? NJRunningState)?.handleTouch(touch)
+            (stateMachine.currentState as? NJJumpingState)?.handleTouch(touch)
+        }
+    }
+    
+    func didBegin(_ contact: SKPhysicsContact) {
+        guard let stateMachine = context?.stateMachine else { return }
+
+        let contactA = contact.bodyA.categoryBitMask
+        let contactB = contact.bodyB.categoryBitMask
+
+        // Check if the player hit a wall
+        print("hit a wall")
+        if (contactA == NJPhysicsCategory.player && contactB == NJPhysicsCategory.wall) ||
+            (contactA == NJPhysicsCategory.wall && contactB == NJPhysicsCategory.player) {
+            // Enter the running state
+            stateMachine.enter(NJRunningState.self)
         }
     }
 

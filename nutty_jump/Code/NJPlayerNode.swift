@@ -12,7 +12,10 @@ class NJPlayerNode: SKSpriteNode {
         super.init(texture: nil, color: .red, size: size)
         self.position = position
         self.physicsBody = SKPhysicsBody(rectangleOf: size)
-        self.physicsBody?.isDynamic = false
+        self.physicsBody?.isDynamic = true
+        self.physicsBody?.affectedByGravity = false
+        self.physicsBody?.categoryBitMask = NJPhysicsCategory.player
+        self.physicsBody?.contactTestBitMask = NJPhysicsCategory.wall
     }
 
     required init?(coder aDecoder: NSCoder) {

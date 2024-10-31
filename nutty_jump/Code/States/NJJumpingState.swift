@@ -24,6 +24,12 @@ class NJJumpingState: GKState {
         print("did enter jumping state")
     }
     
+    func handleTouch(_ touch: UITouch) {
+        guard let scene else { return }
+        let currentPlayerPos = scene.player?.position ?? .zero
+        scene.togglePlayerLocation(currentPlayerPos: currentPlayerPos)
+    }
+    
     override func update(deltaTime seconds: TimeInterval) {
             guard let scene, let context else { return }
 
