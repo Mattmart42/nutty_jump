@@ -80,11 +80,6 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         guard let context else {
             return
         }
-        let rightWallPlayerPos = CGPoint(x: size.width - 40,
-                             y: size.height / 2.0)
-        
-        let leftWallPlayerPos = CGPoint(x: 40,
-                             y: size.height / 2.0)
         let player = NJPlayerNode(size: context.layoutInfo.boxSize, position: rightWallPlayerPos)
         addChild(player)
         self.player = player
@@ -117,41 +112,30 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         
         score += 1
         scoreNode.updateScore(with: score)
-        
-            
-
     }
     
     func togglePlayerLocation(currentPlayerPos: CGPoint) {
-        let rightWallPlayerPos = CGPoint(x: size.width - 40 * 1.5,
-                             y: size.height / 2.0)
-        let leftWallPlayerPos = CGPoint(x: 40 * 1.5,
-                             y: size.height / 2.0)
+        let targetPos = (Int(currentPlayerPos.x) == Int(rightWallPlayerPos.x)) ? leftWallPlayerPos : rightWallPlayerPos
         
-        let targetPos: CGPoint
-        if Int(currentPlayerPos.x) == Int(rightWallPlayerPos.x) {
-            targetPos = leftWallPlayerPos
-        } else if Int(currentPlayerPos.x) == Int(leftWallPlayerPos.x) {
-            targetPos = rightWallPlayerPos
-        } else {
-            return
-        }
-        
-        let moveAction = SKAction.move(to: targetPos, duration: 0.3) // Adjust duration for speed
-            moveAction.timingMode = .easeInEaseOut // Smooth start and stop for the animation
-            player?.run(moveAction)
+        let moveAction = SKAction.move(to: targetPos, duration: 0.3)
+        moveAction.timingMode = .easeInEaseOut
+        player?.run(moveAction)
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let stateMachine = context?.stateMachine,
-              stateMachine.currentState is NJRunningState else {
+              let currentState = stateMachine.currentState else {
             return // Ignore touch if not in running state
         }
-        print("Tapped while in NJRunningState")
-        // Get the first touch (since we're only handling single taps)
-        stateMachine.enter(NJJumpingState.self)
-        if let touch = touches.first {
-            (stateMachine.currentState as? NJJumpingState)?.handleTouch(touch)
+        if currentState is NJRunningState {
+            print("Tapped while in NJRunningState")
+            // Get the first touch (since we're only handling single taps)
+            stateMachine.enter(NJJumpingState.self)
+            if let touch = touches.first {
+                (stateMachine.currentState as? NJJumpingState)?.handleTouch(touch)
+            }
+        } else {
+            print("Tap ignored, not in NJRunningState")
         }
     }
     
