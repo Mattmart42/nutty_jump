@@ -12,6 +12,8 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     weak var context: NJGameContext?
     
     var player: NJPlayerNode?
+    var fruit: NJFruitNode?
+    var hawk: NJHawkNode?
     let scoreNode = NJScoreNode()
     var score = 0
     
@@ -43,6 +45,8 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         
         prepareGameContext()
         prepareStartNodes()
+        dropFruits()
+        dropHawks()
         
         context.stateMachine?.enter(NJRunningState.self)
     }
@@ -112,6 +116,46 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         
         score += 1
         scoreNode.updateScore(with: score)
+    }
+
+    func spawnFruit() {
+        guard let context else { return }
+        
+        let fruitPosition = CGPoint(x: size.width / 2.0, y: size.height - 50)
+        let fruit = NJFruitNode(size: context.layoutInfo.boxSize, position: fruitPosition)
+        fruit.dropFromTop(screenWidth: size.width, screenHeight: size.height)
+        
+        addChild(fruit)
+    }
+    
+    func dropFruits() {
+        let spawnAction = SKAction.run { [weak self] in
+            self?.spawnFruit()
+        }
+        let waitAction = SKAction.wait(forDuration: Double.random(in: 1.0...3.0))
+        let sequence = SKAction.sequence([spawnAction, waitAction])
+        let repeatAction = SKAction.repeatForever(sequence)
+        run(repeatAction)
+    }
+    
+    func spawnHawk() {
+        guard let context else { return }
+        
+        let hawkPosition = CGPoint(x: size.width / 2.0, y: size.height - 50)
+        let hawk = NJHawkNode(size: context.layoutInfo.boxSize, position: hawkPosition)
+        hawk.dropDiagonally(screenWidth: size.width, screenHeight: size.height)
+        
+        addChild(hawk)
+    }
+    
+    func dropHawks() {
+        let spawnAction = SKAction.run { [weak self] in
+            self?.spawnHawk()
+        }
+        let waitAction = SKAction.wait(forDuration: Double.random(in: 1.0...3.0))
+        let sequence = SKAction.sequence([spawnAction, waitAction])
+        let repeatAction = SKAction.repeatForever(sequence)
+        run(repeatAction)
     }
     
     func togglePlayerLocation(currentPlayerPos: CGPoint) {
