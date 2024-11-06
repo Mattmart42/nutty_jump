@@ -17,9 +17,10 @@ class NJFruitNode: SKSpriteNode {
         let radius = circularSize.width / 2.0
         self.physicsBody = SKPhysicsBody(circleOfRadius: radius)
         self.physicsBody?.isDynamic = true
-        self.physicsBody?.affectedByGravity = false
-        self.physicsBody?.categoryBitMask = NJPhysicsCategory.player
-        self.physicsBody?.contactTestBitMask = NJPhysicsCategory.wall
+        //self.physicsBody?.affectedByGravity = false
+        self.physicsBody?.categoryBitMask = NJPhysicsCategory.fruit
+        self.physicsBody?.contactTestBitMask = NJPhysicsCategory.player
+        self.physicsBody?.collisionBitMask = 0
     }
 
     required init?(coder aDecoder: NSCoder) {

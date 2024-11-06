@@ -15,7 +15,8 @@ class NJPlayerNode: SKSpriteNode {
         self.physicsBody?.isDynamic = true
         self.physicsBody?.affectedByGravity = false
         self.physicsBody?.categoryBitMask = NJPhysicsCategory.player
-        self.physicsBody?.contactTestBitMask = NJPhysicsCategory.wall
+        self.physicsBody?.contactTestBitMask = NJPhysicsCategory.wall | NJPhysicsCategory.ground | NJPhysicsCategory.hawk | NJPhysicsCategory.fruit | NJPhysicsCategory.fox | NJPhysicsCategory.nut
+        self.physicsBody?.collisionBitMask = 0
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -24,5 +25,10 @@ class NJPlayerNode: SKSpriteNode {
     
     func getPosition() -> CGPoint {
         return self.position
+    }
+    
+    func toggleGravity() {
+        let current = self.physicsBody?.affectedByGravity
+        self.physicsBody?.affectedByGravity = !current!
     }
 }

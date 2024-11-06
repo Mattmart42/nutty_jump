@@ -11,15 +11,12 @@ class NJHawkNode: SKSpriteNode {
     init(size: CGSize, position: CGPoint) {
         super.init(texture: nil, color: .brown, size: size)
         self.position = position
-        let circularSize = CGSize(width: size.width, height: size.width)
-        // Use width for height to maintain a circle
-        self.size = circularSize
-        let radius = circularSize.width / 2.0
-        self.physicsBody = SKPhysicsBody(circleOfRadius: radius)
+        self.physicsBody = SKPhysicsBody(rectangleOf: size)
         self.physicsBody?.isDynamic = true
         self.physicsBody?.affectedByGravity = false
-        self.physicsBody?.categoryBitMask = NJPhysicsCategory.player
-        self.physicsBody?.contactTestBitMask = NJPhysicsCategory.wall
+        self.physicsBody?.categoryBitMask = NJPhysicsCategory.hawk
+        self.physicsBody?.contactTestBitMask = NJPhysicsCategory.player
+        self.physicsBody?.collisionBitMask = 0
     }
 
     required init?(coder aDecoder: NSCoder) {

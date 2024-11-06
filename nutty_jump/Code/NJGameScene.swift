@@ -16,6 +16,8 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     var hawk: NJHawkNode?
     let scoreNode = NJScoreNode()
     var score = 0
+    var fruitsCollected: Int = 0
+    var hawksCollected: Int = 0
     
     let leftWallPlayerPos: CGPoint
     let rightWallPlayerPos: CGPoint
@@ -34,24 +36,29 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     override func didMove(to view: SKView) {
-        guard let context else {
-            return
-        }
+        guard let context else { return }
+        
         physicsWorld.contactDelegate = self
+        prepareGameContext()
+        prepareStartNodes(screenSize: size)
+        
+        context.stateMachine?.enter(NJRunningState.self)
+        
+        let spawnAction = SKAction.run { [weak self] in self?.spawnFruitHawk() }
+        let delay = SKAction.wait(forDuration: 2.0) // Adjust interval as needed
+        let spawnSequence = SKAction.sequence([spawnAction, delay])
+        run(SKAction.repeatForever(spawnSequence))
+        
+        //dropFruits()
+        //dropHawks()
+    }
+    
+    func prepareStartNodes(screenSize: CGSize) {
+        guard let context else { return }
+        
         scoreNode.setup(screenSize: size)
         addChild(scoreNode)
         
-        prepareWallNodes(screenSize: size)
-        
-        prepareGameContext()
-        prepareStartNodes()
-        dropFruits()
-        dropHawks()
-        
-        context.stateMachine?.enter(NJRunningState.self)
-    }
-    
-    func prepareWallNodes(screenSize: CGSize) {
         let width: CGFloat = (40 / 393) * screenSize.width
         let height: CGFloat = screenSize.height
         
@@ -68,36 +75,27 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
                                 position: CGPoint(x: size.width - width / 2, y: height))
         addChild(rightWallTop)
         addChild(rightWallBot)
+        
+        let ground = NJGroundNode(size: CGSize(width: screenSize.width, height: 10), position: CGPoint(x: size.width / 2, y: 0))
+        addChild(ground)
+        
+        let player = NJPlayerNode(size: context.layoutInfo.boxSize, position: rightWallPlayerPos)
+        addChild(player)
+        self.player = player
     }
     
     func prepareGameContext() {
-        guard let context else {
-            return
-        }
+        guard let context else { return }
 
         context.scene = self
         context.updateLayoutInfo(withScreenSize: size)
         context.configureStates()
     }
     
-    func prepareStartNodes() {
-        guard let context else {
-            return
-        }
-        let player = NJPlayerNode(size: context.layoutInfo.boxSize, position: rightWallPlayerPos)
-        addChild(player)
-        self.player = player
-    }
-    
     override func update(_ currentTime: TimeInterval) {
-        print(size.height, size.width)
-        //let's check for
         children
             .compactMap { $0 as? NJWallNode }
-            .forEach { wallNode in
-                
-                wallNode.position.y -= 10
-                
+            .forEach { wallNode in wallNode.position.y -= 10
                 if wallNode.position.y <= -wallNode.size.height / 2 {
                     wallNode.position.y += wallNode.size.height * 2
                 }
@@ -105,10 +103,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         
         children
             .compactMap { $0 as? GreenWallNode }
-            .forEach { wallNode in
-                
-                wallNode.position.y -= 10
-                
+            .forEach { wallNode in wallNode.position.y -= 10
                 if wallNode.position.y <= -wallNode.size.height / 2 {
                     wallNode.position.y += wallNode.size.height * 2
                 }
@@ -118,45 +113,62 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         scoreNode.updateScore(with: score)
     }
 
-    func spawnFruit() {
-        guard let context else { return }
+    func spawnFruitHawk() {
+        let isFruit = Bool.random()
         
-        let fruitPosition = CGPoint(x: size.width / 2.0, y: size.height - 50)
-        let fruit = NJFruitNode(size: context.layoutInfo.boxSize, position: fruitPosition)
-        fruit.dropFromTop(screenWidth: size.width, screenHeight: size.height)
+        let obstacleSize = CGSize(width: 30, height: 30)
+        let yPosition = size.height
+        let xPosition: CGFloat = Bool.random() ? 60 : size.width - 60
+
+        let obstacle: SKSpriteNode
+        let targetPosition: CGPoint
         
-        addChild(fruit)
-    }
-    
-    func dropFruits() {
-        let spawnAction = SKAction.run { [weak self] in
-            self?.spawnFruit()
+        if isFruit {
+            obstacle = NJFruitNode(size: obstacleSize, position: CGPoint(x: xPosition, y: yPosition))
+            targetPosition = CGPoint(x: xPosition, y: 0)
+            let moveAction = SKAction.move(to: targetPosition, duration: 2.0)
+            let removeAction = SKAction.removeFromParent()
+            obstacle.run(SKAction.sequence([moveAction, removeAction]))
+        } else {
+            obstacle = NJHawkNode(size: obstacleSize, position: CGPoint(x: xPosition, y: yPosition))
+            targetPosition = CGPoint(x: xPosition == 60 ? size.width - 60 : 60, y: player?.position.y ?? 0)
+            let moveAction = SKAction.move(to: targetPosition, duration: 1.0)
+            let removeAction = SKAction.removeFromParent()
+            obstacle.run(SKAction.sequence([moveAction, removeAction]))
         }
-        let waitAction = SKAction.wait(forDuration: Double.random(in: 1.0...3.0))
-        let sequence = SKAction.sequence([spawnAction, waitAction])
-        let repeatAction = SKAction.repeatForever(sequence)
-        run(repeatAction)
+
+        addChild(obstacle)
     }
     
-    func spawnHawk() {
-        guard let context else { return }
-        
-        let hawkPosition = CGPoint(x: size.width / 2.0, y: size.height - 50)
-        let hawk = NJHawkNode(size: context.layoutInfo.boxSize, position: hawkPosition)
-        hawk.dropDiagonally(screenWidth: size.width, screenHeight: size.height)
-        
-        addChild(hawk)
-    }
+//    func dropFruits() {
+//        let spawnAction = SKAction.run { [weak self] in
+//            self?.spawnFruit()
+//        }
+//        let waitAction = SKAction.wait(forDuration: Double.random(in: 1.0...3.0))
+//        let sequence = SKAction.sequence([spawnAction, waitAction])
+//        let repeatAction = SKAction.repeatForever(sequence)
+//        run(repeatAction)
+//    }
     
-    func dropHawks() {
-        let spawnAction = SKAction.run { [weak self] in
-            self?.spawnHawk()
-        }
-        let waitAction = SKAction.wait(forDuration: Double.random(in: 1.0...3.0))
-        let sequence = SKAction.sequence([spawnAction, waitAction])
-        let repeatAction = SKAction.repeatForever(sequence)
-        run(repeatAction)
-    }
+//    func spawnHawk() {
+//        guard let context else { return }
+//        
+//        let hawkPosition = CGPoint(x: size.width / 2.0, y: size.height - 50)
+//        let hawk = NJHawkNode(size: context.layoutInfo.boxSize, position: hawkPosition)
+//        hawk.dropDiagonally(screenWidth: size.width, screenHeight: size.height)
+//        
+//        addChild(hawk)
+//    }
+    
+//    func dropHawks() {
+//        let spawnAction = SKAction.run { [weak self] in
+//            self?.spawnHawk()
+//        }
+//        let waitAction = SKAction.wait(forDuration: Double.random(in: 1.0...3.0))
+//        let sequence = SKAction.sequence([spawnAction, waitAction])
+//        let repeatAction = SKAction.repeatForever(sequence)
+//        run(repeatAction)
+//    }
     
     func togglePlayerLocation(currentPlayerPos: CGPoint) {
         let targetPos = (Int(currentPlayerPos.x) == Int(rightWallPlayerPos.x)) ? leftWallPlayerPos : rightWallPlayerPos
@@ -168,18 +180,21 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let stateMachine = context?.stateMachine,
-              let currentState = stateMachine.currentState else {
-            return // Ignore touch if not in running state
-        }
+              let currentState = stateMachine.currentState else { return }
+        
         if currentState is NJRunningState {
-            print("Tapped while in NJRunningState")
-            // Get the first touch (since we're only handling single taps)
             stateMachine.enter(NJJumpingState.self)
             if let touch = touches.first {
                 (stateMachine.currentState as? NJJumpingState)?.handleTouch(touch)
             }
+        } else if currentState is NJGameOverState {
+            stateMachine.enter(NJJumpingState.self)
+            
+            if let touch = touches.first {
+                (stateMachine.currentState as? NJGameOverState)?.handleTouch(touch)
+            }
         } else {
-            print("Tap ignored, not in NJRunningState")
+            print("Tap ignored, not running or game over")
         }
     }
     
@@ -188,14 +203,56 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
 
         let contactA = contact.bodyA.categoryBitMask
         let contactB = contact.bodyB.categoryBitMask
-
-        // Check if the player hit a wall
-        print("hit a wall")
+        
         if (contactA == NJPhysicsCategory.player && contactB == NJPhysicsCategory.wall) ||
             (contactA == NJPhysicsCategory.wall && contactB == NJPhysicsCategory.player) {
-            // Enter the running state
+            print("player hit wall")
             stateMachine.enter(NJRunningState.self)
+            return
+        }
+        
+        if (contactA == NJPhysicsCategory.player && contactB == NJPhysicsCategory.ground) ||
+            (contactA == NJPhysicsCategory.ground && contactB == NJPhysicsCategory.player) {
+            print("player hit ground")
+            stateMachine.enter(NJGameOverState.self)
+            return
+        }
+        
+        if (contactA == NJPhysicsCategory.player && (contactB == NJPhysicsCategory.fruit || contactB == NJPhysicsCategory.hawk)) || ((contactA == NJPhysicsCategory.fruit || contactA == NJPhysicsCategory.hawk) && contactB == NJPhysicsCategory.player) {
+            if stateMachine.currentState is NJRunningState {
+                print("player hit obstacle while running")
+                player?.toggleGravity()
+            } else if stateMachine.currentState is NJJumpingState {
+                print("player hit obstacle while jumping")
+                let obstacleNode = (contactA == NJPhysicsCategory.fruit || contactA == NJPhysicsCategory.hawk) ? contact.bodyA.node : contact.bodyB.node
+                obstacleNode?.removeFromParent()
+            }
         }
     }
-
+    
+    func reset() {
+        guard let context else { return }
+        score = 0
+        scoreNode.updateScore(with: 0)
+        children
+            .compactMap { $0 as? NJFruitNode }
+            .forEach { $0.removeFromParent() }
+        children
+            .compactMap { $0 as? NJHawkNode }
+            .forEach { $0.removeFromParent() }
+        children
+            .compactMap { $0 as? NJPlayerNode }
+            .forEach { $0.removeFromParent() }
+        children
+            .compactMap { $0 as? NJWallNode }
+            .forEach { $0.removeFromParent() }
+        children
+            .compactMap { $0 as? GreenWallNode }
+            .forEach { $0.removeFromParent() }
+        children
+            .compactMap { $0 as? NJGroundNode }
+            .forEach { $0.removeFromParent() }
+        prepareStartNodes(screenSize: size)
+        context.stateMachine?.enter(NJRunningState.self)
+    }
 }
