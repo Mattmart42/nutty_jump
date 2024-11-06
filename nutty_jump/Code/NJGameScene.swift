@@ -15,9 +15,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     var fruit: NJFruitNode?
     var hawk: NJHawkNode?
     let scoreNode = NJScoreNode()
-    var score = 0
-    var fruitsCollected: Int = 0
-    var hawksCollected: Int = 0
+    var trackerNode: NJPowerUpTrackerNode!
     
     let leftWallPlayerPos: CGPoint
     let rightWallPlayerPos: CGPoint
@@ -59,6 +57,10 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         scoreNode.setup(screenSize: size)
         addChild(scoreNode)
         
+        trackerNode = NJPowerUpTrackerNode(size: CGSize(width: 30, height: 30))
+        trackerNode.position = CGPoint(x: 70 + trackerNode.frame.width / 2, y: 40 + trackerNode.frame.height / 2)
+        addChild(trackerNode)
+        
         let width: CGFloat = (40 / 393) * screenSize.width
         let height: CGFloat = screenSize.height
         
@@ -93,6 +95,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     override func update(_ currentTime: TimeInterval) {
+        guard let context else { return }
         children
             .compactMap { $0 as? NJWallNode }
             .forEach { wallNode in wallNode.position.y -= 10
@@ -109,8 +112,8 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
                 }
             }
         
-        score += 1
-        scoreNode.updateScore(with: score)
+        context.gameInfo.score += 1
+        scoreNode.updateScore(with: context.gameInfo.score)
     }
 
     func spawnFruitHawk() {
@@ -199,11 +202,13 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
-        guard let stateMachine = context?.stateMachine else { return }
+        guard let context else { return }
+        guard let stateMachine = context.stateMachine else { return }
 
         let contactA = contact.bodyA.categoryBitMask
         let contactB = contact.bodyB.categoryBitMask
         
+        //player hits wall
         if (contactA == NJPhysicsCategory.player && contactB == NJPhysicsCategory.wall) ||
             (contactA == NJPhysicsCategory.wall && contactB == NJPhysicsCategory.player) {
             print("player hit wall")
@@ -211,6 +216,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
             return
         }
         
+        //player hits ground
         if (contactA == NJPhysicsCategory.player && contactB == NJPhysicsCategory.ground) ||
             (contactA == NJPhysicsCategory.ground && contactB == NJPhysicsCategory.player) {
             print("player hit ground")
@@ -218,21 +224,64 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
             return
         }
         
-        if (contactA == NJPhysicsCategory.player && (contactB == NJPhysicsCategory.fruit || contactB == NJPhysicsCategory.hawk)) || ((contactA == NJPhysicsCategory.fruit || contactA == NJPhysicsCategory.hawk) && contactB == NJPhysicsCategory.player) {
+        //player hits fruit
+        if (contactA == NJPhysicsCategory.player && contactB == NJPhysicsCategory.fruit) ||
+            (contactA == NJPhysicsCategory.fruit && contactB == NJPhysicsCategory.player) {
             if stateMachine.currentState is NJRunningState {
-                print("player hit obstacle while running")
+                print("player hit fruit while running")
                 player?.toggleGravity()
             } else if stateMachine.currentState is NJJumpingState {
-                print("player hit obstacle while jumping")
-                let obstacleNode = (contactA == NJPhysicsCategory.fruit || contactA == NJPhysicsCategory.hawk) ? contact.bodyA.node : contact.bodyB.node
-                obstacleNode?.removeFromParent()
+                print("player hit fruit while jumping")
+                let fruitNode = (contactA == NJPhysicsCategory.fruit) ? contact.bodyA.node : contact.bodyB.node
+                fruitNode?.removeFromParent()
+                
+                context.gameInfo.hawksCollected = 0
+                if context.gameInfo.fruitsCollected == 2 {
+                    //TODO: Implement powerup states
+                    context.gameInfo.fruitsCollected += 1
+                    trackerNode.updatePowerUpDisplay(for: context.gameInfo.fruitsCollected, with: CollectibleType.fruit)
+                } else if context.gameInfo.fruitsCollected == 1 {
+                    context.gameInfo.fruitsCollected += 1
+                    trackerNode.updatePowerUpDisplay(for: context.gameInfo.fruitsCollected, with: CollectibleType.fruit)
+                } else if context.gameInfo.fruitsCollected == 0 {
+                    trackerNode.resetDisplay()
+                    context.gameInfo.fruitsCollected += 1
+                    trackerNode.updatePowerUpDisplay(for: context.gameInfo.fruitsCollected, with: CollectibleType.fruit)
+                }
+            }
+        }
+        
+        //player hits hawk
+        if (contactA == NJPhysicsCategory.player && contactB == NJPhysicsCategory.hawk) ||
+            (contactA == NJPhysicsCategory.hawk && contactB == NJPhysicsCategory.player) {
+            if stateMachine.currentState is NJRunningState {
+                print("player hit hawk while running")
+                player?.toggleGravity()
+            } else if stateMachine.currentState is NJJumpingState {
+                print("player hit hawk while jumping")
+                let hawkNode = (contactA == NJPhysicsCategory.hawk) ? contact.bodyA.node : contact.bodyB.node
+                hawkNode?.removeFromParent()
+                
+                context.gameInfo.fruitsCollected = 0
+                if context.gameInfo.hawksCollected == 2 {
+                    //TODO: Implement powerup states
+                    context.gameInfo.hawksCollected += 1
+                    trackerNode.updatePowerUpDisplay(for: context.gameInfo.hawksCollected, with: CollectibleType.hawk)
+                } else if context.gameInfo.hawksCollected == 1 {
+                    context.gameInfo.hawksCollected += 1
+                    trackerNode.updatePowerUpDisplay(for: context.gameInfo.hawksCollected, with: CollectibleType.hawk)
+                } else if context.gameInfo.hawksCollected == 0 {
+                    trackerNode.resetDisplay()
+                    context.gameInfo.hawksCollected += 1
+                    trackerNode.updatePowerUpDisplay(for: context.gameInfo.hawksCollected, with: CollectibleType.hawk)
+                }
             }
         }
     }
     
     func reset() {
         guard let context else { return }
-        score = 0
+        context.gameInfo.score = 0
         scoreNode.updateScore(with: 0)
         children
             .compactMap { $0 as? NJFruitNode }

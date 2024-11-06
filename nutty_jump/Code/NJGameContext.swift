@@ -13,7 +13,7 @@ class NJGameContext: GameContext {
         scene as? NJGameScene
     }
     let gameMode: GameModeType
-    let gameInfo: NJGameInfo
+    var gameInfo: NJGameInfo
     var layoutInfo: NJLayoutInfo = .init(screenSize: .zero)
     
     private(set) var stateMachine: GKStateMachine?
