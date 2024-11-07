@@ -2,7 +2,7 @@
 //  NJJumpingState.swift
 //  nutty_jump
 //
-//  Created by keckuser on 10/29/24.
+//  Created by matt on 10/29/24.
 //
 
 import GameplayKit
@@ -17,7 +17,7 @@ class NJJumpingState: GKState {
         super.init()
     }
     override func isValidNextState(_ stateClass: AnyClass) -> Bool {
-        return true
+        return stateClass == NJFallingState.self || stateClass == NJRunningState.self
     }
     
     override func didEnter(from previousState: GKState?) {
@@ -31,17 +31,15 @@ class NJJumpingState: GKState {
     }
     
     override func update(deltaTime seconds: TimeInterval) {
-            guard let scene, let context else { return }
+        guard let scene, let context else { return }
 
-            // Check if the player has reached the opposite wall
-            let currentPlayerPos = scene.player?.position
-            let targetPos = scene.player?.position == scene.rightWallPlayerPos
-                ? scene.leftWallPlayerPos
-                : scene.rightWallPlayerPos
-            
-            // Transition to running state once player reaches the target position
-            if currentPlayerPos == targetPos {
-                context.stateMachine?.enter(NJRunningState.self)
-            }
+        let currentPlayerPos = scene.player?.position
+        let targetPos = scene.player?.position == scene.rightWallPlayerPos
+            ? scene.leftWallPlayerPos
+            : scene.rightWallPlayerPos
+        
+        if currentPlayerPos == targetPos {
+            context.stateMachine?.enter(NJRunningState.self)
         }
+    }
 }

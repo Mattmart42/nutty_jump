@@ -41,5 +41,10 @@ class NJGameContext: GameContext {
             ]
         )
     }
+    
+    func resetGameContext() {
+        gameInfo = NJGameInfo()
+        layoutInfo = NJLayoutInfo(screenSize: layoutInfo.screenSize)
+    }
 }
 

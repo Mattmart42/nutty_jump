@@ -10,8 +10,10 @@ import UIKit
 
 struct NJGameInfo {
     var score = 0
+    var scrollSpeed = 10
     var fruitsCollected = 0
     var hawksCollected = 0
+    var foxesCollected = 0
 }
 
 enum CollectibleType {

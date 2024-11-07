@@ -2,7 +2,7 @@
 //  NJGameOverState.swift
 //  nutty_jump
 //
-//  Created by keckuser on 11/5/24.
+//  Created by matt on 11/5/24.
 //
 
 import GameplayKit
@@ -17,7 +17,7 @@ class NJGameOverState: GKState {
         super.init()
     }
     override func isValidNextState(_ stateClass: AnyClass) -> Bool {
-        return true
+        return stateClass == NJRunningState.self
     }
     
     override func didEnter(from previousState: GKState?) {
@@ -31,17 +31,21 @@ class NJGameOverState: GKState {
     }
     
     override func willExit(to nextState: GKState) {
-        scene?.isPaused = false
+        scene?.childNode(withName: "GameOverLabel")?.removeFromParent()
+        scene?.childNode(withName: "RestartButton")?.removeFromParent()
     }
     
     func handleTouch(_ touch: UITouch) {
         guard let scene else { return }
+        let location = touch.location(in: scene)
+        if let node = scene.atPoint(location) as? SKLabelNode, node.name == "RestartButton" {
+            scene.reset()
+        }
     }
     
     private func displayGameOver() {
         guard let scene = scene else { return }
-        print("displaying game over")
-        // Add a "Game Over" label
+        
         let gameOverLabel = SKLabelNode(text: "Game Over")
         gameOverLabel.fontSize = 48
         gameOverLabel.fontColor = .red
@@ -52,7 +56,6 @@ class NJGameOverState: GKState {
     private func showGameOverOptions() {
         guard let scene = scene else { return }
 
-        // Add a "Restart" button
         let restartButton = SKLabelNode(text: "Restart")
         restartButton.name = "RestartButton"
         restartButton.fontSize = 36
@@ -60,6 +63,4 @@ class NJGameOverState: GKState {
         restartButton.position = CGPoint(x: scene.size.width / 2, y: scene.size.height / 2 - 80)
         scene.addChild(restartButton)
     }
-    
-    
 }

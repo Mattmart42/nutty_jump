@@ -36,9 +36,9 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     override func didMove(to view: SKView) {
         guard let context else { return }
         
-        physicsWorld.contactDelegate = self
         prepareGameContext()
         prepareStartNodes(screenSize: size)
+        physicsWorld.contactDelegate = self
         
         context.stateMachine?.enter(NJRunningState.self)
         
@@ -230,6 +230,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
             if stateMachine.currentState is NJRunningState {
                 print("player hit fruit while running")
                 player?.toggleGravity()
+                stateMachine.enter(NJFallingState.self)
             } else if stateMachine.currentState is NJJumpingState {
                 print("player hit fruit while jumping")
                 let fruitNode = (contactA == NJPhysicsCategory.fruit) ? contact.bodyA.node : contact.bodyB.node
@@ -257,6 +258,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
             if stateMachine.currentState is NJRunningState {
                 print("player hit hawk while running")
                 player?.toggleGravity()
+                stateMachine.enter(NJFallingState.self)
             } else if stateMachine.currentState is NJJumpingState {
                 print("player hit hawk while jumping")
                 let hawkNode = (contactA == NJPhysicsCategory.hawk) ? contact.bodyA.node : contact.bodyB.node
@@ -281,27 +283,23 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     
     func reset() {
         guard let context else { return }
-        context.gameInfo.score = 0
-        scoreNode.updateScore(with: 0)
-        children
-            .compactMap { $0 as? NJFruitNode }
-            .forEach { $0.removeFromParent() }
-        children
-            .compactMap { $0 as? NJHawkNode }
-            .forEach { $0.removeFromParent() }
-        children
-            .compactMap { $0 as? NJPlayerNode }
-            .forEach { $0.removeFromParent() }
-        children
-            .compactMap { $0 as? NJWallNode }
-            .forEach { $0.removeFromParent() }
-        children
-            .compactMap { $0 as? GreenWallNode }
-            .forEach { $0.removeFromParent() }
-        children
-            .compactMap { $0 as? NJGroundNode }
-            .forEach { $0.removeFromParent() }
+        removeAllChildren()
+        removeAllActions()
+
+        context.resetGameContext()
+        
         prepareStartNodes(screenSize: size)
+        scoreNode.updateScore(with: 0)
+        trackerNode.resetDisplay()
+
+        player?.position = rightWallPlayerPos
+        player?.physicsBody?.velocity = .zero
+
+        let spawnAction = SKAction.run { [weak self] in self?.spawnFruitHawk() }
+        let delay = SKAction.wait(forDuration: 2.0)
+        let spawnSequence = SKAction.sequence([spawnAction, delay])
+        run(SKAction.repeatForever(spawnSequence), withKey: "spawnObstacles")
+
         context.stateMachine?.enter(NJRunningState.self)
     }
 }
