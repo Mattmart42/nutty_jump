@@ -17,6 +17,8 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     let scoreNode = NJScoreNode()
     var trackerNode: NJPowerUpTrackerNode!
     
+    var powerUpLength = 10.0
+    
     let leftWallPlayerPos: CGPoint
     let rightWallPlayerPos: CGPoint
     
@@ -125,11 +127,12 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
 
         let obstacle: SKSpriteNode
         let targetPosition: CGPoint
+        let dropDuration = TimeInterval.random(in: 1.0...2.0)
         
         if isFruit {
             obstacle = NJFruitNode(size: obstacleSize, position: CGPoint(x: xPosition, y: yPosition))
             targetPosition = CGPoint(x: xPosition, y: 0)
-            let moveAction = SKAction.move(to: targetPosition, duration: 2.0)
+            let moveAction = SKAction.move(to: targetPosition, duration: dropDuration)
             let removeAction = SKAction.removeFromParent()
             obstacle.run(SKAction.sequence([moveAction, removeAction]))
         } else {
@@ -227,7 +230,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         //player hits fruit
         if (contactA == NJPhysicsCategory.player && contactB == NJPhysicsCategory.fruit) ||
             (contactA == NJPhysicsCategory.fruit && contactB == NJPhysicsCategory.player) {
-            if stateMachine.currentState is NJRunningState {
+            if stateMachine.currentState is NJRunningState && !context.gameInfo.playerIsInvincible {
                 print("player hit fruit while running")
                 player?.toggleGravity()
                 stateMachine.enter(NJFallingState.self)
@@ -255,7 +258,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         //player hits hawk
         if (contactA == NJPhysicsCategory.player && contactB == NJPhysicsCategory.hawk) ||
             (contactA == NJPhysicsCategory.hawk && contactB == NJPhysicsCategory.player) {
-            if stateMachine.currentState is NJRunningState {
+            if stateMachine.currentState is NJRunningState && !context.gameInfo.playerIsInvincible {
                 print("player hit hawk while running")
                 player?.toggleGravity()
                 stateMachine.enter(NJFallingState.self)
@@ -266,7 +269,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
                 
                 context.gameInfo.fruitsCollected = 0
                 if context.gameInfo.hawksCollected == 2 {
-                    //TODO: Implement powerup states
+                    hawkPowerUp()
                     context.gameInfo.hawksCollected += 1
                     trackerNode.updatePowerUpDisplay(for: context.gameInfo.hawksCollected, with: CollectibleType.hawk)
                 } else if context.gameInfo.hawksCollected == 1 {
@@ -278,6 +281,16 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
                     trackerNode.updatePowerUpDisplay(for: context.gameInfo.hawksCollected, with: CollectibleType.hawk)
                 }
             }
+        }
+    }
+    
+    func hawkPowerUp() {
+        guard let context else { return }
+        context.gameInfo.playerIsInvincible = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + self.powerUpLength) {
+            context.gameInfo.playerIsInvincible = false
+            context.gameInfo.hawksCollected = 0
+            self.trackerNode.updatePowerUpDisplay(for: context.gameInfo.hawksCollected, with: CollectibleType.hawk)
         }
     }
     

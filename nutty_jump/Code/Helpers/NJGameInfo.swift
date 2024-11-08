@@ -14,6 +14,7 @@ struct NJGameInfo {
     var fruitsCollected = 0
     var hawksCollected = 0
     var foxesCollected = 0
+    var playerIsInvincible = false
 }
 
 enum CollectibleType {
