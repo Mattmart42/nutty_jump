@@ -30,7 +30,7 @@ class NJPowerUpTrackerNode: SKNode {
     func updatePowerUpDisplay(for count: Int, with collectibleType: CollectibleType) {
         for (index, node) in powerUpNodes.enumerated() {
             node.isHidden = index >= count
-            node.color = collectibleType.color
+            node.texture = collectibleType.texture
         }
     }
     

@@ -8,8 +8,8 @@
 import SpriteKit
 
 class NJPlayerNode: SKSpriteNode {
-    init(size: CGSize, position: CGPoint) {
-        super.init(texture: nil, color: .red, size: size)
+    init(size: CGSize, position: CGPoint, texture: SKTexture) {
+        super.init(texture: texture, color: .red, size: size)
         self.position = position
         self.physicsBody = SKPhysicsBody(rectangleOf: size)
         self.physicsBody?.isDynamic = true

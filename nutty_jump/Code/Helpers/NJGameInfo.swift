@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import SpriteKit
 
 struct NJGameInfo {
     var score = 0
@@ -22,11 +23,11 @@ enum CollectibleType {
     case hawk
     case fox
     
-    var color: UIColor {
+    var texture: SKTexture {
         switch self {
-        case .fruit: return .yellow
-        case .hawk: return .brown
-        case .fox: return .orange
+        case .fruit: return SKTexture(imageNamed: "blueberry")
+        case .hawk: return SKTexture(imageNamed: "coconut")
+        case .fox: return SKTexture(imageNamed: "orange")
         }
     }
 }

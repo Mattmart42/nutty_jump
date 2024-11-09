@@ -8,8 +8,8 @@
 import SpriteKit
 
 class NJFruitNode: SKSpriteNode {
-    init(size: CGSize, position: CGPoint) {
-        super.init(texture: nil, color: .yellow, size: size)
+    init(size: CGSize, position: CGPoint, texture: SKTexture) {
+        super.init(texture: texture, color: .yellow, size: size)
         self.position = position
         let circularSize = CGSize(width: size.width, height: size.width)
         self.size = circularSize
