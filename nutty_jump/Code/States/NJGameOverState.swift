@@ -16,16 +16,14 @@ class NJGameOverState: GKState {
         self.context = context
         super.init()
     }
+    
     override func isValidNextState(_ stateClass: AnyClass) -> Bool {
         return stateClass == NJRunningState.self
     }
     
     override func didEnter(from previousState: GKState?) {
+        //scene?.displayScore()
         scene?.isPaused = true
-//        UIImpactFeedbackGenerator(style: .heavy).impactOccurred(intensity: 0.85)
-//        Task { @MainActor in
-//            scene?.reset()
-//        }
         displayGameOver()
         showGameOverOptions()
     }

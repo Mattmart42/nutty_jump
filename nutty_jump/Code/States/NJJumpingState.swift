@@ -16,6 +16,7 @@ class NJJumpingState: GKState {
         self.context = context
         super.init()
     }
+    
     override func isValidNextState(_ stateClass: AnyClass) -> Bool {
         return stateClass == NJFallingState.self || stateClass == NJRunningState.self
     }
@@ -26,6 +27,7 @@ class NJJumpingState: GKState {
     
     func handleTouch(_ touch: UITouch) {
         guard let scene else { return }
+        
         let currentPlayerPos = scene.player?.position ?? .zero
         scene.togglePlayerLocation(currentPlayerPos: currentPlayerPos)
     }

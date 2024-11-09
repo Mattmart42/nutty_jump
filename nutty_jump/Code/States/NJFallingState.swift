@@ -16,6 +16,7 @@ class NJFallingState: GKState {
         self.context = context
         super.init()
     }
+    
     override func isValidNextState(_ stateClass: AnyClass) -> Bool {
         return stateClass == NJGameOverState.self
     }

@@ -21,6 +21,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     
     let backgroundScrollSpeed: CGFloat = 2.0
     var backgroundNodes: [NJBackgroundNode] = []
+    let textureHeight: CGFloat = 2500
     
     let fruitAtlas = SKTextureAtlas(named: "FruitAtlas")
     let backgroundAtlas = SKTextureAtlas(named: "BackgroundAtlas")
@@ -38,13 +39,10 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         fruitAtlas.preload {
             print("fruit sprite preloaded")
         }
-        
         backgroundAtlas.preload {
             print("background sprite preloaded")
         }
     }
-    
-    
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -56,11 +54,10 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         prepareGameContext()
         prepareStartNodes(screenSize: size)
         physicsWorld.contactDelegate = self
-        
         context.stateMachine?.enter(NJRunningState.self)
         
         let spawnAction = SKAction.run { [weak self] in self?.spawnFruitHawk() }
-        let delay = SKAction.wait(forDuration: 2.0) // Adjust interval as needed
+        let delay = SKAction.wait(forDuration: 2.0)
         let spawnSequence = SKAction.sequence([spawnAction, delay])
         run(SKAction.repeatForever(spawnSequence))
         
@@ -76,7 +73,6 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         let springNode = NJBackgroundNode(texture: backgroundTextures[2])
         let summerNode = NJBackgroundNode(texture: backgroundTextures[3])
         
-        let textureHeight: CGFloat = 2500
         fallNode.position = CGPoint(x: frame.midX, y: textureHeight / 2)
         winterNode.position = CGPoint(x: frame.midX, y: textureHeight * 1.5)
         springNode.position = CGPoint(x: frame.midX, y: textureHeight * 2.5)
@@ -93,10 +89,17 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         addChild(summerNode)
     }
     
-    func scrollBackground() {
+    func scrollScreen() {
+        children
+            .compactMap { $0 as? NJWallNode }
+            .forEach { wallNode in wallNode.position.y -= 10
+                if wallNode.position.y <= -wallNode.size.height / 2 {
+                    wallNode.position.y += wallNode.size.height * 2
+                }
+            }
+        
         for node in self.backgroundNodes {
             node.position.y -= backgroundScrollSpeed
-            
             if node.position.y <= -2500 {
                 node.position.y += 2500 * 4
             }
@@ -108,27 +111,28 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         
         prepareBackgroundNodes()
         
-        scoreNode.setup(screenSize: size)
+        let scoreNodePos = CGPoint(x: screenSize.width / 2, y: screenSize.height - 59 - 45 / 2)
+        scoreNode.setup(screenSize: size, score: context.gameInfo.score, nodePosition: scoreNodePos)
         addChild(scoreNode)
         
         trackerNode = NJPowerUpTrackerNode(size: CGSize(width: 30, height: 30))
         trackerNode.position = CGPoint(x: 70 + trackerNode.frame.width / 2, y: 40 + trackerNode.frame.height / 2)
         addChild(trackerNode)
         
-        let width: CGFloat = (40 / 393) * screenSize.width
-        let height: CGFloat = screenSize.height
+        let wallWidth: CGFloat = (40 / 393) * screenSize.width
+        let wallHeight: CGFloat = screenSize.height
         
-        let leftWallTop = NJWallNode(size: CGSize(width: width, height: height),
-                                     position: CGPoint(x: width / 2, y: 0), texture: SKTexture(imageNamed: "leftWall"))
-        let leftWallBot = NJWallNode(size: CGSize(width: width, height: height),
-                                     position: CGPoint(x: width / 2, y: height), texture: SKTexture(imageNamed: "leftWall"))
+        let leftWallTop = NJWallNode(size: CGSize(width: wallWidth, height: wallHeight),
+                                     position: CGPoint(x: wallWidth / 2, y: 0), texture: SKTexture(imageNamed: "leftWall"))
+        let leftWallBot = NJWallNode(size: CGSize(width: wallWidth, height: wallHeight),
+                                     position: CGPoint(x: wallWidth / 2, y: wallHeight), texture: SKTexture(imageNamed: "leftWall"))
         addChild(leftWallTop)
         addChild(leftWallBot)
         
-        let rightWallTop = NJWallNode(size: CGSize(width: width, height: height),
-                                     position: CGPoint(x: size.width - width / 2, y: 0), texture: SKTexture(imageNamed: "rightWall"))
-        let rightWallBot = NJWallNode(size: CGSize(width: width, height: height),
-                                position: CGPoint(x: size.width - width / 2, y: height), texture: SKTexture(imageNamed: "rightWall"))
+        let rightWallTop = NJWallNode(size: CGSize(width: wallWidth, height: wallHeight),
+                                     position: CGPoint(x: size.width - wallWidth / 2, y: 0), texture: SKTexture(imageNamed: "rightWall"))
+        let rightWallBot = NJWallNode(size: CGSize(width: wallWidth, height: wallHeight),
+                                position: CGPoint(x: size.width - wallWidth / 2, y: wallHeight), texture: SKTexture(imageNamed: "rightWall"))
         addChild(rightWallTop)
         addChild(rightWallBot)
         
@@ -150,15 +154,8 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     
     override func update(_ currentTime: TimeInterval) {
         guard let context else { return }
-        children
-            .compactMap { $0 as? NJWallNode }
-            .forEach { wallNode in wallNode.position.y -= 10
-                if wallNode.position.y <= -wallNode.size.height / 2 {
-                    wallNode.position.y += wallNode.size.height * 2
-                }
-            }
         
-        scrollBackground()
+        scrollScreen()
         context.gameInfo.score += 1
         scoreNode.updateScore(with: context.gameInfo.score)
     }
@@ -172,7 +169,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
 
         let obstacle: SKSpriteNode
         let targetPosition: CGPoint
-        let dropDuration = 1.2//TimeInterval.random(in: 1.0...2.0)
+        let dropDuration = 1.2 //TimeInterval.random(in: 1.0...2.0)
         
         if isFruit {
             let fruitTextures = fruitAtlas.textureNames.map { fruitAtlas.textureNamed($0) }
@@ -180,12 +177,14 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
             
             obstacle = NJFruitNode(size: obstacleSize, position: CGPoint(x: xPosition, y: yPosition), texture: randomTexture)
             targetPosition = CGPoint(x: xPosition, y: 0)
+            
             let moveAction = SKAction.move(to: targetPosition, duration: dropDuration)
             let removeAction = SKAction.removeFromParent()
             obstacle.run(SKAction.sequence([moveAction, removeAction]))
         } else {
             obstacle = NJHawkNode(size: obstacleSize, position: CGPoint(x: xPosition, y: yPosition), texture: SKTexture(imageNamed: "coconut"))
             targetPosition = CGPoint(x: xPosition == 60 ? size.width - 60 : 60, y: player?.position.y ?? 0)
+            
             let moveAction = SKAction.move(to: targetPosition, duration: 1.0)
             let removeAction = SKAction.removeFromParent()
             obstacle.run(SKAction.sequence([moveAction, removeAction]))
@@ -227,6 +226,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     func togglePlayerLocation(currentPlayerPos: CGPoint) {
         let isOnRightWall = Int(currentPlayerPos.x) == Int(rightWallPlayerPos.x)
         let targetPos = isOnRightWall ? leftWallPlayerPos : rightWallPlayerPos
+        
         let moveAction = SKAction.move(to: targetPos, duration: 0.3)
         moveAction.timingMode = .easeInEaseOut
         let rotationAngle: CGFloat = isOnRightWall ? .pi : -.pi
@@ -241,11 +241,12 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         
         if currentState is NJRunningState {
             stateMachine.enter(NJJumpingState.self)
+            
             if let touch = touches.first {
                 (stateMachine.currentState as? NJJumpingState)?.handleTouch(touch)
             }
         } else if currentState is NJGameOverState {
-            stateMachine.enter(NJJumpingState.self)
+            //stateMachine.enter(NJJumpingState.self)
             
             if let touch = touches.first {
                 (stateMachine.currentState as? NJGameOverState)?.handleTouch(touch)
@@ -337,6 +338,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     
     func hawkPowerUp() {
         guard let context else { return }
+        
         context.gameInfo.playerIsInvincible = true
         DispatchQueue.main.asyncAfter(deadline: .now() + self.powerUpLength) {
             context.gameInfo.playerIsInvincible = false
@@ -345,8 +347,17 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+    func displayScore() {
+        guard let context else { return }
+        
+        scoreNode.removeFromParent()
+        scoreNode.setup(screenSize: size, score: context.gameInfo.score, nodePosition: CGPoint(x: size.width / 2, y: size.height / 2 + 50))
+        addChild(scoreNode)
+    }
+    
     func reset() {
         guard let context else { return }
+        
         removeAllChildren()
         removeAllActions()
 
