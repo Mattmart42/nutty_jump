@@ -14,7 +14,7 @@ class NJGroundNode: SKSpriteNode {
         self.physicsBody = SKPhysicsBody(rectangleOf: size)
         self.physicsBody?.isDynamic = false
         self.physicsBody?.categoryBitMask = NJPhysicsCategory.ground
-        self.physicsBody?.contactTestBitMask = NJPhysicsCategory.player
+        self.physicsBody?.contactTestBitMask = NJPhysicsCategory.player | NJPhysicsCategory.foxBranch
         self.physicsBody?.collisionBitMask = 0
     }
 

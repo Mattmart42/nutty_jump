@@ -11,23 +11,53 @@ import SpriteKit
 
 struct NJGameInfo {
     var score = 0
-    var scrollSpeed = 10
+    
+    static let fps = 60.0
+    
+    static var scrollSpeed = 10.0
+    static var backgroundScrollSpeed = 2.0
+    static var fruitSpeed = 10.0
+    static var hawkSpeed = 10.0
+    static var foxSpeed = 500.0
+    
     var fruitsCollected = 0
     var hawksCollected = 0
     var foxesCollected = 0
+    var nutsCollected = 0
+    
+    static let wallWidth = 40.0
+    static let obstacleSize = CGSize(width: 30.0, height: 30.0)
+    static let trackerSize = CGSize(width: 30.0, height: 30.0)
+    static let branchHeight = 40.0
+    static let groundHeight = 10.0
+    static let backgroundHeight = 2500.0
+    static let obstacleXPos = 60.0
+    
     var playerIsInvincible = false
+    var playerIsProtected = false
+    
+    let hawkPULength = 10.0
+    
+    static let bgZPos: CGFloat = 0
+    static let branchZPos: CGFloat = 1
+    static let wallZPos: CGFloat = 2
+    static let playerZPos: CGFloat = 3
+    static let obstacleZPos: CGFloat = 4
+    static let hudZPos: CGFloat = 10
 }
 
 enum CollectibleType {
     case fruit
     case hawk
     case fox
+    case nut
     
     var texture: SKTexture {
         switch self {
         case .fruit: return SKTexture(imageNamed: "blueberry")
         case .hawk: return SKTexture(imageNamed: "coconut")
         case .fox: return SKTexture(imageNamed: "orange")
+        case .nut: return SKTexture(imageNamed: "nut")
         }
     }
 }
