@@ -173,7 +173,8 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
             { self.spawnFruit(obstacleSize: obstacleSize, yPos: obstacleYPos) },
             { self.spawnHawk(obstacleSize: obstacleSize, yPos: obstacleYPos) },
             { self.spawnFox(obstacleSize: obstacleSize, yPos: obstacleYPos) },
-            { self.spawnNut(obstacleSize: obstacleSize, yPos: obstacleYPos) }
+            { self.spawnNut(obstacleSize: obstacleSize, yPos: obstacleYPos) },
+            { self.spawnBomb(obstacleSize: obstacleSize, yPos: obstacleYPos) }
         ]
             
         let randomIndex = Int.random(in: 0..<functions.count)
@@ -241,6 +242,20 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         let xPos: CGFloat = CGFloat.random(in: NJGameInfo.obstacleXPos...(size.width - NJGameInfo.obstacleXPos))
         
         let obstacle = NJNutNode(size: obstacleSize, position: CGPoint(x: xPos, y: yPos), texture: SKTexture(imageNamed: "nut"))
+        let targetPos = CGPoint(x: xPos, y: 0)
+        
+        let moveAction = SKAction.move(to: targetPos, duration: 1.0)
+        let removeAction = SKAction.removeFromParent()
+        obstacle.run(SKAction.sequence([moveAction, removeAction]))
+        
+        obstacle.zPosition = NJGameInfo.obstacleZPos
+        addChild(obstacle)
+    }
+    
+    func spawnBomb(obstacleSize: CGSize, yPos: CGFloat) {
+        let xPos: CGFloat = CGFloat.random(in: NJGameInfo.obstacleXPos...(size.width - NJGameInfo.obstacleXPos))
+        
+        let obstacle = NJBombNode(size: obstacleSize, position: CGPoint(x: xPos, y: yPos), texture: SKTexture(imageNamed: "bomb"))
         let targetPos = CGPoint(x: xPos, y: 0)
         
         let moveAction = SKAction.move(to: targetPos, duration: 1.0)
@@ -420,6 +435,16 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
             context.gameInfo.nutsCollected += 1
             context.gameInfo.playerIsProtected = true
             player?.texture = SKTexture(imageNamed: "protectedPlayer")
+            return
+        }
+        
+        //player hits bomb
+        if (contactA == NJPhysicsCategory.player && contactB == NJPhysicsCategory.bomb) ||
+            (contactA == NJPhysicsCategory.bomb && contactB == NJPhysicsCategory.player) {
+            print("player hit bomb")
+            let bombNode = (contactA == NJPhysicsCategory.bomb) ? contact.bodyA.node : contact.bodyB.node
+            bombNode?.removeFromParent()
+            stateMachine.enter(NJGameOverState.self)
             return
         }
         
