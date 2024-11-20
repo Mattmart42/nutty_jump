@@ -15,7 +15,7 @@ class NJPlayerNode: SKSpriteNode {
         self.physicsBody?.isDynamic = true
         self.physicsBody?.affectedByGravity = false
         self.physicsBody?.categoryBitMask = NJPhysicsCategory.player
-        self.physicsBody?.contactTestBitMask = NJPhysicsCategory.wall | NJPhysicsCategory.ground | NJPhysicsCategory.hawk | NJPhysicsCategory.fruit | NJPhysicsCategory.fox | NJPhysicsCategory.nut
+        self.physicsBody?.contactTestBitMask = NJPhysicsCategory.wall | NJPhysicsCategory.ground | NJPhysicsCategory.hawk | NJPhysicsCategory.fruit | NJPhysicsCategory.fox | NJPhysicsCategory.nut | NJPhysicsCategory.bomb
         self.physicsBody?.collisionBitMask = 0
     }
 

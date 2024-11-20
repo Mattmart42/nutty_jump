@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		254BFC2A2CED7EC000FA803D /* NJBombNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 254BFC292CED7EC000FA803D /* NJBombNode.swift */; };
 		6B1EBEDF2CD4311100C12961 /* NJScoreNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B1EBEDE2CD4311100C12961 /* NJScoreNode.swift */; };
 		6B1EBEE12CD4395A00C12961 /* NJPhysicsCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B1EBEE02CD4395A00C12961 /* NJPhysicsCategory.swift */; };
 		6B4DA9B72CDACD8900042806 /* NJHawkNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B4DA9B62CDACD8900042806 /* NJHawkNode.swift */; };
@@ -53,6 +54,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		254BFC292CED7EC000FA803D /* NJBombNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NJBombNode.swift; sourceTree = SOURCE_ROOT; };
 		6B1EBEDE2CD4311100C12961 /* NJScoreNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NJScoreNode.swift; path = Code/NJScoreNode.swift; sourceTree = SOURCE_ROOT; };
 		6B1EBEE02CD4395A00C12961 /* NJPhysicsCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NJPhysicsCategory.swift; path = Code/NJPhysicsCategory.swift; sourceTree = SOURCE_ROOT; };
 		6B4DA9B52CDACD8900042806 /* NJFruitNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NJFruitNode.swift; path = Code/NJFruitNode.swift; sourceTree = SOURCE_ROOT; };
@@ -228,6 +230,7 @@
 				6BE49A542CD18A4D000DB8DF /* NJPlayerNode.swift */,
 				C9A8F04E2CE80469007602A2 /* NJNutNode.swift */,
 				C9A3BE5E2CE98105006E3E60 /* NJFoxNode.swift */,
+				254BFC292CED7EC000FA803D /* NJBombNode.swift */,
 			);
 			name = "Dynamic Nodes";
 			path = "Code/States/Dynamic Nodes";
@@ -401,6 +404,7 @@
 				C9641A4C2CC8629F00A998FE /* Dependencies.swift in Sources */,
 				6B1EBEE12CD4395A00C12961 /* NJPhysicsCategory.swift in Sources */,
 				6B4DA9BC2CDAE95300042806 /* NJGroundNode.swift in Sources */,
+				254BFC2A2CED7EC000FA803D /* NJBombNode.swift in Sources */,
 				C9641A4D2CC8629F00A998FE /* GameModeType.swift in Sources */,
 				6BE49A4F2CD181AA000DB8DF /* NJJumpingState.swift in Sources */,
 				6BE49A552CD18A4D000DB8DF /* NJPlayerNode.swift in Sources */,
