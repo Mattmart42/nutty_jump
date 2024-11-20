@@ -31,6 +31,7 @@ class NJPowerUpTrackerNode: SKNode {
         for (index, node) in powerUpNodes.enumerated() {
             node.isHidden = index >= count
             node.texture = collectibleType.texture
+            node.size = collectibleType.size
         }
     }
     

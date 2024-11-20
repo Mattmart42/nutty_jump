@@ -171,8 +171,8 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         
         let functions: [() -> Void] = [
             { self.spawnFruit(obstacleSize: obstacleSize, yPos: obstacleYPos) },
-            { self.spawnHawk(obstacleSize: obstacleSize, yPos: obstacleYPos) },
-            { self.spawnFox(obstacleSize: obstacleSize, yPos: obstacleYPos) },
+            { self.spawnHawk(obstacleSize: NJGameInfo.hawkSize, yPos: obstacleYPos) },
+            { self.spawnFox(obstacleSize: NJGameInfo.foxSize, yPos: obstacleYPos) },
             { self.spawnNut(obstacleSize: obstacleSize, yPos: obstacleYPos) }
         ]
             
@@ -201,7 +201,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     func spawnHawk(obstacleSize: CGSize, yPos: CGFloat) {
         let xPos: CGFloat = Bool.random() ? NJGameInfo.obstacleXPos : size.width - NJGameInfo.obstacleXPos
         let targetPos = CGPoint(x: xPos == NJGameInfo.obstacleXPos ? size.width - NJGameInfo.obstacleXPos : NJGameInfo.obstacleXPos, y: player?.position.y ?? 0)
-        let obstacle = NJHawkNode(size: obstacleSize, position: CGPoint(x: xPos, y: yPos), texture: SKTexture(imageNamed: "coconut"))
+        let obstacle = xPos == NJGameInfo.obstacleXPos ? NJHawkNode(size: obstacleSize, position: CGPoint(x: xPos, y: yPos), texture: SKTexture(imageNamed: "hawkLeft")) : NJHawkNode(size: obstacleSize, position: CGPoint(x: xPos, y: yPos), texture: SKTexture(imageNamed: "hawkRight"))
         
         let moveAction = SKAction.move(to: targetPos, duration: 1.0)
         let removeAction = SKAction.removeFromParent()
@@ -211,13 +211,27 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func spawnFox(obstacleSize: CGSize, yPos: CGFloat) {
-        let xPos: CGFloat = Bool.random() ? 0 : size.width
-        let targetPos = CGPoint(x: xPos == 0 ? size.width : 0, y: player?.position.y ?? 0)
-        let obstacle = NJFoxNode(size: obstacleSize, position: CGPoint(x: xPos, y: yPos + NJGameInfo.branchHeight), texture: SKTexture(imageNamed: "orange"))
+        guard let player else { return }
+        
+        spawnFoxBranch(obstacleSize: obstacleSize, yPos: yPos)
+        
+        let xPos: CGFloat = Bool.random() ? NJGameInfo.obstacleXPos : size.width - NJGameInfo.obstacleXPos
+        let targetPos = CGPoint(x: xPos == NJGameInfo.obstacleXPos ? size.width - NJGameInfo.obstacleXPos : NJGameInfo.obstacleXPos, y: player.position.y - 10.0)
+        let obstacle = NJFoxNode(size: obstacleSize, position: CGPoint(x: xPos, y: yPos + NJGameInfo.branchHeight), texture: SKTexture(imageNamed: "fox1"))
+        
+        let foxTextures = [
+                SKTexture(imageNamed: "fox1"),
+                SKTexture(imageNamed: "fox2"),
+                SKTexture(imageNamed: "fox3")
+            ]
+        let animateAction = SKAction.animate(with: foxTextures, timePerFrame: 0.1, resize: false, restore: true)
+        let repeatAnimation = SKAction.repeatForever(animateAction)
+        obstacle.run(repeatAnimation)
         
         let moveAction = SKAction.move(to: targetPos, duration: size.width / NJGameInfo.foxSpeed)
         let removeAction = SKAction.removeFromParent()
-        obstacle.run(SKAction.sequence([moveAction, removeAction]))
+        let sequence = SKAction.sequence([moveAction, removeAction])
+        obstacle.run(sequence)
         
         obstacle.zPosition = NJGameInfo.obstacleZPos
         addChild(obstacle)
