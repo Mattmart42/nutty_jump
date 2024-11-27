@@ -14,11 +14,18 @@ struct NJGameInfo {
     
     static let fps = 60.0
     
-    static var scrollSpeed = 10.0
-    static var backgroundScrollSpeed = 2.0
-    static var fruitSpeed = 10.0
-    static var hawkSpeed = 10.0
-    static var foxSpeed = 500.0
+    static var gameSpeed: CGFloat = 0.5
+    
+    
+    static var scrollSpeed: CGFloat { return 10.0 * gameSpeed }
+    static var backgroundScrollSpeed: CGFloat { return 2.0 * gameSpeed }
+    static var obstacleSpawnRate: CGFloat { return 2.0 }
+    
+    static var fruitSpeed: CGFloat { return 900.0 * gameSpeed }
+    static var hawkSpeed: CGFloat { return 500.0 * gameSpeed }
+    static var foxSpeed: CGFloat { return 500.0 * gameSpeed }
+    static var nutSpeed: CGFloat { return 900.0 * gameSpeed }
+    static var bombSpeed: CGFloat { return 900.0 * gameSpeed }
     
     var fruitsCollected = 0
     var hawksCollected = 0
@@ -26,7 +33,10 @@ struct NJGameInfo {
     var nutsCollected = 0
     
     static let wallWidth = 40.0
-    static let obstacleXPos = 60.0
+    static let obstacleXPos = 50.0
+    static let playerSize = CGSize(width: 20.0, height: 61.735)
+    static let playerFlightSize = CGSize(width: 51.555, height: 40.0)
+    
     static let obstacleSize = CGSize(width: 30.0, height: 30.0)
     static let fruitSize = CGSize(width: 30.0, height: 30.0)
     static let foxSize = CGSize(width: 61.58, height: 40.0)
