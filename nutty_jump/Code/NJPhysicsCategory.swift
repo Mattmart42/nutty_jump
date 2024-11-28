@@ -16,4 +16,5 @@ struct NJPhysicsCategory {
     static let nut: UInt32 = 1 << 6
     static let bomb: UInt32 = 1 << 7
     static let foxBranch: UInt32 = 1 << 8
+    static let shoot: UInt32 = 1 << 9
 }

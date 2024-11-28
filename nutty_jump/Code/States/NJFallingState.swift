@@ -22,6 +22,9 @@ class NJFallingState: GKState {
     }
     
     override func didEnter(from previousState: GKState?) {
+        guard let scene else { return }
         print("did enter falling state")
+        scene.player?.position.x = scene.size.width / 2
+        scene.player?.toggleGravity()
     }
 }

@@ -15,10 +15,11 @@ struct ContentView: View {
     let context = NJGameContext(dependencies: .init(),
                                 gameMode: .single)
     let screenSize: CGSize = UIScreen.main.bounds.size
+    let info = NJGameInfo()
     
     var body: some View {
         SpriteView(scene: NJGameScene(context: context,
-                                      size: screenSize))
+                                      size: screenSize, info: info))
         .ignoresSafeArea()
     }
 }

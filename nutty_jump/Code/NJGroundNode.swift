@@ -9,7 +9,7 @@ import SpriteKit
 
 class NJGroundNode: SKSpriteNode {
     init(size: CGSize, position: CGPoint) {
-        super.init(texture: nil, color: .red, size: size)
+        super.init(texture: nil, color: .clear, size: size)
         self.position = position
         self.physicsBody = SKPhysicsBody(rectangleOf: size)
         self.physicsBody?.isDynamic = false
