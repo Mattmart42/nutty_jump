@@ -109,7 +109,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         scoreNode.zPosition = info.hudZPos
         addChild(scoreNode)
         
-        trackerNode = NJPowerUpTrackerNode(size: info.trackerSize)
+        trackerNode = NJPowerUpTrackerNode(size: info.trackerSize, defaultCollectible: CollectibleType.empty)
         trackerNode.position = CGPoint(x: 70 + trackerNode.frame.width / 2, y: 40 + trackerNode.frame.height / 2)
         trackerNode.zPosition = info.hudZPos
         addChild(trackerNode)
@@ -234,7 +234,8 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
             { self.spawnHawk(obstacleSize: NJGameInfo.hawkSize, yPos: obstacleYPos) },
             { self.spawnFox(obstacleSize: NJGameInfo.foxSize, yPos: obstacleYPos) },
             { self.spawnNut(obstacleSize: obstacleSize, yPos: obstacleYPos) },
-            { self.spawnBomb(obstacleSize: obstacleSize, yPos: obstacleYPos) }
+            { self.spawnBomb(obstacleSize: obstacleSize, yPos: obstacleYPos) },
+            { self.spawnBranch(obstacleSize: self.info.branchSize, yPos: obstacleYPos) }
         ]
             
         let randomIndex = Int.random(in: 0..<functions.count)
@@ -316,6 +317,25 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         addChild(branch)
     }
     
+    func spawnBranch(obstacleSize: CGSize, yPos: CGFloat) {
+        let xPos: CGFloat = Bool.random() ? info.obstacleXPos : size.width - info.obstacleXPos
+        let texture: SKTexture = Bool.random() ? SKTexture(imageNamed: "branchRight") : SKTexture(imageNamed: "branchLeft")
+        
+        let branch = NJBranchNode(size: obstacleSize, position: CGPoint(x: xPos, y: yPos), texture: texture)
+        let branchTargetPos = CGPoint(x: xPos, y: 0)
+        let branchDistance = yPos - branchTargetPos.y
+        let branchDuration = branchDistance / (info.scrollSpeed * info.fps)
+        
+        let moveActionBranch = SKAction.move(to: branchTargetPos, duration: branchDuration)
+        let removeActionBranch = SKAction.removeFromParent()
+        let moveSequence = SKAction.sequence([moveActionBranch, removeActionBranch])
+        
+        branch.run(moveSequence, withKey: "moveBranch") // Assign a key to stop the action later
+        branch.zPosition = info.branchZPos
+        addChild(branch)
+    }
+
+    
     func spawnNut(obstacleSize: CGSize, yPos: CGFloat) {
         let xPos: CGFloat = CGFloat.random(in: info.obstacleXPos...(size.width - info.obstacleXPos))
         
@@ -356,10 +376,65 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         player?.run(moveAction)
     }
     
-    func getPlayerTexture() {
-//        if NJGameInfo.playerIsProtected {
-//            player?.texture = SKTexture(imageNamed: "ProtectedPlayer")
-//        }
+    func getPlayerTextureAndSize() {
+        guard let stateMachine = context?.stateMachine,
+              let currentState = stateMachine.currentState,
+              let player else { return }
+        
+        // Determine the player's texture and size based on state and conditions
+        switch (info.playerIsProtected, info.playerIsDisguised, currentState) {
+        case (true, true, is NJRunningState):
+            player.texture = player.position.x == rightWallPlayerPos.x
+                ? info.runRProtDisg
+                : info.runLProtDisg
+            player.size = info.playerProtSize
+
+        case (true, true, is NJJumpingState):
+            player.texture = player.position.x == rightWallPlayerPos.x
+                ? info.flyLProtDisg
+                : info.flyRProtDisg
+            player.size = info.playerProtFlightSize
+
+        case (true, false, is NJRunningState):
+            player.texture = player.position.x == rightWallPlayerPos.x
+                ? info.runRProt
+                : info.runLProt
+            player.size = info.playerProtSize
+
+        case (true, false, is NJJumpingState):
+            player.texture = player.position.x == rightWallPlayerPos.x
+                ? info.flyLProt
+                : info.flyRProt
+            player.size = info.playerProtFlightSize
+
+        case (false, true, is NJRunningState):
+            player.texture = player.position.x == rightWallPlayerPos.x
+                ? info.runRDisg
+                : info.runLDisg
+            player.size = info.playerSize
+
+        case (false, true, is NJJumpingState):
+            player.texture = player.position.x == rightWallPlayerPos.x
+                ? info.flyLDisg
+                : info.flyRDisg
+            player.size = info.playerFlightSize
+
+        case (false, false, is NJRunningState):
+            player.texture = player.position.x == rightWallPlayerPos.x
+                ? info.runR
+                : info.runL
+            player.size = info.playerSize
+
+        case (false, false, is NJJumpingState):
+            player.texture = player.position.x == rightWallPlayerPos.x
+                ? info.flyL
+                : info.flyR
+            player.size = info.playerFlightSize
+
+        default:
+            player.texture = info.runR
+            player.size = info.playerSize
+        }
     }
     
     // MARK: - User Input
@@ -419,13 +494,22 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
             return
         }
         
+        //player hits branch
+        if (contactA == NJPhysicsCategory.player && contactB == NJPhysicsCategory.branch) ||
+            (contactA == NJPhysicsCategory.branch && contactB == NJPhysicsCategory.player) {
+            print("player hit branch")
+            let branchNode = (contactA == NJPhysicsCategory.branch) ? contact.bodyA.node : contact.bodyB.node
+            branchNode?.removeAction(forKey: "moveBranch")
+            stateMachine.enter(NJFallingState.self)
+        }
+        
         //player hits fruit
         if (contactA == NJPhysicsCategory.player && contactB == NJPhysicsCategory.fruit) ||
             (contactA == NJPhysicsCategory.fruit && contactB == NJPhysicsCategory.player) {
             if stateMachine.currentState is NJRunningState && !info.playerIsInvincible {
                 if info.playerIsProtected {
                     info.playerIsProtected = false
-                    player?.texture = SKTexture(imageNamed: "player")
+                    getPlayerTextureAndSize()
                     return
                 }
                 print("player hit fruit while running")
@@ -461,7 +545,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
             if stateMachine.currentState is NJRunningState && !info.playerIsInvincible {
                 if info.playerIsProtected {
                     info.playerIsProtected = false
-                    player?.texture = SKTexture(imageNamed: "player")
+                    getPlayerTextureAndSize()
                     return
                 }
                 print("player hit hawk while running")
@@ -493,10 +577,10 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         //player hits fox
         if (contactA == NJPhysicsCategory.player && contactB == NJPhysicsCategory.fox) ||
             (contactA == NJPhysicsCategory.fox && contactB == NJPhysicsCategory.player) {
-            if stateMachine.currentState is NJRunningState && !info.playerIsInvincible {
+            if stateMachine.currentState is NJRunningState && !info.playerIsDisguised {
                 if info.playerIsProtected {
                     info.playerIsProtected = false
-                    player?.texture = SKTexture(imageNamed: "player")
+                    getPlayerTextureAndSize()
                     return
                 }
                 print("player hit fox while running")
@@ -533,7 +617,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
             nutNode?.removeFromParent()
             info.nutsCollected += 1
             info.playerIsProtected = true
-            player?.texture = SKTexture(imageNamed: "protectedPlayer")
+            getPlayerTextureAndSize()
             return
         }
         
@@ -543,7 +627,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
             if !info.playerIsInvincible {
                 if info.playerIsProtected {
                     info.playerIsProtected = false
-                    player?.texture = SKTexture(imageNamed: "player")
+                    getPlayerTextureAndSize()
                     return
                 }
                 print("player hit bomb")
@@ -645,7 +729,15 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    func foxPowerUp() {}
+    func foxPowerUp() {
+        info.playerIsDisguised = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + info.foxDisguiseDuration) {
+            self.info.playerIsDisguised = false
+            self.info.foxesCollected = 0
+            self.trackerNode.updatePowerUpDisplay(for: self.info.fruitsCollected, with: CollectibleType.fruit)
+            self.getPlayerTextureAndSize()
+        }
+    }
     
     // MARK: - Other
     

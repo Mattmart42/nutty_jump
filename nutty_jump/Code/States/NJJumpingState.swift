@@ -22,16 +22,9 @@ class NJJumpingState: GKState {
     }
     
     override func didEnter(from previousState: GKState?) {
-        guard let scene, let player = scene.player else { return }
+        guard let scene else { return }
         print("did enter jumping state")
         
-        player.size = scene.info.playerFlightSize
-        
-        if Int(player.position.x) == Int(scene.rightWallPlayerPos.x) {
-            player.texture = SKTexture(imageNamed: "squirrelFlyLeft")
-            
-        } else if Int(player.position.x) == Int(scene.leftWallPlayerPos.x) {
-            player.texture = SKTexture(imageNamed: "squirrelFlyRight")
-        }
+        scene.getPlayerTextureAndSize()
     }
 }

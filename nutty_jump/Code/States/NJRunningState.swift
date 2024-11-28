@@ -22,16 +22,9 @@ class NJRunningState: GKState {
     }
     
     override func didEnter(from previousState: GKState?) {
-        guard let scene, let player = scene.player else { return }
+        guard let scene else { return }
         print("did enter running state")
         
-        player.size = scene.info.playerSize
-        
-        if Int(player.position.x) == Int(scene.rightWallPlayerPos.x) {
-            player.texture = SKTexture(imageNamed: "squirrelRunRight")
-            
-        } else if Int(player.position.x) == Int(scene.leftWallPlayerPos.x) {
-            player.texture = SKTexture(imageNamed: "squirrelRunLeft")
-        }
+        scene.getPlayerTextureAndSize()
     }
 }

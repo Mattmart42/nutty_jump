@@ -31,6 +31,8 @@ struct NJGameInfo {
     var fruitShootDuration: CGFloat { return 5.0 }
     var fruitShootInterval: CGFloat { return 0.1 }
     
+    var foxDisguiseDuration = 10.0
+    
     var fruitsCollected = 0
     var hawksCollected = 0
     var foxesCollected = 0
@@ -38,8 +40,6 @@ struct NJGameInfo {
     
     let wallWidth = 40.0
     let obstacleXPos = 50.0
-    let playerSize = CGSize(width: 20.0, height: 61.735)
-    let playerFlightSize = CGSize(width: 51.555, height: 40.0)
     
     let obstacleSize = CGSize(width: 30.0, height: 30.0)
     static let fruitSize = CGSize(width: 30.0, height: 30.0)
@@ -48,11 +48,13 @@ struct NJGameInfo {
     static let nutSize = CGSize(width: 30.0, height: 30.0)
     let trackerSize = CGSize(width: 30.0, height: 30.0)
     let branchHeight = 40.0
+    let branchSize = CGSize(width: 150.0, height: 40.0)
     let groundHeight = 10.0
     let backgroundHeight = 2500.0
     
     var playerIsInvincible = false
     var playerIsProtected = false
+    var playerIsDisguised = false
     
     let hawkPULength = 10.0
     
@@ -62,6 +64,32 @@ struct NJGameInfo {
     let playerZPos: CGFloat = 3
     let obstacleZPos: CGFloat = 4
     let hudZPos: CGFloat = 10
+    
+    let playerSize = CGSize(width: 20.0, height: 61.03)
+    let playerFlightSize = CGSize(width: 51.56, height: 53.0)
+    let playerProtSize = CGSize(width: 24.0, height: 72.03)
+    let playerProtFlightSize = CGSize(width: 58, height: 60.0)
+    
+    let runR = SKTexture(imageNamed: "squirrelRunRight")
+    let runL = SKTexture(imageNamed: "squirrelRunLeft")
+    let flyR = SKTexture(imageNamed: "squirrelFlyRight")
+    let flyL = SKTexture(imageNamed: "squirrelFlyLeft")
+
+    let runRProt = SKTexture(imageNamed: "squirrelRunRightProtected")
+    let runLProt = SKTexture(imageNamed: "squirrelRunLeftProtected")
+    let flyRProt = SKTexture(imageNamed: "squirrelFlyRightProtected")
+    let flyLProt = SKTexture(imageNamed: "squirrelFlyLeftProtected")
+    
+    let runRDisg = SKTexture(imageNamed: "squirrelRunRightDisg")
+    let runLDisg = SKTexture(imageNamed: "squirrelRunLeftDisg")
+    let flyRDisg = SKTexture(imageNamed: "squirrelFlyRightDisg")
+    let flyLDisg = SKTexture(imageNamed: "squirrelFlyLeftDisg")
+
+    let runRProtDisg = SKTexture(imageNamed: "squirrelRunRightProtectedDisg")
+    let runLProtDisg = SKTexture(imageNamed: "squirrelRunLeftProtectedDisg")
+    let flyRProtDisg = SKTexture(imageNamed: "squirrelFlyRightProtectedDisg")
+    let flyLProtDisg = SKTexture(imageNamed: "squirrelFlyLeftProtectedDisg")
+    
 }
 
 enum CollectibleType {
@@ -69,6 +97,7 @@ enum CollectibleType {
     case hawk
     case fox
     case nut
+    case empty
     
     var texture: SKTexture {
         switch self {
@@ -76,6 +105,7 @@ enum CollectibleType {
         case .hawk: return SKTexture(imageNamed: "hawkRight")
         case .fox: return SKTexture(imageNamed: "foxRight1")
         case .nut: return SKTexture(imageNamed: "nut")
+        case .empty: return SKTexture(imageNamed: "powerUpDefault")
         }
     }
     
@@ -85,6 +115,7 @@ enum CollectibleType {
         case .hawk: return NJGameInfo.hawkSize
         case .fox: return NJGameInfo.foxSize
         case .nut: return NJGameInfo.nutSize
+        case .empty: return NJGameInfo.fruitSize
         }
     }
 }

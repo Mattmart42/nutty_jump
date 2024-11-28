@@ -25,6 +25,7 @@
 		6BE49A512CD181B6000DB8DF /* NJFallingState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BE49A502CD181AF000DB8DF /* NJFallingState.swift */; };
 		6BE49A532CD18660000DB8DF /* NJWallNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BE49A522CD18660000DB8DF /* NJWallNode.swift */; };
 		6BE49A552CD18A4D000DB8DF /* NJPlayerNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BE49A542CD18A4D000DB8DF /* NJPlayerNode.swift */; };
+		C935E6D42CF837F600ECAF98 /* NJBranchNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = C935E6D32CF837F600ECAF98 /* NJBranchNode.swift */; };
 		C94F09E72CDECC0A005D5455 /* NJBackgroundNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94F09E62CDECC0A005D5455 /* NJBackgroundNode.swift */; };
 		C95FE2F52CF6C7D800351D6F /* NJTitleNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = C95FE2F42CF6C7D800351D6F /* NJTitleNode.swift */; };
 		C9641A412CC8602300A998FE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C9641A3A2CC8602300A998FE /* Assets.xcassets */; };
@@ -71,6 +72,7 @@
 		C91B30212CBE250100ACDF61 /* nutty_jump.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = nutty_jump.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C91B30322CBE250300ACDF61 /* nutty_jumpTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = nutty_jumpTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C91B303C2CBE250300ACDF61 /* nutty_jumpUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = nutty_jumpUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C935E6D32CF837F600ECAF98 /* NJBranchNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NJBranchNode.swift; path = Code/NJBranchNode.swift; sourceTree = SOURCE_ROOT; };
 		C94F09E62CDECC0A005D5455 /* NJBackgroundNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NJBackgroundNode.swift; path = Code/NJBackgroundNode.swift; sourceTree = SOURCE_ROOT; };
 		C95FE2F42CF6C7D800351D6F /* NJTitleNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NJTitleNode.swift; path = Code/NJTitleNode.swift; sourceTree = SOURCE_ROOT; };
 		C9641A3A2CC8602300A998FE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -247,6 +249,7 @@
 				6B1EBEDE2CD4311100C12961 /* NJScoreNode.swift */,
 				6BB5D7E12CDC26C60024F926 /* NJPowerUpTrackerNode.swift */,
 				C9A3BE602CE98274006E3E60 /* NJFoxBranchNode.swift */,
+				C935E6D32CF837F600ECAF98 /* NJBranchNode.swift */,
 				C95FE2F42CF6C7D800351D6F /* NJTitleNode.swift */,
 			);
 			name = "Static Nodes";
@@ -419,6 +422,7 @@
 				6BE49A082CD17E3E000DB8DF /* NJLayoutInfo.swift in Sources */,
 				6B1EBEDF2CD4311100C12961 /* NJScoreNode.swift in Sources */,
 				6B4DA9B72CDACD8900042806 /* NJHawkNode.swift in Sources */,
+				C935E6D42CF837F600ECAF98 /* NJBranchNode.swift in Sources */,
 				C9A3BE5F2CE98105006E3E60 /* NJFoxNode.swift in Sources */,
 				6B4DA9B82CDACD8900042806 /* NJFruitNode.swift in Sources */,
 				6B4DA9BA2CDAD16B00042806 /* NJGameOverState.swift in Sources */,
