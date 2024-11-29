@@ -230,12 +230,12 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         let obstacleYPos = size.height
         
         let functions: [() -> Void] = [
-            { self.spawnFruit(obstacleSize: NJGameInfo.fruitSize, yPos: obstacleYPos) },
-            { self.spawnHawk(obstacleSize: NJGameInfo.hawkSize, yPos: obstacleYPos) },
-            { self.spawnFox(obstacleSize: NJGameInfo.foxSize, yPos: obstacleYPos) },
-            { self.spawnNut(obstacleSize: obstacleSize, yPos: obstacleYPos) },
-            { self.spawnBomb(obstacleSize: obstacleSize, yPos: obstacleYPos) },
-            { self.spawnBranch(obstacleSize: self.info.branchSize, yPos: obstacleYPos) }
+            { self.spawnFruit(obstacleSize: NJGameInfo.fruitSize, yPos: obstacleYPos) }//,
+//            { self.spawnHawk(obstacleSize: NJGameInfo.hawkSize, yPos: obstacleYPos) },
+//            { self.spawnFox(obstacleSize: NJGameInfo.foxSize, yPos: obstacleYPos) },
+//            { self.spawnNut(obstacleSize: obstacleSize, yPos: obstacleYPos) },
+//            { self.spawnBomb(obstacleSize: obstacleSize, yPos: obstacleYPos) },
+//            { self.spawnBranch(obstacleSize: self.info.branchSize, yPos: obstacleYPos) }
         ]
             
         let randomIndex = Int.random(in: 0..<functions.count)
@@ -260,16 +260,65 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func spawnHawk(obstacleSize: CGSize, yPos: CGFloat) {
+        guard let player else { return }
         let xPos: CGFloat = Bool.random() ? info.obstacleXPos : size.width - info.obstacleXPos
-        let targetPos = CGPoint(x: xPos == info.obstacleXPos ? size.width - info.obstacleXPos : info.obstacleXPos, y: player?.position.y ?? 0)
+        let targetPos = CGPoint(x: xPos == info.obstacleXPos ? size.width - info.obstacleXPos : info.obstacleXPos, y: player.position.y)
+        let moveAction = SKAction.move(to: targetPos, duration: size.width / info.hawkSpeed)
+        
+        let isMovingLeftToRight = xPos == info.obstacleXPos
+        // Define the center of the invisible circle
+        let circleCenter = CGPoint(x: size.width / 2, y: player.position.y)
+        let radius = abs(size.width / 2 - info.obstacleXPos)
+        // Create the semi-circle path
+        let circularPath = CGMutablePath()
+        let startAngle: CGFloat = isMovingLeftToRight ? 0 : .pi  // Start from left or right
+        let endAngle: CGFloat = isMovingLeftToRight ? .pi : 0   // Move to the opposite side
+        circularPath.addArc(center: circleCenter, radius: radius, startAngle: startAngle, endAngle: endAngle, clockwise: isMovingLeftToRight)
+        let circularMotion = SKAction.follow(circularPath, asOffset: false, orientToPath: false, duration: 2.0)
+        
+        let removeAction = SKAction.removeFromParent()
+        
+        
         let obstacle = xPos == info.obstacleXPos ? NJHawkNode(size: obstacleSize, position: CGPoint(x: xPos, y: yPos), texture: SKTexture(imageNamed: "hawkLeft")) : NJHawkNode(size: obstacleSize, position: CGPoint(x: xPos, y: yPos), texture: SKTexture(imageNamed: "hawkRight"))
         
-        let moveAction = SKAction.move(to: targetPos, duration: size.width / info.hawkSpeed)
-        let removeAction = SKAction.removeFromParent()
-        obstacle.run(SKAction.sequence([moveAction, removeAction]))
+        
+        obstacle.run(SKAction.sequence([moveAction, circularMotion, removeAction]))
         obstacle.zPosition = info.obstacleZPos
         addChild(obstacle)
     }
+    
+//    func spawnHawk(obstacleSize: CGSize, yPos: CGFloat) {
+//        guard let player else { return }
+//        let xPos: CGFloat = Bool.random() ? info.obstacleXPos : size.width - info.obstacleXPos
+//        let startPoint = CGPoint(x: xPos, y: yPos)
+//        let isMovingLeftToRight = xPos == info.obstacleXPos
+//        let endPoint = CGPoint(x: isMovingLeftToRight ? size.width - info.obstacleXPos : info.obstacleXPos, y: yPos)
+//        
+//        // Define the center of the invisible circle
+//        let circleCenter = CGPoint(x: size.width / 2, y: player.position.y)
+//        let radius = abs(size.width / 2 - info.obstacleXPos)
+//        
+//        // Create the semi-circle path
+//        let circularPath = CGMutablePath()
+//        let startAngle: CGFloat = isMovingLeftToRight ? .pi : 0  // Start from left or right
+//        let endAngle: CGFloat = isMovingLeftToRight ? 0 : .pi   // Move to the opposite side
+//        
+//        circularPath.addArc(center: circleCenter, radius: radius, startAngle: startAngle, endAngle: endAngle, clockwise: isMovingLeftToRight)
+//        
+//        // Create the hawk node
+//        let textureName = isMovingLeftToRight ? "hawkLeft" : "hawkRight"
+//        let obstacle = NJHawkNode(size: obstacleSize, position: startPoint, texture: SKTexture(imageNamed: textureName))
+//        
+//        // Follow the path action
+//        let circularMotion = SKAction.follow(circularPath, asOffset: false, orientToPath: false, duration: 2.0)
+//        let removeAction = SKAction.removeFromParent()
+//        
+//        // Run the actions
+//        obstacle.run(SKAction.sequence([circularMotion, removeAction]))
+//        obstacle.zPosition = info.obstacleZPos
+//        addChild(obstacle)
+//    }
+
     
     func spawnFox(obstacleSize: CGSize, yPos: CGFloat) {
         guard let player else { return }
