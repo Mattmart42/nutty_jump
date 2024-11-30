@@ -22,9 +22,24 @@ class NJFallingState: GKState {
     }
     
     override func didEnter(from previousState: GKState?) {
-        guard let scene else { return }
+        guard let scene, let player = scene.player else { return }
         print("did enter falling state")
-        scene.player?.position.x = scene.size.width / 2
-        scene.player?.toggleGravity()
+        let targetPos = CGPoint(x: scene.size.width / 2, y: player.position.y - 50.0)
+        
+        let moveAction = SKAction.move(to: targetPos, duration: 0.2)
+        let rotateAction = SKAction.rotate(byAngle: 90.0, duration: 7.0)
+        player.toggleGravity()
+        player.texture = scene.info.flyR
+        player.size = scene.info.playerFlightSize
+        player.run(SKAction.sequence([moveAction]))
+        player.run(SKAction.sequence([rotateAction]))
+        scene.children
+            .compactMap { $0 as? NJWallNode }
+            .forEach { wallNode in wallNode.position.y += scene.info.scrollSpeed
+                if wallNode.position.y >= wallNode.size.height / 2 {
+                    wallNode.position.y += wallNode.size.height * 2
+                }
+            }
+        
     }
 }

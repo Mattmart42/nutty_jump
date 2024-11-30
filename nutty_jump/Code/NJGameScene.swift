@@ -154,7 +154,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func setupIdleUI() {
-        let titleNode = NJTitleNode(size: CGSize(width: size.width, height: 122), position: CGPoint(x: size.width / 2, y: size.height / 2 + 100), texture: SKTexture(imageNamed: "title"))
+        let titleNode = NJTitleNode(size: CGSize(width: size.width - (info.obstacleXPos * 2), height: 122), position: CGPoint(x: size.width / 2, y: size.height / 2 + 100), texture: SKTexture(imageNamed: "title"))
         titleNode.name = "titleNode"
         addChild(titleNode)
 
@@ -197,7 +197,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
             SKAction.sequence([
                 SKAction.run { [weak self] in
                     guard let self else { return }
-                    info.gameSpeed += 0.05
+                    info.gameSpeed += 0.01
                     //self.updateGameSpeed()
                 },
                 SKAction.wait(forDuration: 10.0) // Adjust the interval as needed
@@ -226,16 +226,16 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     // MARK: - Spawners
     
     func spawnRandomObstacle() {
-        let obstacleSize = info.obstacleSize
+        let obstacleSize = NJGameInfo.obstacleSize
         let obstacleYPos = size.height
         
         let functions: [() -> Void] = [
-            { self.spawnFruit(obstacleSize: NJGameInfo.fruitSize, yPos: obstacleYPos) }//,
-//            { self.spawnHawk(obstacleSize: NJGameInfo.hawkSize, yPos: obstacleYPos) },
-//            { self.spawnFox(obstacleSize: NJGameInfo.foxSize, yPos: obstacleYPos) },
-//            { self.spawnNut(obstacleSize: obstacleSize, yPos: obstacleYPos) },
-//            { self.spawnBomb(obstacleSize: obstacleSize, yPos: obstacleYPos) },
-//            { self.spawnBranch(obstacleSize: self.info.branchSize, yPos: obstacleYPos) }
+            { self.spawnFruit(obstacleSize: NJGameInfo.fruitSize, yPos: obstacleYPos) },
+            { self.spawnHawk(obstacleSize: NJGameInfo.hawkSize, yPos: obstacleYPos) },
+            { self.spawnFox(obstacleSize: NJGameInfo.foxSize, yPos: obstacleYPos) },
+            { self.spawnNut(obstacleSize: obstacleSize, yPos: obstacleYPos) },
+            { self.spawnBomb(obstacleSize: obstacleSize, yPos: obstacleYPos) },
+            { self.spawnBranch(obstacleSize: self.info.branchSize, yPos: obstacleYPos) }
         ]
             
         let randomIndex = Int.random(in: 0..<functions.count)
@@ -248,12 +248,17 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         let fruitTextures = fruitAtlas.textureNames.map { fruitAtlas.textureNamed($0) }
         let randomTexture = fruitTextures.randomElement() ?? fruitTextures[0]
         
-        let obstacle = NJFruitNode(size: obstacleSize, position: CGPoint(x: xPos, y: yPos), texture: randomTexture)
+        let texture = SKTexture(imageNamed: "pinecone")
+        
+        let obstacle = NJFruitNode(size: obstacleSize, position: CGPoint(x: xPos, y: yPos), texture: texture)
         let targetPos = CGPoint(x: xPos, y: 0)
         
         let moveAction = SKAction.move(to: targetPos, duration: size.height / info.fruitSpeed)
         let removeAction = SKAction.removeFromParent()
+        let rotateAction = SKAction.rotate(byAngle: 90.0, duration: 20.0)
+        
         obstacle.run(SKAction.sequence([moveAction, removeAction]))
+        obstacle.run(SKAction.sequence([rotateAction]))
         
         obstacle.zPosition = info.obstacleZPos
         addChild(obstacle)
@@ -286,39 +291,6 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         obstacle.zPosition = info.obstacleZPos
         addChild(obstacle)
     }
-    
-//    func spawnHawk(obstacleSize: CGSize, yPos: CGFloat) {
-//        guard let player else { return }
-//        let xPos: CGFloat = Bool.random() ? info.obstacleXPos : size.width - info.obstacleXPos
-//        let startPoint = CGPoint(x: xPos, y: yPos)
-//        let isMovingLeftToRight = xPos == info.obstacleXPos
-//        let endPoint = CGPoint(x: isMovingLeftToRight ? size.width - info.obstacleXPos : info.obstacleXPos, y: yPos)
-//        
-//        // Define the center of the invisible circle
-//        let circleCenter = CGPoint(x: size.width / 2, y: player.position.y)
-//        let radius = abs(size.width / 2 - info.obstacleXPos)
-//        
-//        // Create the semi-circle path
-//        let circularPath = CGMutablePath()
-//        let startAngle: CGFloat = isMovingLeftToRight ? .pi : 0  // Start from left or right
-//        let endAngle: CGFloat = isMovingLeftToRight ? 0 : .pi   // Move to the opposite side
-//        
-//        circularPath.addArc(center: circleCenter, radius: radius, startAngle: startAngle, endAngle: endAngle, clockwise: isMovingLeftToRight)
-//        
-//        // Create the hawk node
-//        let textureName = isMovingLeftToRight ? "hawkLeft" : "hawkRight"
-//        let obstacle = NJHawkNode(size: obstacleSize, position: startPoint, texture: SKTexture(imageNamed: textureName))
-//        
-//        // Follow the path action
-//        let circularMotion = SKAction.follow(circularPath, asOffset: false, orientToPath: false, duration: 2.0)
-//        let removeAction = SKAction.removeFromParent()
-//        
-//        // Run the actions
-//        obstacle.run(SKAction.sequence([circularMotion, removeAction]))
-//        obstacle.zPosition = info.obstacleZPos
-//        addChild(obstacle)
-//    }
-
     
     func spawnFox(obstacleSize: CGSize, yPos: CGFloat) {
         guard let player else { return }
@@ -758,8 +730,10 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         let fruitTextures = fruitAtlas.textureNames.map { fruitAtlas.textureNamed($0) }
         let randomTexture = fruitTextures.randomElement() ?? fruitTextures[0]
         
-        let fruit = NJFruitShootNode(size: NJGameInfo.fruitSize, position: CGPoint(x: player.position.x, y: player.position.y + NJGameInfo.fruitSize.height), texture: randomTexture)
-        let targetPos = CGPoint(x: player.position.x, y: size.height + NJGameInfo.fruitSize.height)
+        let texture = SKTexture(imageNamed: "pinecone")
+        
+        let fruit = NJFruitShootNode(size: NJGameInfo.obstacleSize, position: CGPoint(x: player.position.x, y: player.position.y + NJGameInfo.obstacleSize.height), texture: texture)
+        let targetPos = CGPoint(x: player.position.x, y: size.height + NJGameInfo.obstacleSize.height)
         
         let moveAction = SKAction.move(to: targetPos, duration: 1.0)//size.height / NJGameInfo.fruitShootSpeed)
         let removeAction = SKAction.removeFromParent()
