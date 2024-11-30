@@ -22,10 +22,11 @@ class NJGameOverState: GKState {
     }
     
     override func didEnter(from previousState: GKState?) {
-        //scene?.displayScore()
-        scene?.isPaused = true
-        displayGameOver()
-        showGameOverOptions()
+        print("did enter idle state")
+        guard let scene else { return }
+        scene.physicsWorld.contactDelegate = nil
+        scene.setupGameOverUI()
+        scene.isPaused = true
     }
     
     override func willExit(to nextState: GKState) {

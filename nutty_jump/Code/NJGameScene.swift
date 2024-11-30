@@ -25,8 +25,8 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     let rightWallPlayerPos: CGPoint
     
     init(context: NJGameContext, size: CGSize, info: NJGameInfo) {
-        self.leftWallPlayerPos = CGPoint(x: info.obstacleXPos, y: size.height / 2.0)
-        self.rightWallPlayerPos = CGPoint(x: size.width - info.obstacleXPos, y: size.height / 2.0)
+        self.leftWallPlayerPos = CGPoint(x: info.obstacleXPos, y: size.height / 2.0 - 100)
+        self.rightWallPlayerPos = CGPoint(x: size.width - info.obstacleXPos, y: size.height / 2.0 - 100)
         self.context = context
         self.info = info
         super.init(size: size)
@@ -171,6 +171,28 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         childNode(withName: "playButton")?.removeFromParent()
     }
     
+    func setupGameOverUI() {
+        let titleNode = NJTitleNode(size: CGSize(width: size.width - (info.obstacleXPos * 2), height: 80), position: CGPoint(x: size.width / 2, y: size.height / 2 + 100), texture: SKTexture(imageNamed: "gameOver"))
+        titleNode.name = "gameOver"
+        addChild(titleNode)
+
+        let scoreText = SKLabelNode(text: "SCORE:")
+        scoreText.name = "scoreText"
+        scoreText.fontName = "PPNeueMontreal-Italic"
+        scoreText.fontSize = 50
+        scoreText.fontColor = .black
+        scoreText.position = CGPoint(x: size.width / 2, y: size.height / 2)
+        addChild(scoreText)
+        
+        let scoreValue = SKLabelNode(text: "\(info.score)")
+        scoreValue.name = "scoreValue"
+        scoreValue.fontName = "PPNeueMontreal-SemiBolditalic"
+        scoreValue.fontSize = 50
+        scoreValue.fontColor = .black
+        scoreValue.position = CGPoint(x: size.width / 2, y: size.height / 2 - 50)
+        addChild(scoreValue)
+    }
+    
     func updateGameSpeed() {
         // Adjust spawn frequency
         removeAction(forKey: "spawnObstacles")
@@ -200,7 +222,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
                     info.gameSpeed += 0.01
                     //self.updateGameSpeed()
                 },
-                SKAction.wait(forDuration: 10.0) // Adjust the interval as needed
+                SKAction.wait(forDuration: 5.0) // Adjust the interval as needed
             ])
         )
         run(speedIncreaseAction)
@@ -227,13 +249,13 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     
     func spawnRandomObstacle() {
         let obstacleSize = NJGameInfo.obstacleSize
-        let obstacleYPos = size.height
+        let obstacleYPos = size.height + 50
         
         let functions: [() -> Void] = [
             { self.spawnFruit(obstacleSize: NJGameInfo.fruitSize, yPos: obstacleYPos) },
             { self.spawnHawk(obstacleSize: NJGameInfo.hawkSize, yPos: obstacleYPos) },
             { self.spawnFox(obstacleSize: NJGameInfo.foxSize, yPos: obstacleYPos) },
-            { self.spawnNut(obstacleSize: obstacleSize, yPos: obstacleYPos) },
+            { self.spawnNut(obstacleSize: NJGameInfo.nutSize, yPos: obstacleYPos) },
             { self.spawnBomb(obstacleSize: obstacleSize, yPos: obstacleYPos) },
             { self.spawnBranch(obstacleSize: self.info.branchSize, yPos: obstacleYPos) }
         ]
@@ -298,10 +320,14 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         spawnFoxBranch(obstacleSize: obstacleSize, yPos: yPos)
         
         let xPos: CGFloat = Bool.random() ? info.obstacleXPos : size.width - info.obstacleXPos
-        let targetPos = CGPoint(x: xPos == info.obstacleXPos ? size.width - info.obstacleXPos : info.obstacleXPos, y: player.position.y - 10.0)
+        
+        let distance = yPos - player.position.y
+        
+        let targetPos1 = CGPoint(x: xPos == info.obstacleXPos ? size.width - info.obstacleXPos : info.obstacleXPos, y: yPos - (distance / 2) - 10.0)
+        let targetPos2 = CGPoint(x: xPos == info.obstacleXPos ?  info.obstacleXPos : size.width - info.obstacleXPos, y: yPos - distance - 10.0)
         let obstacle = NJFoxNode(size: obstacleSize, position: CGPoint(x: xPos, y: yPos + info.branchHeight), texture: SKTexture(imageNamed: "foxRight1"))
         
-        let foxTextures = xPos == info.obstacleXPos ? [
+        let foxTextures1 = xPos == info.obstacleXPos ? [
             SKTexture(imageNamed: "foxLeft1"),
             SKTexture(imageNamed: "foxLeft2"),
             SKTexture(imageNamed: "foxLeft3")
@@ -310,14 +336,32 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
             SKTexture(imageNamed: "foxRight2"),
             SKTexture(imageNamed: "foxRight3")
         ]
+        let foxTextures2 = xPos == info.obstacleXPos ? [
+            SKTexture(imageNamed: "foxRight1"),
+            SKTexture(imageNamed: "foxRight2"),
+            SKTexture(imageNamed: "foxRight3")
+        ] : [
+            SKTexture(imageNamed: "foxLeft1"),
+             SKTexture(imageNamed: "foxLeft2"),
+             SKTexture(imageNamed: "foxLeft3")
+        ]
         
-        let animateAction = SKAction.animate(with: foxTextures, timePerFrame: 0.1, resize: false, restore: true)
-        let repeatAnimation = SKAction.repeatForever(animateAction)
-        obstacle.run(repeatAnimation)
+        let animateAction1 = SKAction.animate(with: foxTextures1, timePerFrame: 0.1, resize: false, restore: true)
+        let repeatAnimation1 = SKAction.repeatForever(animateAction1)
+        obstacle.run(repeatAnimation1)
         
-        let moveAction = SKAction.move(to: targetPos, duration: size.width / info.foxSpeed)
+        let animateAction2 = SKAction.animate(with: foxTextures2, timePerFrame: 0.1, resize: false, restore: true)
+        let repeatAnimation2 = SKAction.repeatForever(animateAction2)
+        obstacle.run(repeatAnimation2)
+        
+        let moveAction1 = SKAction.move(to: targetPos1, duration: size.width / info.foxSpeed1)
+        let moveAction2 = SKAction.move(to: targetPos2, duration: size.width / info.foxSpeed2)
         let removeAction = SKAction.removeFromParent()
-        let sequence = SKAction.sequence([moveAction, removeAction])
+        
+        let group1 = SKAction.group([moveAction1, animateAction1])
+        let group2 = SKAction.group([moveAction2, animateAction2])
+        
+        let sequence = SKAction.sequence([group1, group2, removeAction])
         obstacle.run(sequence)
         
         obstacle.zPosition = info.obstacleZPos

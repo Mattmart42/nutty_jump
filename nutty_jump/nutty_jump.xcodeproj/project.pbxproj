@@ -33,6 +33,13 @@
 		C9641A4D2CC8629F00A998FE /* GameModeType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9641A4A2CC8629F00A998FE /* GameModeType.swift */; };
 		C9641A4E2CC8629F00A998FE /* GameType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9641A4B2CC8629F00A998FE /* GameType.swift */; };
 		C9641A4F2CC8629F00A998FE /* GameContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9641A492CC8629F00A998FE /* GameContext.swift */; };
+		C9A1E5BB2CFAD492008E78F6 /* PPNeueMontreal-SemiBolditalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = C9A1E5B92CFAD492008E78F6 /* PPNeueMontreal-SemiBolditalic.otf */; };
+		C9A1E5BC2CFAD492008E78F6 /* PPNeueMontreal-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = C9A1E5B42CFAD492008E78F6 /* PPNeueMontreal-Bold.otf */; };
+		C9A1E5BD2CFAD492008E78F6 /* PPNeueMontreal-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = C9A1E5B72CFAD492008E78F6 /* PPNeueMontreal-Medium.otf */; };
+		C9A1E5BE2CFAD492008E78F6 /* PPNeueMontreal-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C9A1E5B82CFAD492008E78F6 /* PPNeueMontreal-SemiBold.ttf */; };
+		C9A1E5BF2CFAD492008E78F6 /* PPNeueMontreal-Book.otf in Resources */ = {isa = PBXBuildFile; fileRef = C9A1E5B52CFAD492008E78F6 /* PPNeueMontreal-Book.otf */; };
+		C9A1E5C02CFAD492008E78F6 /* PPNeueMontreal-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = C9A1E5B62CFAD492008E78F6 /* PPNeueMontreal-Italic.otf */; };
+		C9A1E5C12CFAD492008E78F6 /* PPNeueMontreal-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = C9A1E5BA2CFAD492008E78F6 /* PPNeueMontreal-Thin.otf */; };
 		C9A3BE5F2CE98105006E3E60 /* NJFoxNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A3BE5E2CE98105006E3E60 /* NJFoxNode.swift */; };
 		C9A3BE612CE98274006E3E60 /* NJFoxBranchNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A3BE602CE98274006E3E60 /* NJFoxBranchNode.swift */; };
 		C9A8F04F2CE80469007602A2 /* NJNutNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A8F04E2CE80469007602A2 /* NJNutNode.swift */; };
@@ -85,14 +92,34 @@
 		C9641A642CC86CBA00A998FE /* NJLayoutInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NJLayoutInfo.swift; sourceTree = "<group>"; };
 		C9641A652CC86CDA00A998FE /* NJGameInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NJGameInfo.swift; sourceTree = "<group>"; };
 		C9641A672CC86D3300A998FE /* NJGameIdleState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NJGameIdleState.swift; sourceTree = "<group>"; };
+		C9A1E5B42CFAD492008E78F6 /* PPNeueMontreal-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PPNeueMontreal-Bold.otf"; sourceTree = "<group>"; };
+		C9A1E5B52CFAD492008E78F6 /* PPNeueMontreal-Book.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PPNeueMontreal-Book.otf"; sourceTree = "<group>"; };
+		C9A1E5B62CFAD492008E78F6 /* PPNeueMontreal-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PPNeueMontreal-Italic.otf"; sourceTree = "<group>"; };
+		C9A1E5B72CFAD492008E78F6 /* PPNeueMontreal-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PPNeueMontreal-Medium.otf"; sourceTree = "<group>"; };
+		C9A1E5B82CFAD492008E78F6 /* PPNeueMontreal-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PPNeueMontreal-SemiBold.ttf"; sourceTree = "<group>"; };
+		C9A1E5B92CFAD492008E78F6 /* PPNeueMontreal-SemiBolditalic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PPNeueMontreal-SemiBolditalic.otf"; sourceTree = "<group>"; };
+		C9A1E5BA2CFAD492008E78F6 /* PPNeueMontreal-Thin.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PPNeueMontreal-Thin.otf"; sourceTree = "<group>"; };
 		C9A3BE5E2CE98105006E3E60 /* NJFoxNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NJFoxNode.swift; path = Code/NJFoxNode.swift; sourceTree = SOURCE_ROOT; };
 		C9A3BE602CE98274006E3E60 /* NJFoxBranchNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NJFoxBranchNode.swift; path = Code/NJFoxBranchNode.swift; sourceTree = SOURCE_ROOT; };
 		C9A8F04E2CE80469007602A2 /* NJNutNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NJNutNode.swift; path = Code/NJNutNode.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		C9A1E5C42CFAD933008E78F6 /* Exceptions for "nutty_jump" folder in "nutty_jump" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"nutty-jump-Info.plist",
+			);
+			target = C91B30202CBE250100ACDF61 /* nutty_jump */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		C91B30232CBE250100ACDF61 /* nutty_jump */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				C9A1E5C42CFAD933008E78F6 /* Exceptions for "nutty_jump" folder in "nutty_jump" target */,
+			);
 			path = nutty_jump;
 			sourceTree = "<group>";
 		};
@@ -143,6 +170,7 @@
 				C91B30352CBE250300ACDF61 /* nutty_jumpTests */,
 				C91B303F2CBE250300ACDF61 /* nutty_jumpUITests */,
 				C91B30222CBE250100ACDF61 /* Products */,
+				C9A1E5C22CFAD4CD008E78F6 /* Fonts */,
 			);
 			sourceTree = "<group>";
 		};
@@ -224,6 +252,20 @@
 				6B1EBEE02CD4395A00C12961 /* NJPhysicsCategory.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		C9A1E5C22CFAD4CD008E78F6 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				C9A1E5B42CFAD492008E78F6 /* PPNeueMontreal-Bold.otf */,
+				C9A1E5B52CFAD492008E78F6 /* PPNeueMontreal-Book.otf */,
+				C9A1E5B62CFAD492008E78F6 /* PPNeueMontreal-Italic.otf */,
+				C9A1E5B72CFAD492008E78F6 /* PPNeueMontreal-Medium.otf */,
+				C9A1E5B82CFAD492008E78F6 /* PPNeueMontreal-SemiBold.ttf */,
+				C9A1E5B92CFAD492008E78F6 /* PPNeueMontreal-SemiBolditalic.otf */,
+				C9A1E5BA2CFAD492008E78F6 /* PPNeueMontreal-Thin.otf */,
+			);
+			path = Fonts;
 			sourceTree = "<group>";
 		};
 		C9A3BE5C2CE980B4006E3E60 /* Dynamic Nodes */ = {
@@ -376,6 +418,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C9A1E5BB2CFAD492008E78F6 /* PPNeueMontreal-SemiBolditalic.otf in Resources */,
+				C9A1E5BC2CFAD492008E78F6 /* PPNeueMontreal-Bold.otf in Resources */,
+				C9A1E5BD2CFAD492008E78F6 /* PPNeueMontreal-Medium.otf in Resources */,
+				C9A1E5BE2CFAD492008E78F6 /* PPNeueMontreal-SemiBold.ttf in Resources */,
+				C9A1E5BF2CFAD492008E78F6 /* PPNeueMontreal-Book.otf in Resources */,
+				C9A1E5C02CFAD492008E78F6 /* PPNeueMontreal-Italic.otf in Resources */,
+				C9A1E5C12CFAD492008E78F6 /* PPNeueMontreal-Thin.otf in Resources */,
 				C9641A412CC8602300A998FE /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -588,6 +637,7 @@
 				DEVELOPMENT_TEAM = JS978YP3DM;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "nutty-jump-Info.plist";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -626,6 +676,7 @@
 				DEVELOPMENT_TEAM = JS978YP3DM;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "nutty-jump-Info.plist";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;

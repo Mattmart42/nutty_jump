@@ -16,7 +16,7 @@ class NJPowerUpTrackerNode: SKNode {
         powerUpNodes = (0..<3).map { index in
             let node = SKSpriteNode(texture: defaultCollectible.texture, size: defaultCollectible.size)
             node.isHidden = false // Initially visible with default icon
-            node.position = CGPoint(x: CGFloat(index) * (size.width + 10), y: 0)
+            node.position = CGPoint(x: CGFloat(index) * (size.width + 40), y: 0)
             return node
         }
 

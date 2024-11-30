@@ -23,7 +23,8 @@ struct NJGameInfo {
     
     var fruitSpeed: CGFloat { return 700.0 * gameSpeed }
     var hawkSpeed: CGFloat { return 500.0 * gameSpeed }
-    var foxSpeed: CGFloat { return 500.0 * gameSpeed }
+    var foxSpeed1: CGFloat { return 700.0 * gameSpeed }
+    var foxSpeed2: CGFloat { return 800.0 * gameSpeed }
     var nutSpeed: CGFloat { return 900.0 * gameSpeed }
     var bombSpeed: CGFloat { return 900.0 * gameSpeed }
     
@@ -43,9 +44,9 @@ struct NJGameInfo {
     
     static let obstacleSize = CGSize(width: 30.0, height: 30.0)
     static let fruitSize = CGSize(width: 40.0, height: 50.0)
-    static let foxSize = CGSize(width: 61.58, height: 40.0)
-    static let hawkSize = CGSize(width: 40.0, height: 57.59)
-    static let nutSize = CGSize(width: 30.0, height: 30.0)
+    static let foxSize = CGSize(width: 76.98, height: 50.0)
+    static let hawkSize = CGSize(width: 50.0, height: 71.99)
+    static let nutSize = CGSize(width: 40.0, height: 40.0)
     let trackerSize = CGSize(width: 30.0, height: 30.0)
     let branchHeight = 40.0
     let branchSize = CGSize(width: 150.0, height: 40.0)
