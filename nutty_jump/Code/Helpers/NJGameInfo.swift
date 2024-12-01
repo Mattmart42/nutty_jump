@@ -10,6 +10,21 @@ import UIKit
 import SpriteKit
 
 struct NJGameInfo {
+    private let baseScreenWidth: CGFloat = 393.0
+    private let baseScreenHeight: CGFloat = 852.0
+
+    private let screenWidth: CGFloat
+    private let screenHeight: CGFloat
+
+    init(screenSize: CGSize) {
+        screenWidth = screenSize.width
+        screenHeight = screenSize.height
+    }
+    
+    private var widthScale: CGFloat { screenWidth / baseScreenWidth }
+    private var heightScale: CGFloat { screenHeight / baseScreenHeight }
+    private var uniformScale: CGFloat { min(widthScale, heightScale) }
+    
     var score = 0
     
     let fps = 60.0
@@ -20,6 +35,7 @@ struct NJGameInfo {
     var scrollSpeed: CGFloat { return 10.0 * gameSpeed }
     var backgroundScrollSpeed: CGFloat { return 2.0 * gameSpeed }
     var obstacleSpawnRate: CGFloat { return 2.0 }
+    var nutSpawnRate: CGFloat { return 7.0 }
     
     var fruitSpeed: CGFloat { return 700.0 * gameSpeed }
     var hawkSpeed: CGFloat { return 500.0 * gameSpeed }
@@ -27,6 +43,7 @@ struct NJGameInfo {
     var foxSpeed2: CGFloat { return 800.0 * gameSpeed }
     var nutSpeed: CGFloat { return 900.0 * gameSpeed }
     var bombSpeed: CGFloat { return 900.0 * gameSpeed }
+    var jumpDuration: CGFloat { return 0.3 }
     
     var fruitShootSpeed: CGFloat { return 1000.0 }
     var fruitShootDuration: CGFloat { return 5.0 }
@@ -42,11 +59,12 @@ struct NJGameInfo {
     let wallWidth = 40.0
     let obstacleXPos = 50.0
     
-    static let obstacleSize = CGSize(width: 30.0, height: 30.0)
-    static let fruitSize = CGSize(width: 40.0, height: 50.0)
-    static let foxSize = CGSize(width: 76.98, height: 50.0)
-    static let hawkSize = CGSize(width: 50.0, height: 71.99)
-    static let nutSize = CGSize(width: 40.0, height: 40.0)
+    var fruitSize: CGSize { CGSize(width: 40.0 * uniformScale, height: 50.0 * uniformScale) }
+    var foxSize: CGSize { CGSize(width: 76.98 * uniformScale, height: 50.0 * uniformScale) }
+    var hawkSize: CGSize { CGSize(width: 50.0 * uniformScale, height: 71.99 * uniformScale) }
+    var nutSize: CGSize { CGSize(width: 40.0 * uniformScale, height: 40.0 * uniformScale) }
+    var obstacleSize: CGSize { CGSize(width: 30.0 * uniformScale, height: 30.0 * uniformScale) }
+    
     let trackerSize = CGSize(width: 30.0, height: 30.0)
     let branchHeight = 40.0
     let branchSize = CGSize(width: 150.0, height: 40.0)
@@ -66,6 +84,7 @@ struct NJGameInfo {
     let playerZPos: CGFloat = 3
     let obstacleZPos: CGFloat = 4
     let hudZPos: CGFloat = 10
+    let titleZPos: CGFloat = 11
     
     let playerSize = CGSize(width: 20.0, height: 61.03)
     let playerFlightSize = CGSize(width: 51.56, height: 53.0)
@@ -112,13 +131,13 @@ enum CollectibleType {
         }
     }
     
-    var size: CGSize {
+    func size(for gameInfo: NJGameInfo) -> CGSize {
         switch self {
-        case .fruit: return NJGameInfo.fruitSize
-        case .hawk: return NJGameInfo.hawkSize
-        case .fox: return NJGameInfo.foxSize
-        case .nut: return NJGameInfo.nutSize
-        case .empty: return NJGameInfo.obstacleSize
+        case .fruit: return gameInfo.fruitSize
+        case .hawk: return gameInfo.hawkSize
+        case .fox: return gameInfo.foxSize
+        case .nut: return gameInfo.nutSize
+        case .empty: return gameInfo.obstacleSize
         }
     }
 }

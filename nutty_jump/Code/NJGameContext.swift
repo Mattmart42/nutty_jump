@@ -19,7 +19,7 @@ class NJGameContext: GameContext {
     private(set) var stateMachine: GKStateMachine?
     
     init(dependencies: Dependencies, gameMode: GameModeType) {
-        self.gameInfo = NJGameInfo()
+        self.gameInfo = NJGameInfo(screenSize: UIScreen.main.bounds.size)
         self.gameMode = gameMode
         super.init(dependencies: dependencies)
     }
@@ -44,7 +44,7 @@ class NJGameContext: GameContext {
     }
     
     func resetGameContext() {
-        gameInfo = NJGameInfo()
+        gameInfo = NJGameInfo(screenSize: UIScreen.main.bounds.size)
         layoutInfo = NJLayoutInfo(screenSize: layoutInfo.screenSize)
         stateMachine?.enter(NJGameIdleState.self) // Reset to idle state
     }

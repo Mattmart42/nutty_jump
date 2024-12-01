@@ -15,7 +15,7 @@ struct ContentView: View {
     let context = NJGameContext(dependencies: .init(),
                                 gameMode: .single)
     let screenSize: CGSize = UIScreen.main.bounds.size
-    let info = NJGameInfo()
+    let info = NJGameInfo(screenSize: UIScreen.main.bounds.size)
     
     var body: some View {
         SpriteView(scene: NJGameScene(context: context,

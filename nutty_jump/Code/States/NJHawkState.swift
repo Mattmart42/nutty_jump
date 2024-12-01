@@ -25,7 +25,7 @@ class NJHawkState: GKState {
         guard let scene, let player = scene.player else { return }
         print("did enter hawk state")
         scene.info.playerIsInvincible = true
-        player.texture = scene.info.playerIsProtected ? SKTexture(imageNamed: "hawkModeProt") : SKTexture(imageNamed: "hawkMode")
+        player.texture = scene.info.playerIsProtected ? SKTexture(imageNamed: "hawkMode") : SKTexture(imageNamed: "hawkMode")
         player.size = scene.info.hawkModeSize
     }
 }

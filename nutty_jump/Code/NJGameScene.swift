@@ -25,10 +25,10 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     let rightWallPlayerPos: CGPoint
     
     init(context: NJGameContext, size: CGSize, info: NJGameInfo) {
-        self.leftWallPlayerPos = CGPoint(x: info.obstacleXPos, y: size.height / 2.0 - 100)
-        self.rightWallPlayerPos = CGPoint(x: size.width - info.obstacleXPos, y: size.height / 2.0 - 100)
+        self.info = NJGameInfo(screenSize: size)
+        self.leftWallPlayerPos = CGPoint(x: info.obstacleXPos, y: size.height / 2.0 - (size.height * (100/852)))
+        self.rightWallPlayerPos = CGPoint(x: size.width - info.obstacleXPos, y: size.height / 2.0 - (size.height * (100/852)))
         self.context = context
-        self.info = info
         super.init(size: size)
         
         fruitAtlas.preload {
@@ -154,21 +154,23 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func setupIdleUI() {
-        let titleNode = NJTitleNode(size: CGSize(width: size.width - (info.obstacleXPos * 2), height: 122), position: CGPoint(x: size.width / 2, y: size.height / 2 + 100), texture: SKTexture(imageNamed: "title"))
+        let titleNode = NJTitleNode(size: CGSize(width: 393, height: 617), position: CGPoint(x: size.width / 2, y: size.height / 2), texture: SKTexture(imageNamed: "titleScreen"))
         titleNode.name = "titleNode"
+        titleNode.zPosition = info.titleZPos
         addChild(titleNode)
-
-        let playButton = SKLabelNode(text: "Play")
-        playButton.name = "playButton"
-        playButton.fontSize = 30
-        playButton.fontColor = .white
-        playButton.position = CGPoint(x: size.width / 2, y: size.height / 2)
-        addChild(playButton)
+        let text = SKLabelNode(text: "TAP TO START")
+        text.name = "startText"
+        text.fontColor = .black
+        text.fontSize = 20
+        text.fontName = "PPNeueMontreal-SemiBolditalic"
+        text.position = CGPoint(x: size.width / 2, y: 80)
+        text.zPosition = info.titleZPos
+        addChild(text)
     }
 
     func removeIdleUI() {
         childNode(withName: "titleNode")?.removeFromParent()
-        childNode(withName: "playButton")?.removeFromParent()
+        childNode(withName: "startText")?.removeFromParent()
     }
     
     func displayPowerUpText(type: String) {
@@ -243,6 +245,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func runObstacles() {
+        guard let scene else { return }
         let speedIncreaseAction = SKAction.repeatForever(
             SKAction.sequence([
                 SKAction.run { [weak self] in
@@ -259,6 +262,33 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         let delay = SKAction.wait(forDuration: info.obstacleSpawnRate)
         let spawnSequence = SKAction.sequence([spawnAction, delay])
         run(SKAction.repeatForever(spawnSequence))
+        
+        let spawnAction2 = SKAction.run {
+            if self.info.score > 5000 {
+                self.spawnRandomObstacle()
+            }
+        }
+        let delay2 = SKAction.wait(forDuration: info.obstacleSpawnRate * 2)
+        let spawnSequence2 = SKAction.sequence([spawnAction2, delay2])
+        run(SKAction.repeatForever(spawnSequence2))
+        
+        let spawnAction3 = SKAction.run {
+            if self.info.score > 7500 {
+                self.spawnRandomObstacle()
+            }
+        }
+        let delay3 = SKAction.wait(forDuration: info.obstacleSpawnRate * 3)
+        let spawnSequence3 = SKAction.sequence([spawnAction3, delay3])
+        run(SKAction.repeatForever(spawnSequence3))
+        
+        let spawnNutAction = SKAction.run {
+            if !(self.info.playerIsProtected) {
+                self.spawnNut(obstacleSize: self.info.obstacleSize, yPos: self.size.height + (self.size.height * (50 / 852)))
+            }
+        }
+        let delayNut = SKAction.wait(forDuration: info.nutSpawnRate)
+        let spawnNutSequence = SKAction.sequence([spawnNutAction, delayNut])
+        run(SKAction.repeatForever(spawnNutSequence))
     }
     
     override func update(_ currentTime: TimeInterval) {
@@ -276,21 +306,21 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     // MARK: - Spawners
     
     func spawnRandomObstacle() {
-        let obstacleSize = NJGameInfo.obstacleSize
+        let obstacleSize = info.obstacleSize
         let obstacleYPos = size.height + 50
         
         let functions: [() -> Void] = [
-            { self.spawnFruit(obstacleSize: NJGameInfo.fruitSize, yPos: obstacleYPos) }//,
-//            { self.spawnHawk(obstacleSize: NJGameInfo.hawkSize, yPos: obstacleYPos) },
-//            { self.spawnFox(obstacleSize: NJGameInfo.foxSize, yPos: obstacleYPos) },
-//            { self.spawnNut(obstacleSize: NJGameInfo.nutSize, yPos: obstacleYPos) },
-//            { self.spawnBomb(obstacleSize: obstacleSize, yPos: obstacleYPos) },
-//            { self.spawnBranch(obstacleSize: self.info.branchSize, yPos: obstacleYPos) }
+            { self.spawnFruit(obstacleSize: self.info.fruitSize, yPos: obstacleYPos) },
+            { self.spawnHawk(obstacleSize: self.info.hawkSize, yPos: obstacleYPos) },
+            { self.spawnFox(obstacleSize: self.info.foxSize, yPos: obstacleYPos) },
+            { self.spawnBranch(obstacleSize: self.info.branchSize, yPos: obstacleYPos) },
+            { self.spawnBomb(obstacleSize: obstacleSize, yPos: obstacleYPos) }
         ]
             
         let randomIndex = Int.random(in: 0..<functions.count)
         functions[randomIndex]()
     }
+    
     
     func spawnFruit(obstacleSize: CGSize, yPos: CGFloat) {
         let xPos: CGFloat = Bool.random() ? info.obstacleXPos : size.width - info.obstacleXPos
@@ -461,7 +491,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         let isOnRightWall = Int(currentPlayerPos.x) == Int(rightWallPlayerPos.x)
         let targetPos = isOnRightWall ? leftWallPlayerPos : rightWallPlayerPos
         
-        let moveAction = SKAction.move(to: targetPos, duration: 0.3)
+        let moveAction = SKAction.move(to: targetPos, duration: info.jumpDuration)
         moveAction.timingMode = .easeInEaseOut
 //        let rotationAngle: CGFloat = isOnRightWall ? .pi : -.pi
 //        let rotationAction = SKAction.rotate(byAngle: rotationAngle, duration: 0.3)
@@ -548,7 +578,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
             removeAction(forKey: "returnToRunning")
             
             // Schedule return to RunningState only if still valid
-            let delayAction = SKAction.wait(forDuration: 0.3)
+            let delayAction = SKAction.wait(forDuration: info.jumpDuration)
             let switchStateAction = SKAction.run { [weak self] in
                 guard let stateMachine = self?.context?.stateMachine else { return }
                 if stateMachine.currentState is NJJumpingState {
@@ -813,7 +843,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         info.isFruitShoot = true
         
         let texture = SKTexture(imageNamed: "pinecone")
-        let pinecone = NJFruitNode(size: NJGameInfo.fruitSize, position: CGPoint(x: 0, y: NJGameInfo.fruitSize.height), texture: texture)
+        let pinecone = NJFruitNode(size: info.fruitSize, position: CGPoint(x: 0, y: info.fruitSize.height), texture: texture)
         pinecone.name = "pineconeShooter"
         pinecone.zPosition = info.obstacleZPos
         pinecone.physicsBody?.affectedByGravity = false
@@ -857,10 +887,10 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         let randomTexture = fruitTextures.randomElement() ?? fruitTextures[0]
         
         
-        let fruit = NJFruitShootNode(size: NJGameInfo.obstacleSize, position: CGPoint(x: player.position.x, y: player.position.y + NJGameInfo.obstacleSize.height + NJGameInfo.fruitSize.height), texture: randomTexture)
+        let fruit = NJFruitShootNode(size: info.obstacleSize, position: CGPoint(x: player.position.x, y: player.position.y + info.obstacleSize.height + info.fruitSize.height), texture: randomTexture)
         
         
-        let targetPos = CGPoint(x: player.position.x, y: size.height + NJGameInfo.obstacleSize.height)
+        let targetPos = CGPoint(x: player.position.x, y: size.height + info.obstacleSize.height)
         
         let moveAction = SKAction.move(to: targetPos, duration: 1.0)//size.height / NJGameInfo.fruitShootSpeed)
         let removeAction = SKAction.removeFromParent()
