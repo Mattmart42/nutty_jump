@@ -265,7 +265,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         
         let spawnAction2 = SKAction.run {
             if self.info.score > 5000 {
-                self.spawnRandomObstacle()
+                self.spawnMultiplier()
             }
         }
         let delay2 = SKAction.wait(forDuration: info.obstacleSpawnRate * 2)
@@ -274,7 +274,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         
         let spawnAction3 = SKAction.run {
             if self.info.score > 7500 {
-                self.spawnRandomObstacle()
+                self.spawnMultiplier()
             }
         }
         let delay3 = SKAction.wait(forDuration: info.obstacleSpawnRate * 3)
@@ -315,6 +315,20 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
             { self.spawnFox(obstacleSize: self.info.foxSize, yPos: obstacleYPos) },
             { self.spawnBranch(obstacleSize: self.info.branchSize, yPos: obstacleYPos) },
             { self.spawnBomb(obstacleSize: obstacleSize, yPos: obstacleYPos) }
+        ]
+            
+        let randomIndex = Int.random(in: 0..<functions.count)
+        functions[randomIndex]()
+    }
+    
+    func spawnMultiplier() {
+        let obstacleSize = info.obstacleSize
+        let obstacleYPos = size.height + 50
+        
+        let functions: [() -> Void] = [
+            { self.spawnFruit(obstacleSize: self.info.fruitSize, yPos: obstacleYPos) },
+            { self.spawnHawk(obstacleSize: self.info.hawkSize, yPos: obstacleYPos) },
+            { self.spawnFox(obstacleSize: self.info.foxSize, yPos: obstacleYPos) }
         ]
             
         let randomIndex = Int.random(in: 0..<functions.count)
