@@ -53,9 +53,3 @@ class NJPowerUpTrackerNode: SKNode {
         }
     }
 }
-
-extension NJPowerUpTrackerNode {
-    enum Constants {
-        static let size = CGSize(width: 45, height: 45)
-    }
-}

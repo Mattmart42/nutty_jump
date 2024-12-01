@@ -43,6 +43,7 @@
 		C9A3BE5F2CE98105006E3E60 /* NJFoxNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A3BE5E2CE98105006E3E60 /* NJFoxNode.swift */; };
 		C9A3BE612CE98274006E3E60 /* NJFoxBranchNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A3BE602CE98274006E3E60 /* NJFoxBranchNode.swift */; };
 		C9A8F04F2CE80469007602A2 /* NJNutNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A8F04E2CE80469007602A2 /* NJNutNode.swift */; };
+		C9C6D8822CFBC86800FD737D /* NJHawkState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C6D8812CFBC86300FD737D /* NJHawkState.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -102,24 +103,12 @@
 		C9A3BE5E2CE98105006E3E60 /* NJFoxNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NJFoxNode.swift; path = Code/NJFoxNode.swift; sourceTree = SOURCE_ROOT; };
 		C9A3BE602CE98274006E3E60 /* NJFoxBranchNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NJFoxBranchNode.swift; path = Code/NJFoxBranchNode.swift; sourceTree = SOURCE_ROOT; };
 		C9A8F04E2CE80469007602A2 /* NJNutNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NJNutNode.swift; path = Code/NJNutNode.swift; sourceTree = SOURCE_ROOT; };
+		C9C6D8812CFBC86300FD737D /* NJHawkState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NJHawkState.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		C9A1E5C42CFAD933008E78F6 /* Exceptions for "nutty_jump" folder in "nutty_jump" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"nutty-jump-Info.plist",
-			);
-			target = C91B30202CBE250100ACDF61 /* nutty_jump */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		C91B30232CBE250100ACDF61 /* nutty_jump */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				C9A1E5C42CFAD933008E78F6 /* Exceptions for "nutty_jump" folder in "nutty_jump" target */,
-			);
 			path = nutty_jump;
 			sourceTree = "<group>";
 		};
@@ -231,6 +220,7 @@
 				6B4DA9B92CDAD16500042806 /* NJGameOverState.swift */,
 				6BE49A4C2CD1818D000DB8DF /* NJRunningState.swift */,
 				6BE49A4E2CD181A5000DB8DF /* NJJumpingState.swift */,
+				C9C6D8812CFBC86300FD737D /* NJHawkState.swift */,
 				6BE49A502CD181AF000DB8DF /* NJFallingState.swift */,
 				C9641A672CC86D3300A998FE /* NJGameIdleState.swift */,
 			);
@@ -464,6 +454,7 @@
 				C9641A4D2CC8629F00A998FE /* GameModeType.swift in Sources */,
 				6BE49A4F2CD181AA000DB8DF /* NJJumpingState.swift in Sources */,
 				6BE49A552CD18A4D000DB8DF /* NJPlayerNode.swift in Sources */,
+				C9C6D8822CFBC86800FD737D /* NJHawkState.swift in Sources */,
 				6BE49A4D2CD18198000DB8DF /* NJRunningState.swift in Sources */,
 				6BE49A072CD17E07000DB8DF /* NJGameScene.swift in Sources */,
 				C9641A4E2CC8629F00A998FE /* GameType.swift in Sources */,

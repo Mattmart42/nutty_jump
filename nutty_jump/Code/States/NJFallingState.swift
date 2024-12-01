@@ -40,6 +40,5 @@ class NJFallingState: GKState {
                     wallNode.position.y += wallNode.size.height * 2
                 }
             }
-        
     }
 }

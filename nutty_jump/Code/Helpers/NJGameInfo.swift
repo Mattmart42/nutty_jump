@@ -56,8 +56,9 @@ struct NJGameInfo {
     var playerIsInvincible = false
     var playerIsProtected = false
     var playerIsDisguised = false
+    var isFruitShoot = false
     
-    let hawkPULength = 10.0
+    let hawkPULength = 5.0
     
     let bgZPos: CGFloat = 0
     let branchZPos: CGFloat = 1
@@ -70,6 +71,7 @@ struct NJGameInfo {
     let playerFlightSize = CGSize(width: 51.56, height: 53.0)
     let playerProtSize = CGSize(width: 24.0, height: 72.03)
     let playerProtFlightSize = CGSize(width: 58, height: 60.0)
+    let hawkModeSize = CGSize(width: 93.62, height: 65.0)
     
     let runR = SKTexture(imageNamed: "squirrelRunRight")
     let runL = SKTexture(imageNamed: "squirrelRunLeft")

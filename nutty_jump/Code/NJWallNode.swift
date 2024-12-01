@@ -14,7 +14,6 @@ class NJWallNode: SKSpriteNode {
         self.physicsBody = SKPhysicsBody(rectangleOf: size)
         self.physicsBody?.isDynamic = false
         self.physicsBody?.categoryBitMask = NJPhysicsCategory.wall
-        self.physicsBody?.contactTestBitMask = NJPhysicsCategory.player
         self.physicsBody?.collisionBitMask = 0
     }
 

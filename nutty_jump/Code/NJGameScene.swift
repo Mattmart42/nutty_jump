@@ -171,6 +171,34 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         childNode(withName: "playButton")?.removeFromParent()
     }
     
+    func displayPowerUpText(type: String) {
+        var text = SKLabelNode()
+        if type == "fox" {
+            text = SKLabelNode(text: "Fox Disguise activated!")
+            text.name = "foxPowerUpText"
+            text.fontColor = .orange
+        } else if type == "hawk" {
+            text = SKLabelNode(text: "Soaring Hawk activated!")
+            text.name = "hawkPowerUpText"
+            text.fontColor = .brown
+        } else if type == "fruit" {
+            text = SKLabelNode(text: "Fruit Shoot activated!")
+            text.name = "fruitPowerUpText"
+            text.fontColor = .blue
+        }
+        text.fontSize = 20
+        text.fontName = "PPNeueMontreal-Italic"
+        text.position = CGPoint(x: text.frame.width / 2 + info.obstacleXPos, y: 100)
+        text.zPosition = info.hudZPos
+        addChild(text)
+    }
+    
+    func removePowerUpText() {
+        childNode(withName: "foxPowerUpText")?.removeFromParent()
+        childNode(withName: "hawkPowerUpText")?.removeFromParent()
+        childNode(withName: "fruitPowerUpText")?.removeFromParent()
+    }
+    
     func setupGameOverUI() {
         let titleNode = NJTitleNode(size: CGSize(width: size.width - (info.obstacleXPos * 2), height: 80), position: CGPoint(x: size.width / 2, y: size.height / 2 + 100), texture: SKTexture(imageNamed: "gameOver"))
         titleNode.name = "gameOver"
@@ -252,12 +280,12 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         let obstacleYPos = size.height + 50
         
         let functions: [() -> Void] = [
-            { self.spawnFruit(obstacleSize: NJGameInfo.fruitSize, yPos: obstacleYPos) },
-            { self.spawnHawk(obstacleSize: NJGameInfo.hawkSize, yPos: obstacleYPos) },
-            { self.spawnFox(obstacleSize: NJGameInfo.foxSize, yPos: obstacleYPos) },
-            { self.spawnNut(obstacleSize: NJGameInfo.nutSize, yPos: obstacleYPos) },
-            { self.spawnBomb(obstacleSize: obstacleSize, yPos: obstacleYPos) },
-            { self.spawnBranch(obstacleSize: self.info.branchSize, yPos: obstacleYPos) }
+            { self.spawnFruit(obstacleSize: NJGameInfo.fruitSize, yPos: obstacleYPos) }//,
+//            { self.spawnHawk(obstacleSize: NJGameInfo.hawkSize, yPos: obstacleYPos) },
+//            { self.spawnFox(obstacleSize: NJGameInfo.foxSize, yPos: obstacleYPos) },
+//            { self.spawnNut(obstacleSize: NJGameInfo.nutSize, yPos: obstacleYPos) },
+//            { self.spawnBomb(obstacleSize: obstacleSize, yPos: obstacleYPos) },
+//            { self.spawnBranch(obstacleSize: self.info.branchSize, yPos: obstacleYPos) }
         ]
             
         let randomIndex = Int.random(in: 0..<functions.count)
@@ -515,10 +543,21 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
             stateMachine.enter(NJJumpingState.self)
             togglePlayerLocation(currentPlayerPos: player.position)
             
+            
+            // Cancel any existing sequence before starting a new one
+            removeAction(forKey: "returnToRunning")
+            
+            // Schedule return to RunningState only if still valid
             let delayAction = SKAction.wait(forDuration: 0.3)
-            let switchStateAction = SKAction.run { stateMachine.enter(NJRunningState.self) }
+            let switchStateAction = SKAction.run { [weak self] in
+                guard let stateMachine = self?.context?.stateMachine else { return }
+                if stateMachine.currentState is NJJumpingState {
+                    stateMachine.enter(NJRunningState.self)
+                }
+            }
             let sequence = SKAction.sequence([delayAction, switchStateAction])
-            run(sequence)
+            run(sequence, withKey: "returnToRunning")
+            
             
         } else if currentState is NJJumpingState {
             print("cannot tap you're jumping")
@@ -528,6 +567,10 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
             
         } else if currentState is NJGameOverState {
             print("game over tap placeholder")
+            
+        } else if currentState is NJHawkState {
+            print("cannot tap, hawk power-up active")
+            
         } else {
             print("unknown state")
         }
@@ -562,8 +605,18 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         //player hits branch
         if (contactA == NJPhysicsCategory.player && contactB == NJPhysicsCategory.branch) ||
             (contactA == NJPhysicsCategory.branch && contactB == NJPhysicsCategory.player) {
-            print("player hit branch")
             let branchNode = (contactA == NJPhysicsCategory.branch) ? contact.bodyA.node : contact.bodyB.node
+            if stateMachine.currentState is NJHawkState {
+                branchNode?.removeFromParent()
+                return
+            }
+            if info.playerIsProtected {
+                branchNode?.removeFromParent()
+                info.playerIsProtected = false
+                getPlayerTextureAndSize()
+                return
+            }
+            print("player hit branch")
             branchNode?.removeAction(forKey: "moveBranch")
             stateMachine.enter(NJFallingState.self)
         }
@@ -571,7 +624,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         //player hits fruit
         if (contactA == NJPhysicsCategory.player && contactB == NJPhysicsCategory.fruit) ||
             (contactA == NJPhysicsCategory.fruit && contactB == NJPhysicsCategory.player) {
-            if stateMachine.currentState is NJRunningState && !info.playerIsInvincible {
+            if stateMachine.currentState is NJRunningState && !info.isFruitShoot {
                 if info.playerIsProtected {
                     info.playerIsProtected = false
                     getPlayerTextureAndSize()
@@ -601,6 +654,9 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
                     
                 }
                 trackerNode.updatePowerUpDisplay(for: info.fruitsCollected, with: CollectibleType.fruit)
+            } else if stateMachine.currentState is NJHawkState {
+                let fruitNode = (contactA == NJPhysicsCategory.fruit) ? contact.bodyA.node : contact.bodyB.node
+                fruitNode?.removeFromParent()
             }
         }
         
@@ -636,6 +692,9 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
                     
                 }
                 trackerNode.updatePowerUpDisplay(for: info.hawksCollected, with: CollectibleType.hawk)
+            } else if stateMachine.currentState is NJHawkState {
+                let hawkNode = (contactA == NJPhysicsCategory.hawk) ? contact.bodyA.node : contact.bodyB.node
+                hawkNode?.removeFromParent()
             }
         }
         
@@ -671,6 +730,9 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
                     
                 }
                 trackerNode.updatePowerUpDisplay(for: info.foxesCollected, with: CollectibleType.fox)
+            } else if stateMachine.currentState is NJHawkState {
+                let foxNode = (contactA == NJPhysicsCategory.fox) ? contact.bodyA.node : contact.bodyB.node
+                foxNode?.removeFromParent()
             }
         }
         
@@ -689,17 +751,21 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         //player hits bomb
         if (contactA == NJPhysicsCategory.player && contactB == NJPhysicsCategory.bomb) ||
             (contactA == NJPhysicsCategory.bomb && contactB == NJPhysicsCategory.player) {
-            if !info.playerIsInvincible {
-                if info.playerIsProtected {
-                    info.playerIsProtected = false
-                    getPlayerTextureAndSize()
-                    return
-                }
-                print("player hit bomb")
-                let bombNode = (contactA == NJPhysicsCategory.bomb) ? contact.bodyA.node : contact.bodyB.node
-                stateMachine.enter(NJFallingState.self)
+            let bombNode = (contactA == NJPhysicsCategory.bomb) ? contact.bodyA.node : contact.bodyB.node
+            if stateMachine.currentState is NJHawkState {
+                bombNode?.removeFromParent()
                 return
             }
+            if info.playerIsProtected {
+                info.playerIsProtected = false
+                getPlayerTextureAndSize()
+                
+                bombNode?.removeFromParent()
+                return
+            }
+            print("player hit bomb")
+            stateMachine.enter(NJFallingState.self)
+            return
         }
         
         //branch hits ground
@@ -740,8 +806,21 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     // MARK: - Powerup Functions
     
     func fruitPowerUp() {
+        guard let player else { return }
+        
         print("Power-up activated: Shooting fruits!")
-
+        displayPowerUpText(type: "fruit")
+        info.isFruitShoot = true
+        
+        let texture = SKTexture(imageNamed: "pinecone")
+        let pinecone = NJFruitNode(size: NJGameInfo.fruitSize, position: CGPoint(x: 0, y: NJGameInfo.fruitSize.height), texture: texture)
+        pinecone.name = "pineconeShooter"
+        pinecone.zPosition = info.obstacleZPos
+        pinecone.physicsBody?.affectedByGravity = false
+        pinecone.physicsBody?.isDynamic = false
+        pinecone.physicsBody?.categoryBitMask = 0
+        player.addChild(pinecone)
+        
         let shootAction = SKAction.run { [weak self] in
             self?.shootFruit()
         }
@@ -765,6 +844,9 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         DispatchQueue.main.asyncAfter(deadline: .now() + info.fruitShootDuration) {
             self.info.fruitsCollected = 0
             self.trackerNode.updatePowerUpDisplay(for: self.info.fruitsCollected, with: CollectibleType.fruit)
+            self.removePowerUpText()
+            player.childNode(withName: "pineconeShooter")?.removeFromParent()
+            self.info.isFruitShoot = false
         }
     }
     
@@ -774,9 +856,10 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         let fruitTextures = fruitAtlas.textureNames.map { fruitAtlas.textureNamed($0) }
         let randomTexture = fruitTextures.randomElement() ?? fruitTextures[0]
         
-        let texture = SKTexture(imageNamed: "pinecone")
         
-        let fruit = NJFruitShootNode(size: NJGameInfo.obstacleSize, position: CGPoint(x: player.position.x, y: player.position.y + NJGameInfo.obstacleSize.height), texture: texture)
+        let fruit = NJFruitShootNode(size: NJGameInfo.obstacleSize, position: CGPoint(x: player.position.x, y: player.position.y + NJGameInfo.obstacleSize.height + NJGameInfo.fruitSize.height), texture: randomTexture)
+        
+        
         let targetPos = CGPoint(x: player.position.x, y: size.height + NJGameInfo.obstacleSize.height)
         
         let moveAction = SKAction.move(to: targetPos, duration: 1.0)//size.height / NJGameInfo.fruitShootSpeed)
@@ -785,24 +868,46 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         
         fruit.zPosition = info.obstacleZPos
         addChild(fruit)
+        
     }
     
     func hawkPowerUp() {
-        info.playerIsInvincible = true
+        guard let stateMachine = context?.stateMachine, let player else { return }
+        displayPowerUpText(type: "hawk")
+        stateMachine.enter(NJHawkState.self)
+        
+        let pos1 = CGPoint(x: size.width / 2, y: rightWallPlayerPos.y)
+        let pos2 = CGPoint(x: info.obstacleXPos, y: rightWallPlayerPos.y + 50)
+        let pos3 = CGPoint(x: size.width / 2, y: size.height - 200)
+        let pos4 = CGPoint(x: size.width - info.obstacleXPos, y: rightWallPlayerPos.y + 50)
+        let pos5 = rightWallPlayerPos
+        
+        let move1 = SKAction.move(to: pos1, duration: info.hawkPULength / 5)
+        let move2 = SKAction.move(to: pos2, duration: info.hawkPULength / 5)
+        let move3 = SKAction.move(to: pos3, duration: info.hawkPULength / 5)
+        let move4 = SKAction.move(to: pos4, duration: info.hawkPULength / 5)
+        let move5 = SKAction.move(to: pos5, duration: info.hawkPULength / 5)
+        
+        player.run(SKAction.sequence([move1, move2, move3, move4, move5]))
         DispatchQueue.main.asyncAfter(deadline: .now() + info.hawkPULength) {
-            self.info.playerIsInvincible = false
             self.info.hawksCollected = 0
             self.trackerNode.updatePowerUpDisplay(for: self.info.hawksCollected, with: CollectibleType.hawk)
+            self.getPlayerTextureAndSize()
+            self.info.playerIsInvincible = false
+            self.removePowerUpText()
+            stateMachine.enter(NJRunningState.self)
         }
     }
     
     func foxPowerUp() {
+        displayPowerUpText(type: "fox")
         info.playerIsDisguised = true
         DispatchQueue.main.asyncAfter(deadline: .now() + info.foxDisguiseDuration) {
             self.info.playerIsDisguised = false
             self.info.foxesCollected = 0
             self.trackerNode.updatePowerUpDisplay(for: self.info.fruitsCollected, with: CollectibleType.fruit)
             self.getPlayerTextureAndSize()
+            self.removePowerUpText()
         }
     }
     
