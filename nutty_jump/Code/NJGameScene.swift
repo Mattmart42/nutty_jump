@@ -364,8 +364,8 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
             { self.spawnFruit(obstacleSize: self.info.fruitSize, yPos: obstacleYPos) },
             { self.spawnHawk(obstacleSize: self.info.hawkSize, yPos: obstacleYPos) },
             { self.spawnFox(obstacleSize: self.info.foxSize, yPos: obstacleYPos) },
-            { self.spawnBranch(obstacleSize: self.info.branchSize, yPos: obstacleYPos) },
-            { self.spawnBomb(obstacleSize: obstacleSize, yPos: obstacleYPos) }
+            { self.spawnBranch(obstacleSize: self.info.branchSize, yPos: obstacleYPos) }
+//            { self.spawnBomb(obstacleSize: obstacleSize, yPos: obstacleYPos) }
         ]
             
         let randomIndex = Int.random(in: 0..<functions.count)
