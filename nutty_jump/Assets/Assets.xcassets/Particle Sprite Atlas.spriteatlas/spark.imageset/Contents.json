@@ -1,17 +1,15 @@
 {
   "images" : [
     {
-      "filename" : "Frame 2444.png",
+      "filename" : "spark.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "Frame 2444@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "Frame 2444@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

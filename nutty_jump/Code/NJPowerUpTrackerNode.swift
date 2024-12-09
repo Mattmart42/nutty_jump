@@ -47,7 +47,7 @@ class NJPowerUpTrackerNode: SKNode {
             } else {
                 // Keep remaining nodes with the default texture and visible
                 node.texture = defaultCollectible.texture
-                node.size = collectibleType.size(for: info)
+                node.size = info.obstacleSize
                 node.isHidden = false
             }
         }

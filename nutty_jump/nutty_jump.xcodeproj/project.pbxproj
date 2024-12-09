@@ -44,6 +44,9 @@
 		C9A3BE612CE98274006E3E60 /* NJFoxBranchNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A3BE602CE98274006E3E60 /* NJFoxBranchNode.swift */; };
 		C9A8F04F2CE80469007602A2 /* NJNutNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A8F04E2CE80469007602A2 /* NJNutNode.swift */; };
 		C9C6D8822CFBC86800FD737D /* NJHawkState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C6D8812CFBC86300FD737D /* NJHawkState.swift */; };
+		C9D78BAF2D06581400110AC7 /* NJPlayerTrail.sks in Resources */ = {isa = PBXBuildFile; fileRef = C9D78BAE2D06581400110AC7 /* NJPlayerTrail.sks */; };
+		C9D78BB12D0660A500110AC7 /* NJEnemyDeath.sks in Resources */ = {isa = PBXBuildFile; fileRef = C9D78BB02D0660A500110AC7 /* NJEnemyDeath.sks */; };
+		C9D78BB32D066F3B00110AC7 /* NJBombExplosion.sks in Resources */ = {isa = PBXBuildFile; fileRef = C9D78BB22D066F3B00110AC7 /* NJBombExplosion.sks */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -104,6 +107,9 @@
 		C9A3BE602CE98274006E3E60 /* NJFoxBranchNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NJFoxBranchNode.swift; path = Code/NJFoxBranchNode.swift; sourceTree = SOURCE_ROOT; };
 		C9A8F04E2CE80469007602A2 /* NJNutNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NJNutNode.swift; path = Code/NJNutNode.swift; sourceTree = SOURCE_ROOT; };
 		C9C6D8812CFBC86300FD737D /* NJHawkState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NJHawkState.swift; sourceTree = "<group>"; };
+		C9D78BAE2D06581400110AC7 /* NJPlayerTrail.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = NJPlayerTrail.sks; sourceTree = "<group>"; };
+		C9D78BB02D0660A500110AC7 /* NJEnemyDeath.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = NJEnemyDeath.sks; sourceTree = "<group>"; };
+		C9D78BB22D066F3B00110AC7 /* NJBombExplosion.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = NJBombExplosion.sks; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -190,6 +196,9 @@
 			isa = PBXGroup;
 			children = (
 				C9641A3A2CC8602300A998FE /* Assets.xcassets */,
+				C9D78BAE2D06581400110AC7 /* NJPlayerTrail.sks */,
+				C9D78BB02D0660A500110AC7 /* NJEnemyDeath.sks */,
+				C9D78BB22D066F3B00110AC7 /* NJBombExplosion.sks */,
 			);
 			path = Assets;
 			sourceTree = "<group>";
@@ -414,8 +423,11 @@
 				C9A1E5BE2CFAD492008E78F6 /* PPNeueMontreal-SemiBold.ttf in Resources */,
 				C9A1E5BF2CFAD492008E78F6 /* PPNeueMontreal-Book.otf in Resources */,
 				C9A1E5C02CFAD492008E78F6 /* PPNeueMontreal-Italic.otf in Resources */,
+				C9D78BB32D066F3B00110AC7 /* NJBombExplosion.sks in Resources */,
 				C9A1E5C12CFAD492008E78F6 /* PPNeueMontreal-Thin.otf in Resources */,
+				C9D78BB12D0660A500110AC7 /* NJEnemyDeath.sks in Resources */,
 				C9641A412CC8602300A998FE /* Assets.xcassets in Resources */,
+				C9D78BAF2D06581400110AC7 /* NJPlayerTrail.sks in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

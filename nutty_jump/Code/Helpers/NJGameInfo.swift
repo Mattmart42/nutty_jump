@@ -33,7 +33,7 @@ struct NJGameInfo {
     
     
     var scrollSpeed: CGFloat { return 10.0 * gameSpeed }
-    var backgroundScrollSpeed: CGFloat { return 2.0 * gameSpeed }
+    var backgroundScrollSpeed: CGFloat { return 0.8 * gameSpeed }
     var obstacleSpawnRate: CGFloat { return 2.0 }
     var nutSpawnRate: CGFloat { return 7.0 }
     
@@ -58,6 +58,9 @@ struct NJGameInfo {
     
     let wallWidth = 40.0
     let obstacleXPos = 50.0
+    let fruitXPos = 65.0
+    let nutXPos = 60.0
+    var playerYPos: CGFloat { return screenHeight / 2.0 - (screenHeight * (100/852)) }
     
     var fruitSize: CGSize { CGSize(width: 40.0 * uniformScale, height: 50.0 * uniformScale) }
     var foxSize: CGSize { CGSize(width: 76.98 * uniformScale, height: 50.0 * uniformScale) }

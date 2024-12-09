@@ -26,7 +26,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     
     init(context: NJGameContext, size: CGSize, info: NJGameInfo) {
         self.info = NJGameInfo(screenSize: size)
-        self.leftWallPlayerPos = CGPoint(x: info.obstacleXPos, y: size.height / 2.0 - (size.height * (100/852)))
+        self.leftWallPlayerPos = CGPoint(x: info.obstacleXPos, y: info.playerYPos)
         self.rightWallPlayerPos = CGPoint(x: size.width - info.obstacleXPos, y: size.height / 2.0 - (size.height * (100/852)))
         self.context = context
         super.init(size: size)
@@ -143,6 +143,57 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         player.zPosition = info.playerZPos
         addChild(player)
         self.player = player
+        addTrailToPlayer(player: player)
+    }
+    
+    func addTrailToPlayer(player: SKSpriteNode) {
+        if let trail = SKEmitterNode(fileNamed: "NJPlayerTrail") {
+            trail.targetNode = scene // Ensure particles remain in the scene
+            trail.position = CGPoint(x: 0, y: 0) // Position at the bottom
+            player.addChild(trail)
+        }
+    }
+    
+    func handleEnemyHit(enemy: SKNode, at position: CGPoint) {
+        if enemy is NJBombNode {
+            if let poof = SKEmitterNode(fileNamed: "NJEnemyDeath") {
+                poof.position = position
+                addChild(poof)
+                print(enemy is NJBombNode)
+                
+                let stopEmission = SKAction.run { poof.particleBirthRate = 0 }
+                let waitBeforeStop = SKAction.wait(forDuration: 0.05) // Adjust duration as needed
+                let removeEmitter = SKAction.sequence([
+                    SKAction.wait(forDuration: TimeInterval(poof.particleLifetime)),
+                    SKAction.removeFromParent()
+                ])
+                
+                poof.run(SKAction.sequence([waitBeforeStop, stopEmission]))
+                poof.run(removeEmitter)
+            }
+        } else {
+            if let poof = SKEmitterNode(fileNamed: "NJEnemyDeath") {
+                poof.position = position
+                addChild(poof)
+                print(enemy is NJBombNode)
+                
+                let stopEmission = SKAction.run { poof.particleBirthRate = 0 }
+                let waitBeforeStop = SKAction.wait(forDuration: 0.05) // Adjust duration as needed
+                let removeEmitter = SKAction.sequence([
+                    SKAction.wait(forDuration: TimeInterval(poof.particleLifetime)),
+                    SKAction.removeFromParent()
+                ])
+                
+                poof.run(SKAction.sequence([waitBeforeStop, stopEmission]))
+                poof.run(removeEmitter)
+            }
+        }
+        let scale = SKAction.scale(to: 0.0, duration: 0.5)
+        let fade = SKAction.fadeOut(withDuration: 0.5)
+        let group = SKAction.group([scale, fade])
+        let remove = SKAction.removeFromParent()
+        enemy.run(SKAction.sequence([group, remove]))
+        enemy.removeFromParent()
     }
     
     func prepareGameContext() {
@@ -283,7 +334,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         
         let spawnNutAction = SKAction.run {
             if !(self.info.playerIsProtected) {
-                self.spawnNut(obstacleSize: self.info.obstacleSize, yPos: self.size.height + (self.size.height * (50 / 852)))
+                self.spawnNut(obstacleSize: self.info.nutSize, yPos: self.size.height + (self.size.height * (50 / 852)))
             }
         }
         let delayNut = SKAction.wait(forDuration: info.nutSpawnRate)
@@ -337,7 +388,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     
     
     func spawnFruit(obstacleSize: CGSize, yPos: CGFloat) {
-        let xPos: CGFloat = Bool.random() ? info.obstacleXPos : size.width - info.obstacleXPos
+        let xPos: CGFloat = Bool.random() ? info.fruitXPos : size.width - info.fruitXPos
         
         let fruitTextures = fruitAtlas.textureNames.map { fruitAtlas.textureNamed($0) }
         let randomTexture = fruitTextures.randomElement() ?? fruitTextures[0]
@@ -361,12 +412,12 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     func spawnHawk(obstacleSize: CGSize, yPos: CGFloat) {
         guard let player else { return }
         let xPos: CGFloat = Bool.random() ? info.obstacleXPos : size.width - info.obstacleXPos
-        let targetPos = CGPoint(x: xPos == info.obstacleXPos ? size.width - info.obstacleXPos : info.obstacleXPos, y: player.position.y)
+        let targetPos = CGPoint(x: xPos == info.obstacleXPos ? size.width - info.obstacleXPos : info.obstacleXPos, y: info.playerYPos)
         let moveAction = SKAction.move(to: targetPos, duration: size.width / info.hawkSpeed)
         
         let isMovingLeftToRight = xPos == info.obstacleXPos
         // Define the center of the invisible circle
-        let circleCenter = CGPoint(x: size.width / 2, y: player.position.y)
+        let circleCenter = CGPoint(x: size.width / 2, y: info.playerYPos)
         let radius = abs(size.width / 2 - info.obstacleXPos)
         // Create the semi-circle path
         let circularPath = CGMutablePath()
@@ -375,13 +426,16 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         circularPath.addArc(center: circleCenter, radius: radius, startAngle: startAngle, endAngle: endAngle, clockwise: isMovingLeftToRight)
         let circularMotion = SKAction.follow(circularPath, asOffset: false, orientToPath: false, duration: 2.0)
         
+        let endTarget = CGPoint(x: xPos == info.obstacleXPos ? -50.0 : size.width + 50.0, y: info.playerYPos + 100.0)
+        let endAction = SKAction.move(to: endTarget, duration: 0.5)
+        
         let removeAction = SKAction.removeFromParent()
         
         
         let obstacle = xPos == info.obstacleXPos ? NJHawkNode(size: obstacleSize, position: CGPoint(x: xPos, y: yPos), texture: SKTexture(imageNamed: "hawkLeft")) : NJHawkNode(size: obstacleSize, position: CGPoint(x: xPos, y: yPos), texture: SKTexture(imageNamed: "hawkRight"))
         
         
-        obstacle.run(SKAction.sequence([moveAction, circularMotion, removeAction]))
+        obstacle.run(SKAction.sequence([moveAction, circularMotion, endAction, removeAction]))
         obstacle.zPosition = info.obstacleZPos
         addChild(obstacle)
     }
@@ -393,7 +447,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         
         let xPos: CGFloat = Bool.random() ? info.obstacleXPos : size.width - info.obstacleXPos
         
-        let distance = yPos - player.position.y
+        let distance = yPos - info.playerYPos
         
         let targetPos1 = CGPoint(x: xPos == info.obstacleXPos ? size.width - info.obstacleXPos : info.obstacleXPos, y: yPos - (distance / 2) - 10.0)
         let targetPos2 = CGPoint(x: xPos == info.obstacleXPos ?  info.obstacleXPos : size.width - info.obstacleXPos, y: yPos - distance - 10.0)
@@ -474,12 +528,14 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
 
     
     func spawnNut(obstacleSize: CGSize, yPos: CGFloat) {
-        let xPos: CGFloat = CGFloat.random(in: info.obstacleXPos...(size.width - info.obstacleXPos))
+        let xPos: CGFloat = Bool.random() ? info.nutXPos : size.width - info.nutXPos
         
         let obstacle = NJNutNode(size: obstacleSize, position: CGPoint(x: xPos, y: yPos), texture: SKTexture(imageNamed: "nut"))
         let targetPos = CGPoint(x: xPos, y: 0)
+        let distance = yPos - targetPos.y
+        let duration = distance / (info.scrollSpeed * info.fps)
         
-        let moveAction = SKAction.move(to: targetPos, duration: size.height / info.nutSpeed)
+        let moveAction = SKAction.move(to: targetPos, duration: duration)
         let removeAction = SKAction.removeFromParent()
         obstacle.run(SKAction.sequence([moveAction, removeAction]))
         
@@ -655,7 +711,8 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
                 return
             }
             if info.playerIsProtected {
-                branchNode?.removeFromParent()
+                guard let branchNode else { return }
+                handleEnemyHit(enemy: branchNode, at: branchNode.position)
                 info.playerIsProtected = false
                 getPlayerTextureAndSize()
                 return
@@ -680,7 +737,8 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
             } else if stateMachine.currentState is NJJumpingState {
                 print("player hit fruit while jumping")
                 let fruitNode = (contactA == NJPhysicsCategory.fruit) ? contact.bodyA.node : contact.bodyB.node
-                fruitNode?.removeFromParent()
+                guard let fruitNode else { return }
+                handleEnemyHit(enemy: fruitNode, at: fruitNode.position)
                 
                 info.hawksCollected = 0
                 info.foxesCollected = 0
@@ -700,7 +758,8 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
                 trackerNode.updatePowerUpDisplay(for: info.fruitsCollected, with: CollectibleType.fruit)
             } else if stateMachine.currentState is NJHawkState {
                 let fruitNode = (contactA == NJPhysicsCategory.fruit) ? contact.bodyA.node : contact.bodyB.node
-                fruitNode?.removeFromParent()
+                guard let fruitNode else { return }
+                handleEnemyHit(enemy: fruitNode, at: fruitNode.position)
             }
         }
         
@@ -718,7 +777,8 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
             } else if stateMachine.currentState is NJJumpingState {
                 print("player hit hawk while jumping")
                 let hawkNode = (contactA == NJPhysicsCategory.hawk) ? contact.bodyA.node : contact.bodyB.node
-                hawkNode?.removeFromParent()
+                guard let hawkNode else { return }
+                handleEnemyHit(enemy: hawkNode, at: hawkNode.position)
                 
                 info.fruitsCollected = 0
                 info.foxesCollected = 0
@@ -738,7 +798,8 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
                 trackerNode.updatePowerUpDisplay(for: info.hawksCollected, with: CollectibleType.hawk)
             } else if stateMachine.currentState is NJHawkState {
                 let hawkNode = (contactA == NJPhysicsCategory.hawk) ? contact.bodyA.node : contact.bodyB.node
-                hawkNode?.removeFromParent()
+                guard let hawkNode else { return }
+                handleEnemyHit(enemy: hawkNode, at: hawkNode.position)
             }
         }
         
@@ -756,7 +817,8 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
             } else if stateMachine.currentState is NJJumpingState {
                 print("player hit fox while jumping")
                 let foxNode = (contactA == NJPhysicsCategory.fox) ? contact.bodyA.node : contact.bodyB.node
-                foxNode?.removeFromParent()
+                guard let foxNode else { return }
+                handleEnemyHit(enemy: foxNode, at: foxNode.position)
                 
                 info.fruitsCollected = 0
                 info.hawksCollected = 0
@@ -776,7 +838,8 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
                 trackerNode.updatePowerUpDisplay(for: info.foxesCollected, with: CollectibleType.fox)
             } else if stateMachine.currentState is NJHawkState {
                 let foxNode = (contactA == NJPhysicsCategory.fox) ? contact.bodyA.node : contact.bodyB.node
-                foxNode?.removeFromParent()
+                guard let foxNode else { return }
+                handleEnemyHit(enemy: foxNode, at: foxNode.position)
             }
         }
         
@@ -796,15 +859,14 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         if (contactA == NJPhysicsCategory.player && contactB == NJPhysicsCategory.bomb) ||
             (contactA == NJPhysicsCategory.bomb && contactB == NJPhysicsCategory.player) {
             let bombNode = (contactA == NJPhysicsCategory.bomb) ? contact.bodyA.node : contact.bodyB.node
+            guard let bombNode else { return }
+            handleEnemyHit(enemy: bombNode, at: bombNode.position)
             if stateMachine.currentState is NJHawkState {
-                bombNode?.removeFromParent()
                 return
             }
             if info.playerIsProtected {
                 info.playerIsProtected = false
                 getPlayerTextureAndSize()
-                
-                bombNode?.removeFromParent()
                 return
             }
             print("player hit bomb")
@@ -901,7 +963,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         let randomTexture = fruitTextures.randomElement() ?? fruitTextures[0]
         
         
-        let fruit = NJFruitShootNode(size: info.obstacleSize, position: CGPoint(x: player.position.x, y: player.position.y + info.obstacleSize.height + info.fruitSize.height), texture: randomTexture)
+        let fruit = NJFruitShootNode(size: info.obstacleSize, position: CGPoint(x: player.position.x, y: info.playerYPos + info.obstacleSize.height + info.fruitSize.height), texture: randomTexture)
         
         
         let targetPos = CGPoint(x: player.position.x, y: size.height + info.obstacleSize.height)

@@ -32,7 +32,7 @@ class NJGameIdleState: GKState {
         guard let scene, let context else { return }
         scene.removeIdleUI()
         scene.physicsWorld.contactDelegate = context.gameScene
-        let delayAction = SKAction.wait(forDuration: 5.0) // Delay of 5 seconds
+        let delayAction = SKAction.wait(forDuration: 2.0) // Delay of 5 seconds
         let runObstaclesAction = SKAction.run { [weak scene] in
             scene?.runObstacles() // Run obstacles after the delay
         }
