@@ -209,14 +209,20 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         titleNode.name = "titleNode"
         titleNode.zPosition = info.titleZPos
         addChild(titleNode)
-        let text = SKLabelNode(text: "TAP TO START")
+        let text = SKLabelNode(text: "tap to start")
         text.name = "startText"
-        text.fontColor = .black
+        text.fontColor = .white
         text.fontSize = 20
         text.fontName = "PPNeueMontreal-SemiBolditalic"
         text.position = CGPoint(x: size.width / 2, y: 80)
         text.zPosition = info.titleZPos
         addChild(text)
+        
+        // flashing message
+        let fadeOut = SKAction.fadeAlpha(to: 0.2, duration: 0.8)
+        let fadeIn = SKAction.fadeAlpha(to: 1.0, duration: 0.8)
+        let flashing = SKAction.sequence([fadeOut, fadeIn])
+        text.run(SKAction.repeatForever(flashing))
     }
 
     func removeIdleUI() {
