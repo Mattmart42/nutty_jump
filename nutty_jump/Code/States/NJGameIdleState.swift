@@ -25,12 +25,12 @@ class NJGameIdleState: GKState {
         print("did enter idle state")
         guard let scene else { return }
         scene.physicsWorld.contactDelegate = nil
-        scene.setupIdleUI()
+        setupIdleUI()
     }
     
     override func willExit(to nextState: GKState) {
         guard let scene, let context else { return }
-        scene.removeIdleUI()
+        removeIdleUI()
         scene.physicsWorld.contactDelegate = context.gameScene
         let delayAction = SKAction.wait(forDuration: 2.0) // Delay of 5 seconds
         let runObstaclesAction = SKAction.run { [weak scene] in
@@ -42,6 +42,30 @@ class NJGameIdleState: GKState {
         
         // Run the combined action on the scene
         scene.run(sequence)
+    }
+    
+    func setupIdleUI() {
+        guard let scene else { return }
+        
+        let titleNode = NJTitleNode(size: CGSize(width: 393, height: 617), position: CGPoint(x: scene.size.width / 2, y: scene.size.height / 2), texture: SKTexture(imageNamed: "titleScreen"))
+        titleNode.name = "titleNode"
+        titleNode.zPosition = scene.info.titleZPos
+        scene.addChild(titleNode)
+        let text = SKLabelNode(text: "TAP TO START")
+        text.name = "startText"
+        text.fontColor = .black
+        text.fontSize = 20
+        text.fontName = "PPNeueMontreal-SemiBolditalic"
+        text.position = CGPoint(x: scene.size.width / 2, y: 80)
+        text.zPosition = scene.info.titleZPos
+        scene.addChild(text)
+    }
+
+    func removeIdleUI() {
+        guard let scene else { return }
+        
+        scene.childNode(withName: "titleNode")?.removeFromParent()
+        scene.childNode(withName: "startText")?.removeFromParent()
     }
     
 //    func handleTouch(_ touch: UITouch) {
