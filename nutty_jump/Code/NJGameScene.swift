@@ -203,6 +203,32 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         context.updateLayoutInfo(withScreenSize: size)
         context.configureStates()
     }
+
+    func setupIdleUI() {
+        let titleNode = NJTitleNode(size: CGSize(width: 393, height: 617), position: CGPoint(x: size.width / 2, y: size.height / 2), texture: SKTexture(imageNamed: "titleScreen"))
+        titleNode.name = "titleNode"
+        titleNode.zPosition = info.titleZPos
+        addChild(titleNode)
+        let text = SKLabelNode(text: "tap to start")
+        text.name = "startText"
+        text.fontColor = .white
+        text.fontSize = 20
+        text.fontName = "PPNeueMontreal-SemiBolditalic"
+        text.position = CGPoint(x: size.width / 2, y: 80)
+        text.zPosition = info.titleZPos
+        addChild(text)
+        
+        // flashing message
+        let fadeOut = SKAction.fadeAlpha(to: 0.2, duration: 0.8)
+        let fadeIn = SKAction.fadeAlpha(to: 1.0, duration: 0.8)
+        let flashing = SKAction.sequence([fadeOut, fadeIn])
+        text.run(SKAction.repeatForever(flashing))
+    }
+
+    func removeIdleUI() {
+        childNode(withName: "titleNode")?.removeFromParent()
+        childNode(withName: "startText")?.removeFromParent()
+    }
     
     func displayPowerUpText(type: String) {
         var text = SKLabelNode()
@@ -322,8 +348,8 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
             { self.spawnFruit(obstacleSize: self.info.fruitSize, yPos: obstacleYPos) },
             { self.spawnHawk(obstacleSize: self.info.hawkSize, yPos: obstacleYPos) },
             { self.spawnFox(obstacleSize: self.info.foxSize, yPos: obstacleYPos) },
-            { self.spawnBranch(obstacleSize: self.info.branchSize, yPos: obstacleYPos) },
-            { self.spawnBomb(obstacleSize: obstacleSize, yPos: obstacleYPos) }
+            { self.spawnBranch(obstacleSize: self.info.branchSize, yPos: obstacleYPos) }
+//            { self.spawnBomb(obstacleSize: obstacleSize, yPos: obstacleYPos) }
         ]
             
         let randomIndex = Int.random(in: 0..<functions.count)
