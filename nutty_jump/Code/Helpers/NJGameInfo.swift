@@ -39,8 +39,9 @@ struct NJGameInfo {
     
     var fruitSpeed: CGFloat { return 700.0 * gameSpeed }
     var hawkSpeed: CGFloat { return 500.0 * gameSpeed }
-    var foxSpeed1: CGFloat { return 700.0 * gameSpeed }
+    var foxSpeed1: CGFloat { return 840.0 * gameSpeed }
     var foxSpeed2: CGFloat { return 800.0 * gameSpeed }
+    var foxStep: CGFloat { return screenHeight / 1.5 }
     var nutSpeed: CGFloat { return 900.0 * gameSpeed }
     var bombSpeed: CGFloat { return 900.0 * gameSpeed }
     var jumpDuration: CGFloat { return 0.3 - gameSpeed / 10 }

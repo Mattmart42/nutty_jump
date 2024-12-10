@@ -425,8 +425,6 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func spawnFox(obstacleSize: CGSize, yPos: CGFloat) {
-        guard let player else { return }
-        
         spawnFoxBranch(obstacleSize: obstacleSize, yPos: yPos)
         
         let xPos: CGFloat = Bool.random() ? info.obstacleXPos : size.width - info.obstacleXPos
@@ -437,45 +435,43 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         let targetPos2 = CGPoint(x: xPos == info.obstacleXPos ?  info.obstacleXPos : size.width - info.obstacleXPos, y: yPos - distance - 10.0)
         let obstacle = NJFoxNode(size: obstacleSize, position: CGPoint(x: xPos, y: yPos + info.branchHeight), texture: SKTexture(imageNamed: "foxRight1"))
         
-        let foxTextures1 = xPos == info.obstacleXPos ? [
-            SKTexture(imageNamed: "foxLeft1"),
-            SKTexture(imageNamed: "foxLeft2"),
-            SKTexture(imageNamed: "foxLeft3")
-        ] : [
-            SKTexture(imageNamed: "foxRight1"),
-            SKTexture(imageNamed: "foxRight2"),
-            SKTexture(imageNamed: "foxRight3")
-        ]
-        let foxTextures2 = xPos == info.obstacleXPos ? [
-            SKTexture(imageNamed: "foxRight1"),
-            SKTexture(imageNamed: "foxRight2"),
-            SKTexture(imageNamed: "foxRight3")
-        ] : [
-            SKTexture(imageNamed: "foxLeft1"),
-             SKTexture(imageNamed: "foxLeft2"),
-             SKTexture(imageNamed: "foxLeft3")
-        ]
         
-        let animateAction1 = SKAction.animate(with: foxTextures1, timePerFrame: 0.1, resize: false, restore: true)
-        let repeatAnimation1 = SKAction.repeatForever(animateAction1)
-        obstacle.run(repeatAnimation1)
         
-        let animateAction2 = SKAction.animate(with: foxTextures2, timePerFrame: 0.1, resize: false, restore: true)
-        let repeatAnimation2 = SKAction.repeatForever(animateAction2)
-        obstacle.run(repeatAnimation2)
-        
-        let moveAction1 = SKAction.move(to: targetPos1, duration: size.width / info.foxSpeed1)
-        let moveAction2 = SKAction.move(to: targetPos2, duration: size.width / info.foxSpeed2)
-        let removeAction = SKAction.removeFromParent()
-        
-        let group1 = SKAction.group([moveAction1, animateAction1])
-        let group2 = SKAction.group([moveAction2, animateAction2])
-        
-        let sequence = SKAction.sequence([group1, group2, removeAction])
-        obstacle.run(sequence)
+        moveFoxDown(obstacle, startPos: CGPoint(x: xPos, y: yPos + info.branchHeight), distance: info.foxStep)
         
         obstacle.zPosition = info.obstacleZPos
         addChild(obstacle)
+    }
+    
+    func moveFoxDown(_ obstacle: NJFoxNode, startPos: CGPoint, distance: CGFloat) {
+        let isMovingRight = startPos.x == info.obstacleXPos
+        
+        obstacle.xScale = isMovingRight ? 1.0 : -1.0
+        
+        
+        
+        if obstacle.action(forKey: "foxAnimation") == nil {
+            let foxTextures = [
+                SKTexture(imageNamed: "foxLeft1"),
+                SKTexture(imageNamed: "foxLeft2"),
+                SKTexture(imageNamed: "foxLeft3")
+            ]
+            let animationAction = SKAction.animate(with: foxTextures, timePerFrame: 0.1)
+            let repeatAnimation = SKAction.repeatForever(animationAction)
+            obstacle.run(repeatAnimation, withKey: "foxAnimation")
+        }
+        
+        let targetPos = CGPoint(x: isMovingRight ? size.width - info.obstacleXPos : info.obstacleXPos, y: startPos.y - (distance / 2))
+        
+        let moveAction = SKAction.move(to: targetPos, duration: size.width / info.foxSpeed1)
+        
+        obstacle.run(moveAction) {
+            if targetPos.y > 0 { // Check if not reached the bottom
+                self.moveFoxDown(obstacle, startPos: targetPos, distance: distance)
+            } else {
+                obstacle.removeFromParent() // Remove once it hits the bottom
+            }
+        }
     }
     
     func spawnFoxBranch(obstacleSize: CGSize, yPos: CGFloat) {
