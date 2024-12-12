@@ -25,11 +25,21 @@ class NJGameIdleState: GKState {
         print("did enter idle state")
         guard let scene else { return }
         scene.physicsWorld.contactDelegate = nil
+        
+        scene.player?.isHidden = true
+        scene.scoreNode.isHidden = true
+        scene.trackerNode.isHidden = true
+        scene.equationNode.isHidden = true
         setupIdleUI()
     }
     
     override func willExit(to nextState: GKState) {
-        guard let scene, let context else { return }
+        guard let scene, let context, let player = scene.player else { return }
+        scene.player?.isHidden = false
+        scene.addTrailToPlayer(player: player)
+        scene.scoreNode.isHidden = false
+        scene.trackerNode.isHidden = false
+        scene.equationNode.isHidden = false
         removeIdleUI()
         scene.physicsWorld.contactDelegate = context.gameScene
         let delayAction = SKAction.wait(forDuration: 2.0) // Delay of 5 seconds
@@ -51,14 +61,19 @@ class NJGameIdleState: GKState {
         titleNode.name = "titleNode"
         titleNode.zPosition = scene.info.titleZPos
         scene.addChild(titleNode)
-        let text = SKLabelNode(text: "TAP TO START")
+        let text = SKLabelNode(text: "tap to start")
         text.name = "startText"
-        text.fontColor = .black
+        text.fontColor = .white
         text.fontSize = 20
         text.fontName = "PPNeueMontreal-SemiBolditalic"
         text.position = CGPoint(x: scene.size.width / 2, y: 80)
         text.zPosition = scene.info.titleZPos
         scene.addChild(text)
+        
+        let fadeOut = SKAction.fadeAlpha(to: 0.2, duration: 0.8)
+        let fadeIn = SKAction.fadeAlpha(to: 1.0, duration: 0.8)
+        let flashing = SKAction.sequence([fadeOut, fadeIn])
+        text.run(SKAction.repeatForever(flashing))
     }
 
     func removeIdleUI() {

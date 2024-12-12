@@ -46,7 +46,6 @@ class NJGameContext: GameContext {
     func resetGameContext() {
         gameInfo = NJGameInfo(screenSize: UIScreen.main.bounds.size)
         layoutInfo = NJLayoutInfo(screenSize: layoutInfo.screenSize)
-        stateMachine?.enter(NJGameIdleState.self) // Reset to idle state
     }
 }
 

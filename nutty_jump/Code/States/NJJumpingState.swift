@@ -25,6 +25,6 @@ class NJJumpingState: GKState {
         guard let scene else { return }
         print("did enter jumping state")
         
-        scene.getPlayerTextureAndSize()
+        scene.animatePlayerBasedOnState()
     }
 }

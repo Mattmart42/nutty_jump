@@ -47,6 +47,8 @@
 		C9D78BAF2D06581400110AC7 /* NJPlayerTrail.sks in Resources */ = {isa = PBXBuildFile; fileRef = C9D78BAE2D06581400110AC7 /* NJPlayerTrail.sks */; };
 		C9D78BB12D0660A500110AC7 /* NJEnemyDeath.sks in Resources */ = {isa = PBXBuildFile; fileRef = C9D78BB02D0660A500110AC7 /* NJEnemyDeath.sks */; };
 		C9D78BB32D066F3B00110AC7 /* NJBombExplosion.sks in Resources */ = {isa = PBXBuildFile; fileRef = C9D78BB22D066F3B00110AC7 /* NJBombExplosion.sks */; };
+		C9F23EA82D0A5C0700A59BB5 /* NJNutParticle.sks in Resources */ = {isa = PBXBuildFile; fileRef = C9F23EA72D0A5C0700A59BB5 /* NJNutParticle.sks */; };
+		C9F23EAA2D0A5DC900A59BB5 /* NJNutCollection.sks in Resources */ = {isa = PBXBuildFile; fileRef = C9F23EA92D0A5DC900A59BB5 /* NJNutCollection.sks */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -110,6 +112,8 @@
 		C9D78BAE2D06581400110AC7 /* NJPlayerTrail.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = NJPlayerTrail.sks; sourceTree = "<group>"; };
 		C9D78BB02D0660A500110AC7 /* NJEnemyDeath.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = NJEnemyDeath.sks; sourceTree = "<group>"; };
 		C9D78BB22D066F3B00110AC7 /* NJBombExplosion.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = NJBombExplosion.sks; sourceTree = "<group>"; };
+		C9F23EA72D0A5C0700A59BB5 /* NJNutParticle.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = NJNutParticle.sks; sourceTree = "<group>"; };
+		C9F23EA92D0A5DC900A59BB5 /* NJNutCollection.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = NJNutCollection.sks; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -198,6 +202,8 @@
 				C9641A3A2CC8602300A998FE /* Assets.xcassets */,
 				C9D78BAE2D06581400110AC7 /* NJPlayerTrail.sks */,
 				C9D78BB02D0660A500110AC7 /* NJEnemyDeath.sks */,
+				C9F23EA72D0A5C0700A59BB5 /* NJNutParticle.sks */,
+				C9F23EA92D0A5DC900A59BB5 /* NJNutCollection.sks */,
 				C9D78BB22D066F3B00110AC7 /* NJBombExplosion.sks */,
 			);
 			path = Assets;
@@ -419,11 +425,13 @@
 			files = (
 				C9A1E5BB2CFAD492008E78F6 /* PPNeueMontreal-SemiBolditalic.otf in Resources */,
 				C9A1E5BC2CFAD492008E78F6 /* PPNeueMontreal-Bold.otf in Resources */,
+				C9F23EA82D0A5C0700A59BB5 /* NJNutParticle.sks in Resources */,
 				C9A1E5BD2CFAD492008E78F6 /* PPNeueMontreal-Medium.otf in Resources */,
 				C9A1E5BE2CFAD492008E78F6 /* PPNeueMontreal-SemiBold.ttf in Resources */,
 				C9A1E5BF2CFAD492008E78F6 /* PPNeueMontreal-Book.otf in Resources */,
 				C9A1E5C02CFAD492008E78F6 /* PPNeueMontreal-Italic.otf in Resources */,
 				C9D78BB32D066F3B00110AC7 /* NJBombExplosion.sks in Resources */,
+				C9F23EAA2D0A5DC900A59BB5 /* NJNutCollection.sks in Resources */,
 				C9A1E5C12CFAD492008E78F6 /* PPNeueMontreal-Thin.otf in Resources */,
 				C9D78BB12D0660A500110AC7 /* NJEnemyDeath.sks in Resources */,
 				C9641A412CC8602300A998FE /* Assets.xcassets in Resources */,

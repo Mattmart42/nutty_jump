@@ -30,13 +30,14 @@ class NJGameOverState: GKState {
     }
     
     override func willExit(to nextState: GKState) {
-        scene?.childNode(withName: "GameOverLabel")?.removeFromParent()
-        scene?.childNode(withName: "RestartButton")?.removeFromParent()
+        guard let scene else { return }
+        scene.removeAllChildren()
+        scene.removeAllActions()
     }
     
     func setupGameOverUI() {
         guard let scene else { return }
-        let titleNode = NJTitleNode(size: CGSize(width: scene.size.width - (scene.info.obstacleXPos * 2), height: 80), position: CGPoint(x: scene.size.width / 2, y: scene.size.height / 2 + 100), texture: SKTexture(imageNamed: "gameOver"))
+        let titleNode = NJTitleNode(size: CGSize(width: scene.size.width - (scene.info.playerXPosLeft * 2), height: 80), position: CGPoint(x: scene.size.width / 2, y: scene.size.height / 2 + 100), texture: SKTexture(imageNamed: "gameOver"))
         titleNode.name = "gameOver"
         scene.addChild(titleNode)
 
@@ -56,12 +57,14 @@ class NJGameOverState: GKState {
         scoreValue.position = CGPoint(x: scene.size.width / 2, y: scene.size.height / 2 - 50)
         scene.addChild(scoreValue)
         
-        let restartButton = SKLabelNode(text: "Restart")
-        restartButton.name = "RestartButton"
-        scoreValue.fontName = "PPNeueMontreal-Bold"
-        restartButton.fontSize = 36
-        restartButton.fontColor = .black
-        restartButton.position = CGPoint(x: scene.size.width / 2, y: scene.size.height / 2 - 100)
-        scene.addChild(restartButton)
+        let continueButton = SKLabelNode(text: "Continue")
+        continueButton.name = "ContinueButton"
+        continueButton.fontName = "PPNeueMontreal-Bold"
+        continueButton.fontSize = 36
+        continueButton.fontColor = .black
+        continueButton.position = CGPoint(x: scene.size.width / 2, y: scene.size.height / 2 - 100)
+        scene.addChild(continueButton)
     }
+    
+    
 }

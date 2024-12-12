@@ -25,6 +25,6 @@ class NJRunningState: GKState {
         guard let scene else { return }
         print("did enter running state")
         
-        scene.getPlayerTextureAndSize()
+        scene.animatePlayerBasedOnState()
     }
 }
