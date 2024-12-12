@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "blueberry.png",
+      "filename" : "Frame 2492.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "blueberry@2x.png",
+      "filename" : "Frame 2492@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "blueberry@3x.png",
+      "filename" : "Frame 2492@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

@@ -29,15 +29,15 @@ class NJGameOverState: GKState {
         scene.isPaused = true
     }
     
-    override func willExit(to nextState: GKState) {
-        guard let scene else { return }
-        scene.removeAllChildren()
-        scene.removeAllActions()
-    }
+//    override func willExit(to nextState: GKState) {
+//        guard let scene else { return }
+//        scene.removeAllChildren()
+//        scene.removeAllActions()
+//    }
     
     func setupGameOverUI() {
         guard let scene else { return }
-        let titleNode = NJTitleNode(size: CGSize(width: scene.size.width - (scene.info.playerXPosLeft * 2), height: 80), position: CGPoint(x: scene.size.width / 2, y: scene.size.height / 2 + 100), texture: SKTexture(imageNamed: "gameOver"))
+        let titleNode = NJTitleNode(size: scene.info.gameOverSize, position: CGPoint(x: scene.size.width / 2, y: scene.size.height / 2 + 100), texture: SKTexture(imageNamed: "gameOver"))
         titleNode.name = "gameOver"
         scene.addChild(titleNode)
 
@@ -62,7 +62,7 @@ class NJGameOverState: GKState {
         continueButton.fontName = "PPNeueMontreal-Bold"
         continueButton.fontSize = 36
         continueButton.fontColor = .black
-        continueButton.position = CGPoint(x: scene.size.width / 2, y: scene.size.height / 2 - 100)
+        continueButton.position = CGPoint(x: scene.size.width / 2, y: 200)
         scene.addChild(continueButton)
     }
     

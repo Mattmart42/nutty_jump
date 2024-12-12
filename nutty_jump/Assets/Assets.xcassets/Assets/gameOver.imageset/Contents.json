@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Game Over.png",
+      "filename" : "Frame 2493.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "Game Over@2x.png",
+      "filename" : "Frame 2493@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "Game Over@3x.png",
+      "filename" : "Frame 2493@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

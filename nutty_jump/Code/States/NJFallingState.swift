@@ -29,7 +29,7 @@ class NJFallingState: GKState {
         let moveAction = SKAction.move(to: targetPos, duration: 0.2)
         let rotateAction = SKAction.rotate(byAngle: 90.0, duration: 7.0)
         player.toggleGravity()
-        player.texture = scene.info.flyR
+        player.texture = SKTexture(imageNamed: "flyR")
         player.size = scene.info.playerFlightSize
         player.run(SKAction.sequence([moveAction]))
         player.run(SKAction.sequence([rotateAction]))
@@ -38,6 +38,16 @@ class NJFallingState: GKState {
             .forEach { wallNode in wallNode.position.y += scene.info.scrollSpeed
                 if wallNode.position.y >= wallNode.size.height / 2 {
                     wallNode.position.y += wallNode.size.height * 2
+                }
+            }
+        scene.children
+            .compactMap { $0 as? NJFoxBranchNode }
+            .forEach { branch in
+                if branch.action(forKey: "moveFoxBranch") != nil {
+                    branch.removeAction(forKey: "moveFoxBranch")
+                    print("Removed 'moveFoxBranch' action from branch at \(branch.position)")
+                } else {
+                    print("No 'moveFoxBranch' action found for branch at \(branch.position)")
                 }
             }
     }
