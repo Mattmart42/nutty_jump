@@ -276,7 +276,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
             SKAction.sequence([
                 SKAction.run { [weak self] in
                     guard let self else { return }
-                    info.gameSpeed += 0.025
+                    info.gameSpeed += 0.03
                 },
                 SKAction.wait(forDuration: 4.0)
             ])
