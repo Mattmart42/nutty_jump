@@ -590,7 +590,11 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         guard let stateMachine = context?.stateMachine,
               let currentState = stateMachine.currentState,
               let player else { return }
-        
+        if currentState is NJFallingState {
+            player.size = info.playerFlightSize
+            player.texture = SKTexture(imageNamed: "flyFall")
+            return
+        }
         let atlasName: String
         let textures: [SKTexture]
         let size: CGSize
@@ -1036,6 +1040,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
             self.info.playerIsInvincible = false
             self.removePowerUpText()
             self.info.isPoweredUp = false
+            self.currentPlayerXPos = self.info.playerXPosRight
             stateMachine.enter(NJRunningState.self)
         }
     }
