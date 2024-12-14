@@ -6,10 +6,12 @@
 //
 
 import GameplayKit
+import AVFoundation
 
 class NJHawkState: GKState {
     weak var scene: NJGameScene?
     weak var context: NJGameContext?
+    private var audioPlayer: AVAudioPlayer?
     
     init(scene: NJGameScene, context: NJGameContext) {
         self.scene = scene
@@ -26,5 +28,20 @@ class NJHawkState: GKState {
         print("did enter hawk state")
         scene.info.playerIsInvincible = true
         scene.animatePlayerBasedOnState()
+        playHawkPowerup()
+    }
+    
+    private func playHawkPowerup() {
+        guard let hawkPowerupSoundURL = Bundle.main.url(forResource: "HawkPowerup", withExtension: "m4a") else {
+            print("Failed to find HawkPowerup.m4a")
+            return
+        }
+        
+        do {
+            audioPlayer = try AVAudioPlayer(contentsOf: hawkPowerupSoundURL)
+            audioPlayer?.play()
+        } catch {
+            print("Failed to play hawk powerup sound: \(error)")
+        }
     }
 }

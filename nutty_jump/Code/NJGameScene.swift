@@ -9,6 +9,7 @@ import SpriteKit
 import GameplayKit
 import CoreHaptics
 import AVFoundation
+import AudioToolbox
 
 class NJGameScene: SKScene, SKPhysicsContactDelegate {
     weak var context: NJGameContext?
@@ -736,6 +737,48 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
             print("Failed to play pinecone sound: \(error)")
         }
     }
+    
+    private func playAcorn() {
+        guard let acornSoundURL = Bundle.main.url(forResource: "Acorn", withExtension: "m4a") else {
+            print("Failed to find Acorn.m4a")
+            return
+        }
+        
+        do {
+            audioPlayer = try AVAudioPlayer(contentsOf: acornSoundURL)
+            audioPlayer?.play()
+        } catch {
+            print("Failed to play acorn sound: \(error)")
+        }
+    }
+    
+    private func playFruitShoot() {
+        guard let fruitShootSoundURL = Bundle.main.url(forResource: "FruitShoot", withExtension: "m4a") else {
+            print("Failed to find FruitShoot.m4a")
+            return
+        }
+        
+        do {
+            audioPlayer = try AVAudioPlayer(contentsOf: fruitShootSoundURL)
+            audioPlayer?.play()
+        } catch {
+            print("Failed to play fruit shoot sound: \(error)")
+        }
+    }
+    
+    private func playFoxPowerup() {
+        guard let foxPowerupSoundURL = Bundle.main.url(forResource: "FoxPowerup", withExtension: "mp3") else {
+            print("Failed to find FoxPowerup.mp3")
+            return
+        }
+        
+        do {
+            audioPlayer = try AVAudioPlayer(contentsOf: foxPowerupSoundURL)
+            audioPlayer?.play()
+        } catch {
+            print("Failed to play fox powerup sound: \(error)")
+        }
+    }
         
     // MARK: - Physics Contacts
     
@@ -918,6 +961,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         if (contactA == NJPhysicsCategory.player && contactB == NJPhysicsCategory.nut) ||
             (contactA == NJPhysicsCategory.nut && contactB == NJPhysicsCategory.player) {
             print("player hit nut")
+            playAcorn()
             let nutNode = (contactA == NJPhysicsCategory.nut) ? contact.bodyA.node : contact.bodyB.node
             guard let nutNode else { return }
             handleEnemyHit(enemy: nutNode, at: nutNode.position)
@@ -1004,6 +1048,8 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     func fruitPowerUp() {
         guard let player else { return }
         info.isPoweredUp = true
+        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+        playFruitShoot()
         
         print("Power-up activated: Shooting fruits!")
         displayPowerUpText(type: "fruit")
@@ -1069,6 +1115,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     func hawkPowerUp() {
         guard let stateMachine = context?.stateMachine, let player else { return }
         info.isPoweredUp = true
+        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
         displayPowerUpText(type: "hawk")
         stateMachine.enter(NJHawkState.self)
         
@@ -1099,6 +1146,8 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     func foxPowerUp() {
         displayPowerUpText(type: "fox")
         info.isPoweredUp = true
+        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+        playFoxPowerup()
         info.playerIsDisguised = true
         DispatchQueue.main.asyncAfter(deadline: .now() + info.foxDisguiseDuration) {
             self.info.playerIsDisguised = false
