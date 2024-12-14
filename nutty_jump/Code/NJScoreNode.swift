@@ -10,19 +10,22 @@ import SpriteKit
 class NJScoreNode: SKNode {
 
     private let textNode = SKLabelNode()
+    private let info: NJGameInfo
+    
+    override init() {
+        self.info = NJGameInfo(screenSize: UIScreen.main.bounds.size)
+        super.init()
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     func setup(screenSize: CGSize, score: Int, nodePosition: CGPoint) {
         position = nodePosition
 
-        let backgroundNode = SKShapeNode(
-            rect: CGRect(
-                origin: CGPoint(x: -(Constants.size.width / 2), y: -(Constants.size.height / 2)),
-                size: Constants.size
-            ),
-            cornerRadius: Constants.size.height / 2
-        )
-        backgroundNode.fillColor = .white
-        backgroundNode.strokeColor = UIColor(named: "1672c4") ?? .clear
+        let backgroundNode = SKSpriteNode(texture: SKTexture(imageNamed: "score"))
+        backgroundNode.size = info.scoreNodeSize
         addChild(backgroundNode)
         updateScore(with: score)
         textNode.verticalAlignmentMode = .center

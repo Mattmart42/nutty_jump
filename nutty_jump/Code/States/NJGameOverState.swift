@@ -25,6 +25,9 @@ class NJGameOverState: GKState {
         print("did enter game over state")
         guard let scene else { return }
         scene.physicsWorld.contactDelegate = nil
+        scene.scoreNode.removeFromParent()
+        scene.trackerNode.removeFromParent()
+        scene.equationNode.removeFromParent()
         setupGameOverUI()
         scene.isPaused = true
     }
@@ -37,17 +40,18 @@ class NJGameOverState: GKState {
     
     func setupGameOverUI() {
         guard let scene else { return }
-        let titleNode = NJTitleNode(size: scene.info.gameOverSize, position: CGPoint(x: scene.size.width / 2, y: scene.size.height / 2 + 100), texture: SKTexture(imageNamed: "gameOver"))
-        titleNode.name = "gameOver"
+        let titleNode = NJTitleNode(size: scene.info.gameOverScreenSize, position: scene.info.gameOverScreenPos, texture: SKTexture(imageNamed: "gameOverScreen"))
+        titleNode.name = "gameOverScreen"
+        titleNode.zPosition = scene.info.titleZPos
         scene.addChild(titleNode)
 
-        let scoreText = SKLabelNode(text: "SCORE:")
-        scoreText.name = "scoreText"
-        scoreText.fontName = "PPNeueMontreal-Italic"
-        scoreText.fontSize = 50
-        scoreText.fontColor = .black
-        scoreText.position = CGPoint(x: scene.size.width / 2, y: scene.size.height / 2)
-        scene.addChild(scoreText)
+//        let scoreText = SKLabelNode(text: "SCORE:")
+//        scoreText.name = "scoreText"
+//        scoreText.fontName = "PPNeueMontreal-Italic"
+//        scoreText.fontSize = 50
+//        scoreText.fontColor = .black
+//        scoreText.position = CGPoint(x: scene.size.width / 2, y: scene.size.height / 2)
+//        scene.addChild(scoreText)
         
         let scoreValue = SKLabelNode(text: "\(scene.info.score)")
         scoreValue.name = "scoreValue"
@@ -55,14 +59,12 @@ class NJGameOverState: GKState {
         scoreValue.fontSize = 50
         scoreValue.fontColor = .black
         scoreValue.position = CGPoint(x: scene.size.width / 2, y: scene.size.height / 2 - 50)
+        scoreValue.zPosition = scene.info.titleZPos
         scene.addChild(scoreValue)
         
-        let continueButton = SKLabelNode(text: "Continue")
+        let continueButton = NJTitleNode(size: scene.info.continueButtonSize, position: scene.info.continueButtonPos, texture: SKTexture(imageNamed: "continueButton"))
         continueButton.name = "ContinueButton"
-        continueButton.fontName = "PPNeueMontreal-Bold"
-        continueButton.fontSize = 36
-        continueButton.fontColor = .black
-        continueButton.position = CGPoint(x: scene.size.width / 2, y: 200)
+        continueButton.zPosition = scene.info.titleZPos
         scene.addChild(continueButton)
     }
     

@@ -57,16 +57,17 @@ class NJGameIdleState: GKState {
     func setupIdleUI() {
         guard let scene else { return }
         
-        let titleNode = NJTitleNode(size: CGSize(width: 393, height: 617), position: CGPoint(x: scene.size.width / 2, y: scene.size.height / 2), texture: SKTexture(imageNamed: "titleScreen"))
+        let titleNode = NJTitleNode(size: scene.info.titleScreenSize, position: CGPoint(x: scene.size.width / 2, y: scene.size.height / 2), texture: SKTexture(imageNamed: "titleScreen"))
         titleNode.name = "titleNode"
         titleNode.zPosition = scene.info.titleZPos
         scene.addChild(titleNode)
+        
         let text = SKLabelNode(text: "tap to start")
         text.name = "startText"
-        text.fontColor = .white
+        text.fontColor = .black
         text.fontSize = 20
         text.fontName = "PPNeueMontreal-SemiBolditalic"
-        text.position = CGPoint(x: scene.size.width / 2, y: 80)
+        text.position = scene.info.tapStartPos
         text.zPosition = scene.info.titleZPos
         scene.addChild(text)
         

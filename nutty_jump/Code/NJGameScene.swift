@@ -671,7 +671,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         } else if currentState is NJGameOverState {
             if let touch = touches.first {
                 let location = touch.location(in: self)
-                if let node = atPoint(location) as? SKLabelNode, node.name == "ContinueButton" {
+                if let node = atPoint(location) as? NJTitleNode, node.name == "ContinueButton" {
                     continueScreen()
                 }
                 else if let node = atPoint(location) as? SKLabelNode, node.name == "RestartButton" {
@@ -914,14 +914,18 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     func toggleShield(protect: Bool) {
         guard let player else { return }
         info.playerIsProtected = protect
-        if protect, let shield = SKEmitterNode(fileNamed: "NJNutCollection") {
+        if protect, let shield = SKEmitterNode(fileNamed: "NJNutParticle") {
             shield.name = "playerShield"
             shield.targetNode = scene // Ensure particles remain in the scene
             shield.position = CGPoint(x: 0, y: 0) // Position at the bottom
             player.addChild(shield)
+            let shieldNode = SKSpriteNode(texture: SKTexture(imageNamed: "shield"), size: info.shieldSize)
+            shieldNode.name = "playerShieldNode"
+            player.addChild(shieldNode)
             return
         }
         player.childNode(withName: "playerShield")?.removeFromParent()
+        player.childNode(withName: "playerShieldNode")?.removeFromParent()
     }
     
     func handleContactBetween(shoot: SKNode, target: SKNode) {
@@ -979,7 +983,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + info.fruitShootDuration) {
             self.info.fruitsCollected = 0
-            self.trackerNode.updatePowerUpDisplay(for: self.info.fruitsCollected, with: CollectibleType.fruit)
+            self.trackerNode.resetDisplay()
             self.removePowerUpText()
             player.childNode(withName: "pineconeShooter")?.removeFromParent()
             self.info.isFruitShoot = false
@@ -1028,7 +1032,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         player.run(SKAction.sequence([move1, move2, move3, move4, move5]))
         DispatchQueue.main.asyncAfter(deadline: .now() + info.hawkPULength) {
             self.info.hawksCollected = 0
-            self.trackerNode.updatePowerUpDisplay(for: self.info.hawksCollected, with: CollectibleType.hawk)
+            self.trackerNode.resetDisplay()
             self.info.playerIsInvincible = false
             self.removePowerUpText()
             self.info.isPoweredUp = false
@@ -1043,7 +1047,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         DispatchQueue.main.asyncAfter(deadline: .now() + info.foxDisguiseDuration) {
             self.info.playerIsDisguised = false
             self.info.foxesCollected = 0
-            self.trackerNode.updatePowerUpDisplay(for: self.info.fruitsCollected, with: CollectibleType.fruit)
+            self.trackerNode.resetDisplay()
             self.animatePlayerBasedOnState()
             self.removePowerUpText()
             self.info.isPoweredUp = false
@@ -1062,7 +1066,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         self.removeAllChildren()
         self.removeAllActions()
 
-        let titleNode = NJTitleNode(size: info.gameOverSize, position: CGPoint(x: size.width / 2, y: size.height / 2 + 100), texture: SKTexture(imageNamed: "gameOver"))
+        let titleNode = NJTitleNode(size: info.gameOverSize, position: CGPoint(x: size.width / 2, y: size.height / 2 + 100), texture: SKTexture(imageNamed: "gameOverWhite"))
         titleNode.name = "gameOver"
         addChild(titleNode)
         

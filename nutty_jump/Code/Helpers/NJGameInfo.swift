@@ -44,7 +44,7 @@ struct NJGameInfo {
     var foxSpeed: CGFloat { return 840 * gameSpeed }
     var nutSpeed: CGFloat { return 900 * gameSpeed }
     var foxStep: CGFloat { return 568 * heightScale }
-    var playerSpeed: CGFloat { return 0.1 * gameSpeed }
+    var playerSpeed: CGFloat { return 0.18 - (0.1 * gameSpeed) }
     //var bombSpeed: CGFloat { return 900.0 * gameSpeed }
     
     //MARK: Position & Sizing
@@ -61,15 +61,27 @@ struct NJGameInfo {
     var fruitSize: CGSize { CGSize(width: 40 * uniformScale, height: 50 * uniformScale) }
     var foxSize: CGSize { CGSize(width: 76.98 * uniformScale, height: 50 * uniformScale) }
     var hawkSize: CGSize { CGSize(width: 50 * uniformScale, height: 71.99 * uniformScale) }
-    var nutSize: CGSize { CGSize(width: 40 * uniformScale, height: 40 * uniformScale) }
+    var nutSize: CGSize { CGSize(width: 50 * uniformScale, height: 50 * uniformScale) }
     var defaultSize: CGSize { CGSize(width: 30 * uniformScale, height: 30 * uniformScale) }
+    var shieldSize: CGSize { CGSize(width: 90 * uniformScale, height: 90 * uniformScale) }
     
     var scoreNodePos: CGPoint { CGPoint(x: screenWidth / 2, y: screenHeight - (80 * heightScale)) }
+    var scoreNodeSize: CGSize { CGSize(width: 180 * uniformScale, height: 51 * uniformScale) }
     var branchSize: CGSize { CGSize(width: 150 * uniformScale, height: 40 * uniformScale) }
     var branchHeight: CGFloat { return (40 * heightScale) }
     var groundHeight: CGFloat { return (10 * heightScale) }
     var backgroundHeight: CGFloat { return (2500) }
-    var gameOverSize: CGSize { CGSize(width: 393 * uniformScale, height: 122 * uniformScale) }
+    
+    var gameOverSize: CGSize { CGSize(width: 340 * uniformScale, height: 44 * uniformScale) }
+    
+    var titleScreenSize: CGSize { CGSize(width: 393 * uniformScale, height: 741 * uniformScale) }
+    
+    var gameOverScreenSize: CGSize { CGSize(width: 393 * uniformScale, height: 533 * uniformScale) }
+    var continueButtonSize: CGSize { CGSize(width: 292 * uniformScale, height: 83 * uniformScale) }
+    var gameOverScreenPos: CGPoint { CGPoint(x: screenWidth / 2, y: screenHeight / 2 + 80) }
+    var continueButtonPos: CGPoint { CGPoint(x: screenWidth / 2, y: screenHeight / 2 - 300) }
+    var tapStartPos: CGPoint { CGPoint(x: screenWidth / 2, y: 110 * heightScale) }
+    
     
     //MARK: Power-Up Tracking
     
