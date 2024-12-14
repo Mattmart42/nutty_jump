@@ -6,10 +6,12 @@
 //
 
 import GameplayKit
+import AVFoundation
 
 class NJGameIdleState: GKState {
     weak var scene: NJGameScene?
     weak var context: NJGameContext?
+    private var audioPlayer: AVAudioPlayer?
     
     init(scene: NJGameScene, context: NJGameContext) {
         self.scene = scene
@@ -23,6 +25,7 @@ class NJGameIdleState: GKState {
     
     override func didEnter(from previousState: GKState?) {
         print("did enter idle state")
+        playMusic()
         guard let scene else { return }
         scene.physicsWorld.contactDelegate = nil
         
@@ -52,6 +55,21 @@ class NJGameIdleState: GKState {
         
         // Run the combined action on the scene
         scene.run(sequence)
+    }
+    
+    private func playMusic() {
+        guard let musicSoundURL = Bundle.main.url(forResource: "Music", withExtension: "mp3") else {
+            print("Failed to find Music.mp3")
+            return
+        }
+        
+        do {
+            audioPlayer = try AVAudioPlayer(contentsOf: musicSoundURL)
+            audioPlayer?.numberOfLoops = -1
+            audioPlayer?.play()
+        } catch {
+            print("Failed to play music: \(error)")
+        }
     }
     
     func setupIdleUI() {

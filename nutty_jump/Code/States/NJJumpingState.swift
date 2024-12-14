@@ -6,10 +6,13 @@
 //
 
 import GameplayKit
+import CoreHaptics
+import AVFoundation
 
 class NJJumpingState: GKState {
     weak var scene: NJGameScene?
     weak var context: NJGameContext?
+    private var audioPlayer: AVAudioPlayer?
     
     init(scene: NJGameScene, context: NJGameContext) {
         self.scene = scene
@@ -23,8 +26,24 @@ class NJJumpingState: GKState {
     
     override func didEnter(from previousState: GKState?) {
         guard let scene else { return }
+        UIImpactFeedbackGenerator(style: .light).impactOccurred(intensity: 0.5)
         print("did enter jumping state")
         
         scene.animatePlayerBasedOnState()
+        playJumpingSound()
+    }
+    
+    private func playJumpingSound() {
+        guard let jumpingSoundURL = Bundle.main.url(forResource: "Sword", withExtension: "m4a") else {
+            print("Failed to find Sword.m4a")
+            return
+        }
+        
+        do {
+            audioPlayer = try AVAudioPlayer(contentsOf: jumpingSoundURL)
+            audioPlayer?.play()
+        } catch {
+            print("Failed to play jumping sound: \(error)")
+        }
     }
 }

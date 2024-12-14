@@ -7,6 +7,8 @@
 
 import SpriteKit
 import GameplayKit
+import CoreHaptics
+import AVFoundation
 
 class NJGameScene: SKScene, SKPhysicsContactDelegate {
     weak var context: NJGameContext?
@@ -17,6 +19,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     var trackerNode: NJPowerUpTrackerNode!
     var equationNode: NJEquationNode!
     var backgroundNodes: [NJBackgroundNode] = []
+    private var audioPlayer: AVAudioPlayer?
     
     let fruitAtlas = SKTextureAtlas(named: "FruitAtlas")
     let backgroundAtlas = SKTextureAtlas(named: "BackgroundAtlas")
@@ -209,6 +212,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
             if let poof = SKEmitterNode(fileNamed: "NJEnemyDeath") {
                 poof.position = position
                 addChild(poof)
+                UIImpactFeedbackGenerator(style: .light).impactOccurred(intensity: 0.75)
                 print(enemy is NJBombNode)
                 
                 let stopEmission = SKAction.run { poof.particleBirthRate = 0 }
@@ -686,6 +690,49 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+    // MARK: - Sounds    
+    private func playFoxDeath() {
+        guard let foxDeathSoundURL = Bundle.main.url(forResource: "FoxDeath", withExtension: "m4a") else {
+            print("Failed to find FoxDeath.m4a")
+            return
+        }
+        
+        do {
+            audioPlayer = try AVAudioPlayer(contentsOf: foxDeathSoundURL)
+            audioPlayer?.play()
+        } catch {
+            print("Failed to play fox death sound: \(error)")
+        }
+    }
+    
+    private func playHawkDeath() {
+        guard let hawkDeathSoundURL = Bundle.main.url(forResource: "HawkDeath", withExtension: "m4a") else {
+            print("Failed to find HawkDeath.m4a")
+            return
+        }
+        
+        do {
+            audioPlayer = try AVAudioPlayer(contentsOf: hawkDeathSoundURL)
+            audioPlayer?.play()
+        } catch {
+            print("Failed to play hawk death sound: \(error)")
+        }
+    }
+    
+    private func playPinecone() {
+        guard let pineconeSoundURL = Bundle.main.url(forResource: "Pinecone", withExtension: "m4a") else {
+            print("Failed to find Pinecone.m4a")
+            return
+        }
+        
+        do {
+            audioPlayer = try AVAudioPlayer(contentsOf: pineconeSoundURL)
+            audioPlayer?.play()
+        } catch {
+            print("Failed to play pinecone sound: \(error)")
+        }
+    }
+        
     // MARK: - Physics Contacts
     
     func didBegin(_ contact: SKPhysicsContact) {
@@ -706,6 +753,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         if (contactA == NJPhysicsCategory.player && contactB == NJPhysicsCategory.ground) ||
             (contactA == NJPhysicsCategory.ground && contactB == NJPhysicsCategory.player) {
             print("player hit ground")
+            audioPlayer?.stop()
             let playerNode = (contactA == NJPhysicsCategory.player) ? contact.bodyA.node : contact.bodyB.node
             playerNode?.removeFromParent()
             stateMachine.enter(NJGameOverState.self)
@@ -746,6 +794,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
                 
             } else if stateMachine.currentState is NJJumpingState {
                 print("player hit fruit while jumping")
+                playPinecone()
                 let fruitNode = (contactA == NJPhysicsCategory.fruit) ? contact.bodyA.node : contact.bodyB.node
                 guard let fruitNode else { return }
                 handleEnemyHit(enemy: fruitNode, at: fruitNode.position)
@@ -787,6 +836,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
                 stateMachine.enter(NJFallingState.self)
             } else if stateMachine.currentState is NJJumpingState {
                 print("player hit hawk while jumping")
+                playHawkDeath()
                 let hawkNode = (contactA == NJPhysicsCategory.hawk) ? contact.bodyA.node : contact.bodyB.node
                 guard let hawkNode else { return }
                 handleEnemyHit(enemy: hawkNode, at: hawkNode.position)
@@ -831,6 +881,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
                 stateMachine.enter(NJFallingState.self)
             } else if stateMachine.currentState is NJJumpingState {
                 print("player hit fox while jumping")
+                playFoxDeath()
                 let foxNode = (contactA == NJPhysicsCategory.fox) ? contact.bodyA.node : contact.bodyB.node
                 guard let foxNode else { return }
                 handleEnemyHit(enemy: foxNode, at: foxNode.position)

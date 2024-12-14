@@ -6,10 +6,14 @@
 //
 
 import GameplayKit
+import CoreHaptics
+import AVFoundation
+import AudioToolbox
 
 class NJFallingState: GKState {
     weak var scene: NJGameScene?
     weak var context: NJGameContext?
+    private var audioPlayer: AVAudioPlayer?
     
     init(scene: NJGameScene, context: NJGameContext) {
         self.scene = scene
@@ -24,6 +28,8 @@ class NJFallingState: GKState {
     override func didEnter(from previousState: GKState?) {
         guard let scene, let player = scene.player else { return }
         print("did enter falling state")
+        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+        playSquirrelDeath()
         let targetPos = CGPoint(x: scene.size.width / 2, y: player.position.y - 50.0)
         
         let moveAction = SKAction.move(to: targetPos, duration: 0.2)
@@ -50,5 +56,19 @@ class NJFallingState: GKState {
                     print("No 'moveFoxBranch' action found for branch at \(branch.position)")
                 }
             }
+    }
+    
+    private func playSquirrelDeath() {
+        guard let squirrelDeathSoundURL = Bundle.main.url(forResource: "SquirrelDeath", withExtension: "m4a") else {
+            print("Failed to find SquirrelDeath.m4a")
+            return
+        }
+        
+        do {
+            audioPlayer = try AVAudioPlayer(contentsOf: squirrelDeathSoundURL)
+            audioPlayer?.play()
+        } catch {
+            print("Failed to play squirrel death sound: \(error)")
+        }
     }
 }

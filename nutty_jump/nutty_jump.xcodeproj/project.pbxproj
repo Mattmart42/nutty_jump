@@ -117,6 +117,11 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		254BFC712D0D167000FA803D /* Sounds */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Sounds;
+			sourceTree = "<group>";
+		};
 		C91B30232CBE250100ACDF61 /* nutty_jump */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = nutty_jump;
@@ -162,6 +167,7 @@
 		C91B30182CBE250100ACDF61 = {
 			isa = PBXGroup;
 			children = (
+				254BFC712D0D167000FA803D /* Sounds */,
 				C9641A512CC862B500A998FE /* Assets */,
 				C9641A522CC862BE00A998FE /* Base */,
 				C9641A502CC862AA00A998FE /* Code */,
@@ -319,6 +325,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				254BFC712D0D167000FA803D /* Sounds */,
 				C91B30232CBE250100ACDF61 /* nutty_jump */,
 			);
 			name = nutty_jump;
@@ -645,7 +652,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"nutty_jump/Preview Content\"";
-				DEVELOPMENT_TEAM = JS978YP3DM;
+				DEVELOPMENT_TEAM = M3388MYSZM;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "nutty-jump-Info.plist";
@@ -684,7 +691,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"nutty_jump/Preview Content\"";
-				DEVELOPMENT_TEAM = JS978YP3DM;
+				DEVELOPMENT_TEAM = M3388MYSZM;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "nutty-jump-Info.plist";
