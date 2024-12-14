@@ -30,13 +30,13 @@ class NJFallingState: GKState {
         print("did enter falling state")
         AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
         playSquirrelDeath()
+        scene.animatePlayerBasedOnState()
         let targetPos = CGPoint(x: scene.size.width / 2, y: player.position.y - 50.0)
         
         let moveAction = SKAction.move(to: targetPos, duration: 0.2)
         let rotateAction = SKAction.rotate(byAngle: 90.0, duration: 7.0)
         player.toggleGravity()
-        player.texture = SKTexture(imageNamed: "flyR")
-        player.size = scene.info.playerFlightSize
+        
         player.run(SKAction.sequence([moveAction]))
         player.run(SKAction.sequence([rotateAction]))
         scene.children
