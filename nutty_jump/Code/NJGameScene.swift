@@ -749,88 +749,29 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     
     // MARK: - Sounds    
     private func playFoxDeath() {
-        guard let foxDeathSoundURL = Bundle.main.url(forResource: "FoxDeath", withExtension: "m4a") else {
-            print("Failed to find FoxDeath.m4a")
-            return
-        }
-        
-        do {
-            audioPlayer = try AVAudioPlayer(contentsOf: foxDeathSoundURL)
-            audioPlayer?.play()
-        } catch {
-            print("Failed to play fox death sound: \(error)")
-        }
+        run(SKAction.playSoundFileNamed("FoxDeath.m4a", waitForCompletion: false))
     }
     
     private func playHawkDeath() {
-        guard let hawkDeathSoundURL = Bundle.main.url(forResource: "HawkDeath", withExtension: "m4a") else {
-            print("Failed to find HawkDeath.m4a")
-            return
-        }
-        
-        do {
-            audioPlayer = try AVAudioPlayer(contentsOf: hawkDeathSoundURL)
-            audioPlayer?.play()
-        } catch {
-            print("Failed to play hawk death sound: \(error)")
-        }
+        run(SKAction.playSoundFileNamed("HawkDeath.m4a", waitForCompletion: false))
     }
     
     private func playPinecone() {
-        guard let pineconeSoundURL = Bundle.main.url(forResource: "Pinecone", withExtension: "m4a") else {
-            print("Failed to find Pinecone.m4a")
-            return
-        }
-        
-        do {
-            audioPlayer = try AVAudioPlayer(contentsOf: pineconeSoundURL)
-            audioPlayer?.play()
-        } catch {
-            print("Failed to play pinecone sound: \(error)")
-        }
+        run(SKAction.playSoundFileNamed("Pinecone.m4a", waitForCompletion: false))
     }
     
     private func playAcorn() {
-        guard let acornSoundURL = Bundle.main.url(forResource: "Acorn", withExtension: "m4a") else {
-            print("Failed to find Acorn.m4a")
-            return
-        }
-        
-        do {
-            audioPlayer = try AVAudioPlayer(contentsOf: acornSoundURL)
-            audioPlayer?.play()
-        } catch {
-            print("Failed to play acorn sound: \(error)")
-        }
+        run(SKAction.playSoundFileNamed("Acorn.m4a", waitForCompletion: false))
     }
-    
+
     private func playFruitShoot() {
-        guard let fruitShootSoundURL = Bundle.main.url(forResource: "FruitShoot", withExtension: "m4a") else {
-            print("Failed to find FruitShoot.m4a")
-            return
-        }
-        
-        do {
-            audioPlayer = try AVAudioPlayer(contentsOf: fruitShootSoundURL)
-            audioPlayer?.play()
-        } catch {
-            print("Failed to play fruit shoot sound: \(error)")
-        }
+        run(SKAction.playSoundFileNamed("FruitShoot.m4a", waitForCompletion: false))
     }
-    
+
     private func playFoxPowerup() {
-        guard let foxPowerupSoundURL = Bundle.main.url(forResource: "FoxPowerup", withExtension: "mp3") else {
-            print("Failed to find FoxPowerup.mp3")
-            return
-        }
-        
-        do {
-            audioPlayer = try AVAudioPlayer(contentsOf: foxPowerupSoundURL)
-            audioPlayer?.play()
-        } catch {
-            print("Failed to play fox powerup sound: \(error)")
-        }
+        run(SKAction.playSoundFileNamed("FoxPowerup.mp3", waitForCompletion: false))
     }
+
         
     // MARK: - Physics Contacts
     
@@ -840,13 +781,6 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         
         let contactA = contact.bodyA.categoryBitMask
         let contactB = contact.bodyB.categoryBitMask
-        
-        //player hits wall
-        //        if (contactA == NJPhysicsCategory.player && contactB == NJPhysicsCategory.wall) ||
-        //            (contactA == NJPhysicsCategory.wall && contactB == NJPhysicsCategory.player) {
-        //            stateMachine.enter(NJRunningState.self)
-        //            return
-        //        }
         
         //player hits ground
         if (contactA == NJPhysicsCategory.player && contactB == NJPhysicsCategory.ground) ||
@@ -1175,21 +1109,23 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         let pos4 = CGPoint(x: size.width - info.obstacleXPos, y: rightWallPlayerPos.y + 50)
         let pos5 = rightWallPlayerPos
         
-        let move1 = SKAction.move(to: pos1, duration: info.hawkPULength / 5)
-        let move2 = SKAction.move(to: pos2, duration: info.hawkPULength / 5)
-        let move3 = SKAction.move(to: pos3, duration: info.hawkPULength / 5)
-        let move4 = SKAction.move(to: pos4, duration: info.hawkPULength / 5)
-        let move5 = SKAction.move(to: pos5, duration: info.hawkPULength / 5)
+        let move1 = SKAction.move(to: pos1, duration: 1.0)
+        let move2 = SKAction.move(to: pos2, duration: 1.0)
+        let move3 = SKAction.move(to: pos3, duration: 1.0)
+        let move4 = SKAction.move(to: pos4, duration: 1.0)
+        let move5 = SKAction.move(to: pos5, duration: 1.0)
         
         player.run(SKAction.sequence([move1, move2, move3, move4, move5]))
         DispatchQueue.main.asyncAfter(deadline: .now() + info.hawkPULength) {
             self.info.hawksCollected = 0
             self.trackerNode.resetDisplay()
-            self.info.playerIsInvincible = false
             self.removePowerUpText()
             self.info.isPoweredUp = false
             self.currentPlayerXPos = self.info.playerXPosRight
             stateMachine.enter(NJRunningState.self)
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            self.info.playerIsInvincible = false
         }
     }
     

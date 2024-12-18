@@ -34,16 +34,7 @@ class NJJumpingState: GKState {
     }
     
     private func playJumpingSound() {
-        guard let jumpingSoundURL = Bundle.main.url(forResource: "Sword", withExtension: "m4a") else {
-            print("Failed to find Sword.m4a")
-            return
-        }
-        
-        do {
-            audioPlayer = try AVAudioPlayer(contentsOf: jumpingSoundURL)
-            audioPlayer?.play()
-        } catch {
-            print("Failed to play jumping sound: \(error)")
-        }
+        guard let scene else { return }
+        scene.run(SKAction.playSoundFileNamed("Sword.m4a", waitForCompletion: false))
     }
 }

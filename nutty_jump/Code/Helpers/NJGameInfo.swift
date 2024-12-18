@@ -96,12 +96,12 @@ struct NJGameInfo {
     var trackerSize: CGSize { CGSize(width: 30 * uniformScale, height: 30 * uniformScale) }
     var equationSize: CGSize { CGSize(width: 166 * uniformScale, height: 18 * uniformScale) }
     
-    var equationPos: CGPoint { CGPoint(x: 180 * uniformScale, y: 40 * uniformScale) }
+    var equationPos: CGPoint { CGPoint(x: (180 * heightScale), y: (42 * widthScale)) }
     var node1Pos: CGPoint { CGPoint(x: 70 * uniformScale, y: 5 * uniformScale) }
     var node2Pos: CGPoint { CGPoint(x: 145 * uniformScale, y: 5 * uniformScale) }
     var node3Pos: CGPoint { CGPoint(x: 215 * uniformScale, y: 5 * uniformScale) }
     var resultPos: CGPoint { CGPoint(x: 300 * uniformScale, y: 5 * uniformScale) }
-    var powerUpTextPos: CGPoint { CGPoint(x: 160 * heightScale, y: 80 * widthScale) }
+    var powerUpTextPos: CGPoint { CGPoint(x: 160 * widthScale, y: 90 * heightScale) }
     
     var fruitTrackerSize: CGSize { CGSize(width: 34 * uniformScale, height: 34 * uniformScale) }
     var foxTrackerSize: CGSize { CGSize(width: 48.48 * uniformScale, height: 30 * uniformScale) }

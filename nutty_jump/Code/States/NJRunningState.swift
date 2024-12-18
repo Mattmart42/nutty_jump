@@ -32,21 +32,11 @@ class NJRunningState: GKState {
     }
     
     private func playRunningSound() {
-        guard let runningSoundURL = Bundle.main.url(forResource: "Running", withExtension: "mp3") else {
-            print("Failed to find Running.mp3")
-            return
-        }
-        
-        do {
-            audioPlayer = try AVAudioPlayer(contentsOf: runningSoundURL)
-            audioPlayer?.numberOfLoops = -1 // Loop indefinitely if the sound should continue
-            audioPlayer?.play()
-        } catch {
-            print("Failed to play running sound: \(error)")
-        }
+        guard let scene else { return }
+        scene.run(SKAction.playSoundFileNamed("Running.mp3", waitForCompletion: false))
     }
     
     override func willExit(to nextState: GKState) {
-        audioPlayer?.stop() // Stop the running sound when exiting the state
+        audioPlayer?.stop()
     }
 }

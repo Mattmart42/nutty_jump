@@ -32,16 +32,7 @@ class NJHawkState: GKState {
     }
     
     private func playHawkPowerup() {
-        guard let hawkPowerupSoundURL = Bundle.main.url(forResource: "HawkPowerup", withExtension: "m4a") else {
-            print("Failed to find HawkPowerup.m4a")
-            return
-        }
-        
-        do {
-            audioPlayer = try AVAudioPlayer(contentsOf: hawkPowerupSoundURL)
-            audioPlayer?.play()
-        } catch {
-            print("Failed to play hawk powerup sound: \(error)")
-        }
+        guard let scene else { return }
+        scene.run(SKAction.playSoundFileNamed("HawkPowerup.m4a", waitForCompletion: false))
     }
 }

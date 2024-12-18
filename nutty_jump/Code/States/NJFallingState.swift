@@ -70,16 +70,7 @@ class NJFallingState: GKState {
     }
     
     private func playSquirrelDeath() {
-        guard let squirrelDeathSoundURL = Bundle.main.url(forResource: "SquirrelDeath", withExtension: "m4a") else {
-            print("Failed to find SquirrelDeath.m4a")
-            return
-        }
-        
-        do {
-            audioPlayer = try AVAudioPlayer(contentsOf: squirrelDeathSoundURL)
-            audioPlayer?.play()
-        } catch {
-            print("Failed to play squirrel death sound: \(error)")
-        }
+        guard let scene else { return }
+        scene.run(SKAction.playSoundFileNamed("SquirrelDeath.m4a", waitForCompletion: false))
     }
 }

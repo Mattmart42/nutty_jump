@@ -47,20 +47,18 @@ class NJGameIdleState: GKState {
         scene.pauseNode.isHidden = false
         removeIdleUI()
         scene.physicsWorld.contactDelegate = context.gameScene
-        let delayAction = SKAction.wait(forDuration: 2.0) // Delay of 5 seconds
+        let delayAction = SKAction.wait(forDuration: 2.0)
         let runObstaclesAction = SKAction.run { [weak scene] in
-            scene?.runObstacles() // Run obstacles after the delay
+            scene?.runObstacles()
         }
         
-        // Combine the delay and the action to run
         let sequence = SKAction.sequence([delayAction, runObstaclesAction])
         
-        // Run the combined action on the scene
         scene.run(sequence)
     }
     
     private func playMusic() {
-        guard let musicSoundURL = Bundle.main.url(forResource: "Music", withExtension: "mp3") else {
+        guard let musicSoundURL = Bundle.main.url(forResource: "Music", withExtension: "m4a") else {
             print("Failed to find Music.mp3")
             return
         }
@@ -103,12 +101,4 @@ class NJGameIdleState: GKState {
         scene.childNode(withName: "titleNode")?.removeFromParent()
         scene.childNode(withName: "startText")?.removeFromParent()
     }
-    
-//    func handleTouch(_ touch: UITouch) {
-//        guard let scene, let context else { return }
-//        print("touched \(touch)")
-//        scene.childNode(withName: "TitleLabel")?.removeFromParent()
-//        scene.childNode(withName: "PlayButton")?.removeFromParent()
-//        //context.stateMachine?.enter(NJRunningState.self)
-//    }
 }
