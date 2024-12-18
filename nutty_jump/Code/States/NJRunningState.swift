@@ -20,7 +20,7 @@ class NJRunningState: GKState {
     }
     
     override func isValidNextState(_ stateClass: AnyClass) -> Bool {
-        return stateClass == NJFallingState.self || stateClass == NJJumpingState.self
+        return stateClass == NJFallingState.self || stateClass == NJJumpingState.self || stateClass == NJPauseState.self
     }
     
     override func didEnter(from previousState: GKState?) {

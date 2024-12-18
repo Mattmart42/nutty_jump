@@ -24,7 +24,7 @@ class NJHawkState: GKState {
     }
     
     override func didEnter(from previousState: GKState?) {
-        guard let scene, let player = scene.player else { return }
+        guard let scene else { return }
         print("did enter hawk state")
         scene.info.playerIsInvincible = true
         scene.animatePlayerBasedOnState()

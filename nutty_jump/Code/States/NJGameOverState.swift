@@ -28,6 +28,7 @@ class NJGameOverState: GKState {
         scene.scoreNode.removeFromParent()
         scene.trackerNode.removeFromParent()
         scene.equationNode.removeFromParent()
+        scene.pauseNode.removeFromParent()
         setupGameOverUI()
         scene.isPaused = true
     }

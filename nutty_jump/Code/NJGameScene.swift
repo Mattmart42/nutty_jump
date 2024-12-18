@@ -19,6 +19,9 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     let scoreNode = NJScoreNode()
     var trackerNode: NJPowerUpTrackerNode!
     var equationNode: NJEquationNode!
+    var pauseNode: SKSpriteNode!
+    var playNode: SKSpriteNode!
+    var quitNode: SKSpriteNode!
     var backgroundNodes: [NJBackgroundNode] = []
     private var audioPlayer: AVAudioPlayer?
     
@@ -145,7 +148,31 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         
         equationNode?.removeFromParent()
         equationNode = NJEquationNode(size: info.equationSize, position: info.equationPos, texture: SKTexture(imageNamed: "equation"))
+        equationNode.zPosition = info.hudZPos
         addChild(equationNode)
+        
+        pauseNode?.removeFromParent()
+        pauseNode = SKSpriteNode(texture: SKTexture(imageNamed: "pause"), size: info.pauseNodeSize)
+        pauseNode.position = info.pauseNodePos
+        pauseNode.name = "PauseNode"
+        pauseNode.zPosition = info.hudZPos
+        addChild(pauseNode)
+        
+        playNode?.removeFromParent()
+        playNode = SKSpriteNode(texture: SKTexture(imageNamed: "play"), size: info.playNodeSize)
+        playNode.position = info.playNodePos
+        playNode.name = "PauseNode"
+        playNode.isHidden = true
+        playNode.zPosition = info.hudZPos
+        addChild(playNode)
+        
+        quitNode?.removeFromParent()
+        quitNode = SKSpriteNode(texture: SKTexture(imageNamed: "quit"), size: info.quitNodeSize)
+        quitNode.position = info.quitNodePos
+        quitNode.name = "QuitNode"
+        quitNode.isHidden = true
+        quitNode.zPosition = info.hudZPos
+        addChild(quitNode)
         
         for wall in ["leftWallTop", "leftWallBot", "rightWallTop", "rightWallBot", "ground", "player"] { self.childNode(withName: wall)?.removeFromParent() }
         
@@ -286,12 +313,12 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
                 SKAction.wait(forDuration: 4.0)
             ])
         )
-        run(speedIncreaseAction)
+        run(speedIncreaseAction, withKey: "speedIncreaseAction")
         
         let spawnAction = SKAction.run { [weak self] in self?.spawnRandomObstacle() }
         let delay = SKAction.wait(forDuration: info.obstacleSpawnRate)
         let spawnSequence = SKAction.sequence([spawnAction, delay])
-        run(SKAction.repeatForever(spawnSequence))
+        run(SKAction.repeatForever(spawnSequence), withKey: "spawnObstacles")
         
         DispatchQueue.main.asyncAfter(deadline: .now() + info.branchSpawnRate) {
             let spawnBranch = SKAction.run { [weak self] in self?.spawnRandomBranch() }
@@ -307,7 +334,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         }
         let delay2 = SKAction.wait(forDuration: info.obstacleSpawnRate * 2)
         let spawnSequence2 = SKAction.sequence([spawnAction2, delay2])
-        run(SKAction.repeatForever(spawnSequence2))
+        run(SKAction.repeatForever(spawnSequence2), withKey: "spawnObstacles2")
         
         let spawnAction3 = SKAction.run {
             if self.info.score > 7500 {
@@ -316,7 +343,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         }
         let delay3 = SKAction.wait(forDuration: info.obstacleSpawnRate * 3)
         let spawnSequence3 = SKAction.sequence([spawnAction3, delay3])
-        run(SKAction.repeatForever(spawnSequence3))
+        run(SKAction.repeatForever(spawnSequence3), withKey: "spawnObstacles3")
         
         DispatchQueue.main.asyncAfter(deadline: .now() + info.nutSpawnRate) {
             let spawnNutAction = SKAction.run {
@@ -326,14 +353,15 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
             }
             let delayNut = SKAction.wait(forDuration: self.info.nutSpawnRate)
             let spawnNutSequence = SKAction.sequence([spawnNutAction, delayNut])
-            self.run(SKAction.repeatForever(spawnNutSequence))
+            self.run(SKAction.repeatForever(spawnNutSequence), withKey: "spawnNuts")
         }
     }
     
     override func update(_ currentTime: TimeInterval) {
         guard let context else { return }
+        despawn()
         
-        if !(context.stateMachine?.currentState is NJGameIdleState) && !(context.stateMachine?.currentState is NJFallingState) && !(context.stateMachine?.currentState is NJGameOverState) {
+        if !(context.stateMachine?.currentState is NJGameIdleState) && !(context.stateMachine?.currentState is NJFallingState) && !(context.stateMachine?.currentState is NJGameOverState) && !info.isPaused {
             scrollScreen()
             info.score += 1
             scoreNode.updateScore(with: info.score)
@@ -428,6 +456,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         let xPos: CGFloat = Bool.random() ? info.obstacleXPos : size.width - info.obstacleXPos
         
         let obstacle = NJFoxNode(size: obstacleSize, position: CGPoint(x: xPos, y: yPos + info.branchHeight), texture: SKTexture(imageNamed: "foxLeft1"))
+        obstacle.name = "FoxNode"
         
         moveFoxDown(obstacle, startPos: CGPoint(x: xPos, y: yPos + info.branchHeight), distance: info.foxStep)
         
@@ -649,12 +678,23 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let stateMachine = context?.stateMachine,
-              let currentState = stateMachine.currentState else { return }
+              let currentState = stateMachine.currentState,
+              let context else { return }
+        
+        
         
         if currentState is NJGameIdleState {
             stateMachine.enter(NJRunningState.self)
             
         } else if currentState is NJRunningState {
+            if let touch = touches.first {
+                let location = touch.location(in: self)
+                if let node = atPoint(location) as? SKSpriteNode, node.name == "PauseNode" {
+                    pause()
+                    return
+                }
+            }
+            
             stateMachine.enter(NJJumpingState.self)
             togglePlayerLocation()
             
@@ -690,6 +730,18 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         } else if currentState is NJHawkState {
             print("cannot tap, hawk power-up active")
             
+        } else if currentState is NJPauseState {
+            if let touch = touches.first {
+                let location = touch.location(in: self)
+                if let node = atPoint(location) as? SKSpriteNode, node.name == "PauseNode" {
+                    play()
+                    return
+                }
+                if let node = atPoint(location) as? SKSpriteNode, node.name == "QuitNode" {
+                    quit()
+                    return
+                }
+            }
         } else {
             print("unknown state")
         }
@@ -922,9 +974,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
                     return
                 }
                 print("player hit fox while running")
-                let foxNode = (contactA == NJPhysicsCategory.fox) ? contact.bodyA.node : contact.bodyB.node
-                guard let foxNode else { return }
-                despawnFox(obstacle: foxNode)
+                checkAndDespawnFox()
                 stateMachine.enter(NJFallingState.self)
             } else if stateMachine.currentState is NJJumpingState {
                 print("player hit fox while jumping")
@@ -1182,6 +1232,40 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         restartButton.fontColor = .white
         restartButton.position = CGPoint(x: size.width / 2, y: size.height / 2 - 100)
         addChild(restartButton)
+    }
+    
+    func checkAndDespawnFox() {
+        self.enumerateChildNodes(withName: "FoxNode") { node, _ in
+            if let specificNode = node as? NJFoxNode {
+                self.despawnFox(obstacle: specificNode)
+            }
+        }
+    }
+    
+    func despawn() {
+        self.enumerateChildNodes(withName: "//*") { node, _ in
+            if let specificNode = node as? NJFoxNode {
+                if specificNode.position.y < self.info.playerYPos - 1250 {
+                    specificNode.removeFromParent()
+                    print("item despawned")
+                }
+            }
+        }
+    }
+    
+    func pause() {
+        guard let stateMachine = context?.stateMachine else { return }
+        stateMachine.enter(NJPauseState.self)
+    }
+    
+    func play() {
+        guard let stateMachine = context?.stateMachine else { return }
+        stateMachine.enter(NJRunningState.self)
+    }
+    
+    func quit() {
+        guard let stateMachine = context?.stateMachine else { return }
+        stateMachine.enter(NJGameOverState.self)
     }
     
     func reset() {

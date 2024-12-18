@@ -65,10 +65,19 @@ struct NJGameInfo {
     var defaultSize: CGSize { CGSize(width: 30 * uniformScale, height: 30 * uniformScale) }
     var shieldSize: CGSize { CGSize(width: 90 * uniformScale, height: 90 * uniformScale) }
     
+    var pauseNodeSize: CGSize { CGSize(width: 60 * uniformScale, height: 60 * uniformScale) }
+    var pauseNodePos: CGPoint { CGPoint(x: screenWidth / 2 + pauseNodeSize.width * 2, y: scoreNodePos.y) }
+    var playNodeSize: CGSize { CGSize(width: 80 * uniformScale, height: 80 * uniformScale) }
+    var playNodePos: CGPoint { CGPoint(x: screenWidth / 2 + (60 * widthScale), y: screenHeight / 2 - (300 * heightScale)) }
+    var quitNodeSize: CGSize { CGSize(width: 80 * uniformScale, height: 80 * uniformScale) }
+    var quitNodePos: CGPoint { CGPoint(x: screenWidth / 2 - (60 * widthScale), y: screenHeight / 2 - (300 * heightScale)) }
+    
     var scoreNodePos: CGPoint { CGPoint(x: screenWidth / 2, y: screenHeight - (80 * heightScale)) }
     var scoreNodeSize: CGSize { CGSize(width: 180 * uniformScale, height: 51 * uniformScale) }
+    
     var branchSize: CGSize { CGSize(width: 150 * uniformScale, height: 40 * uniformScale) }
     var branchHeight: CGFloat { return (40 * heightScale) }
+    
     var groundHeight: CGFloat { return (10 * heightScale) }
     var backgroundHeight: CGFloat { return (2500) }
     
@@ -81,7 +90,6 @@ struct NJGameInfo {
     var gameOverScreenPos: CGPoint { CGPoint(x: screenWidth / 2, y: screenHeight / 2 + 80) }
     var continueButtonPos: CGPoint { CGPoint(x: screenWidth / 2, y: screenHeight / 2 - 300) }
     var tapStartPos: CGPoint { CGPoint(x: screenWidth / 2, y: 110 * heightScale) }
-    
     
     //MARK: Power-Up Tracking
     
@@ -123,6 +131,8 @@ struct NJGameInfo {
     let foxDisguiseDuration = 10.0
     
     let hawkPULength = 5.0
+    
+    var isPaused = false
     
     //MARK: Z-Positions
     

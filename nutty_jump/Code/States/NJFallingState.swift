@@ -31,6 +31,8 @@ class NJFallingState: GKState {
         AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
         playSquirrelDeath()
         scene.animatePlayerBasedOnState()
+        scene.checkAndDespawnFox()
+        
         let targetPos = CGPoint(x: scene.size.width / 2, y: player.position.y - 50.0)
         
         let moveAction = SKAction.move(to: targetPos, duration: 0.2)
@@ -39,6 +41,15 @@ class NJFallingState: GKState {
         
         player.run(SKAction.sequence([moveAction]))
         player.run(SKAction.sequence([rotateAction]))
+        
+        scene.removeAction(forKey: "speedIncreaseAction")
+        scene.removeAction(forKey: "spawnObstacles")
+        scene.removeAction(forKey: "spawnBranches")
+        scene.removeAction(forKey: "spawnObstacles2")
+        scene.removeAction(forKey: "spawnObstacles3")
+        scene.removeAction(forKey: "spawnNuts")
+        scene.removeAction(forKey: "moveFoxBranch")
+        
         scene.children
             .compactMap { $0 as? NJWallNode }
             .forEach { wallNode in wallNode.position.y += scene.info.scrollSpeed
