@@ -22,13 +22,4 @@ class NJFoxNode: SKSpriteNode {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    func runAcross(screenWidth: CGFloat) {
-        // Set the target position on the opposite wall
-        let targetX = position.x == 0 ? screenWidth : 0
-        let targetPosition = CGPoint(x: targetX, y: position.y)
-        let moveAction = SKAction.move(to: targetPosition, duration: 3.0) // Adjust speed as needed
-        let removeAction = SKAction.removeFromParent()
-        self.run(SKAction.sequence([moveAction, removeAction]))
-    }
 }

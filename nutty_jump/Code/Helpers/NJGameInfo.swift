@@ -44,8 +44,14 @@ struct NJGameInfo {
     var foxSpeed: CGFloat { return 840 * gameSpeed }
     var nutSpeed: CGFloat { return 900 * gameSpeed }
     var foxStep: CGFloat { return 568 * heightScale }
-    var playerSpeed: CGFloat { return 0.18 - (0.1 * gameSpeed) }
+    var playerSpeed: CGFloat {
+        if self.score >= 5000 {
+            return 0.18 - (0.1 * 1.62)
+        }
+        return 0.18 - (0.1 * gameSpeed)
+    }
     //var bombSpeed: CGFloat { return 900.0 * gameSpeed }
+    var lastObstaclePosition: CGFloat?
     
     //MARK: Position & Sizing
     
@@ -128,7 +134,7 @@ struct NJGameInfo {
     var fruitShootDuration: CGFloat { return 5 }
     var fruitShootInterval: CGFloat { return 0.1 }
     
-    let foxDisguiseDuration = 10.0
+    let foxDisguiseDuration = 5.0
     
     let hawkPULength = 5.0
     

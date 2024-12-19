@@ -42,6 +42,12 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     let rightWallPlayerPos: CGPoint
     var currentPlayerXPos: CGFloat
     
+    var usedPositions: [String: Set<CGFloat>] = [
+        "fruit": [],
+        "fox": [],
+        "hawk": []
+    ]
+    
     init(context: NJGameContext, size: CGSize, info: NJGameInfo) {
         self.info = NJGameInfo(screenSize: size)
         self.leftWallPlayerPos = CGPoint(x: info.playerXPosLeft, y: info.playerYPos)
@@ -75,7 +81,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     
     override func didMove(to view: SKView) {
         guard let context else { return }
-        
+        print("Screen Size: \(size)")
         prepareGameContext()
         prepareStartNodes(screenSize: size)
         physicsWorld.contactDelegate = self
@@ -310,7 +316,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
                     guard let self else { return }
                     info.gameSpeed += 0.03
                 },
-                SKAction.wait(forDuration: 4.0)
+                SKAction.wait(forDuration: 3.0)
             ])
         )
         run(speedIncreaseAction, withKey: "speedIncreaseAction")
@@ -328,7 +334,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         let spawnAction2 = SKAction.run {
-            if self.info.score > 5000 {
+            if self.info.score > 3000 {
                 self.spawnRandomObstacle()
             }
         }
@@ -337,7 +343,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         run(SKAction.repeatForever(spawnSequence2), withKey: "spawnObstacles2")
         
         let spawnAction3 = SKAction.run {
-            if self.info.score > 7500 {
+            if self.info.score > 5000 {
                 self.spawnRandomObstacle()
             }
         }
@@ -372,18 +378,44 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     
     func spawnRandomObstacle() {
         let obstacleYPos = size.height + 50
-        
-        let functions: [() -> Void] = [
-            { self.spawnFruit(obstacleSize: self.info.fruitSize, yPos: obstacleYPos) },
-            { self.spawnHawk(obstacleSize: self.info.hawkSize, yPos: obstacleYPos) },
-            { self.spawnFox(obstacleSize: self.info.foxSize, yPos: obstacleYPos) }
-//            { self.spawnBranch(obstacleSize: self.info.branchSize, yPos: obstacleYPos) }
-//            { self.spawnBomb(obstacleSize: obstacleSize, yPos: obstacleYPos) }
-        ]
-            
-        let randomIndex = Int.random(in: 0..<functions.count)
-        functions[randomIndex]()
+        let possiblePositions: [CGFloat] = [info.obstacleXPos, size.width - info.obstacleXPos]
+
+        // Select a random obstacle type
+        let obstacleTypes = ["fruit", "fox", "hawk"]
+        let selectedType = obstacleTypes.randomElement()!
+
+        // Get positions currently in use by this obstacle type
+        let usedPositionsForType = usedPositions[selectedType] ?? []
+
+        // Filter available positions
+        let availablePositions = possiblePositions.filter { !usedPositionsForType.contains($0) }
+        guard let newPosition = availablePositions.randomElement() else {
+            print("No available positions for \(selectedType)")
+            return
+        }
+
+        // Spawn the obstacle
+        switch selectedType {
+        case "fruit":
+            spawnFruit(obstacleSize: info.fruitSize, yPos: obstacleYPos, xPos: newPosition)
+        case "fox":
+            spawnFox(obstacleSize: info.foxSize, yPos: obstacleYPos, xPos: newPosition)
+        case "hawk":
+            spawnHawk(obstacleSize: info.hawkSize, yPos: obstacleYPos, xPos: newPosition)
+        default:
+            break
+        }
+
+        // Mark position as used for this type
+        usedPositions[selectedType, default: []].insert(newPosition)
+
+        // Schedule removal from `usedPositions` after despawn
+        DispatchQueue.main.asyncAfter(deadline: .now() + info.obstacleSpawnRate) {
+            self.usedPositions[selectedType]?.remove(newPosition)
+        }
     }
+
+
     
     func spawnRandomBranch() {
         let obstacleYPos = size.height + 50
@@ -404,9 +436,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
 //    }
     
     
-    func spawnFruit(obstacleSize: CGSize, yPos: CGFloat) {
-        let xPos: CGFloat = Bool.random() ? info.fruitXPos : size.width - info.fruitXPos
-        
+    func spawnFruit(obstacleSize: CGSize, yPos: CGFloat, xPos: CGFloat) {
         let texture = SKTexture(imageNamed: "pinecone")
         
         let obstacle = NJFruitNode(size: obstacleSize, position: CGPoint(x: xPos, y: yPos), texture: texture)
@@ -423,8 +453,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         addChild(obstacle)
     }
     
-    func spawnHawk(obstacleSize: CGSize, yPos: CGFloat) {
-        let xPos: CGFloat = Bool.random() ? info.obstacleXPos : size.width - info.obstacleXPos
+    func spawnHawk(obstacleSize: CGSize, yPos: CGFloat, xPos: CGFloat) {
         let isMovingLeftToRight = xPos == info.obstacleXPos
         
         let targetPos = CGPoint(x: isMovingLeftToRight ? size.width - info.obstacleXPos : info.obstacleXPos, y: info.playerYPos)
@@ -450,10 +479,8 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         addChild(obstacle)
     }
     
-    func spawnFox(obstacleSize: CGSize, yPos: CGFloat) {
+    func spawnFox(obstacleSize: CGSize, yPos: CGFloat, xPos: CGFloat) {
         spawnFoxBranch(obstacleSize: obstacleSize, yPos: yPos)
-        
-        let xPos: CGFloat = Bool.random() ? info.obstacleXPos : size.width - info.obstacleXPos
         
         let obstacle = NJFoxNode(size: obstacleSize, position: CGPoint(x: xPos, y: yPos + info.branchHeight), texture: SKTexture(imageNamed: "foxLeft1"))
         obstacle.name = "FoxNode"
@@ -1124,7 +1151,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
             self.currentPlayerXPos = self.info.playerXPosRight
             stateMachine.enter(NJRunningState.self)
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + info.hawkPULength + 2.0) {
             self.info.playerIsInvincible = false
         }
     }
