@@ -22,18 +22,29 @@ class NJPauseState: GKState {
     }
     
     override func didEnter(from previousState: GKState?) {
-        guard let scene else { return }
+        guard let scene, let context else { return }
         scene.isPaused = true
+        scene.enumerateChildNodes(withName: "//") { node, _ in
+            node.isPaused = true
+        }
+        context.isPaused = true
         scene.pauseNode.isHidden.toggle()
         scene.playNode.isHidden.toggle()
         scene.quitNode.isHidden.toggle()
     }
     
     override func willExit(to nextState: GKState) {
-        guard let scene else { return }
+        guard let scene, let context else { return }
         scene.isPaused = false
+        scene.enumerateChildNodes(withName: "//") { node, _ in
+            node.isPaused = false
+        }
+        context.isPaused = false
         scene.pauseNode.isHidden.toggle()
         scene.playNode.isHidden.toggle()
         scene.quitNode.isHidden.toggle()
     }
+    
+    
+
 }

@@ -15,6 +15,7 @@ class NJGameContext: GameContext {
     let gameMode: GameModeType
     var gameInfo: NJGameInfo
     var layoutInfo: NJLayoutInfo = .init(screenSize: .zero)
+    var isPaused: Bool = false
     
     private(set) var stateMachine: GKStateMachine?
     
@@ -22,6 +23,20 @@ class NJGameContext: GameContext {
         self.gameInfo = NJGameInfo(screenSize: UIScreen.main.bounds.size)
         self.gameMode = gameMode
         super.init(dependencies: dependencies)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(appDidBecomeActive),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(appWillResignActive),
+            name: UIApplication.willResignActiveNotification,
+            object: nil
+        )
+
     }
     
     func updateLayoutInfo(withScreenSize size: CGSize) {
@@ -48,5 +63,29 @@ class NJGameContext: GameContext {
         gameInfo = NJGameInfo(screenSize: UIScreen.main.bounds.size)
         layoutInfo = NJLayoutInfo(screenSize: layoutInfo.screenSize)
     }
+    
+    @objc func appWillResignActive() {
+        pauseGame() // Ensure all nodes/actions are paused.
+    }
+
+    @objc func appDidBecomeActive() {
+        if scene?.isPaused == true {
+            scene?.enumerateChildNodes(withName: "//") { node, _ in
+                node.isPaused = true
+            }
+        }
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    func pauseGame() {
+        scene?.isPaused = true
+        scene?.enumerateChildNodes(withName: "//") { node, _ in
+            node.isPaused = true
+        }
+    }
+
 }
 
