@@ -42,7 +42,8 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     var usedPositions: [String: Set<CGFloat>] = [
         "fruit": [],
         "fox": [],
-        "hawk": []
+        "hawk": [],
+        "branch": []
     ]
     
     init(context: NJGameContext, size: CGSize, info: NJGameInfo) {
@@ -393,8 +394,25 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     
     func spawnRandomBranch() {
         let obstacleYPos = size.height + 50
-        spawnBranch(obstacleSize: self.info.branchSize, yPos: obstacleYPos)
+        let possiblePositions: [CGFloat] = [info.obstacleXPos, size.width - info.obstacleXPos]
+        
+        let usedFoxPositions = usedPositions["fox"] ?? []
+        let availablePositions = possiblePositions.filter { !usedFoxPositions.contains($0) }
+        
+        guard let xPos = availablePositions.randomElement() else {
+            print("No available positions for branch due to active foxes")
+            return
+        }
+        
+        spawnBranch(obstacleSize: info.branchSize, yPos: obstacleYPos, xPos: xPos)
+        
+        usedPositions["branch", default: []].insert(xPos)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + info.obstacleSpawnRate) {
+            self.usedPositions["branch"]?.remove(xPos)
+        }
     }
+
     
 //    func spawnMultiplier() {
 //        let obstacleYPos = size.height + 50
@@ -493,7 +511,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
             obstacle.run(repeatAnimation, withKey: "foxAnimation")
         }
         
-        let targetPos = CGPoint(x: isMovingRight ? size.width - info.obstacleXPos : info.obstacleXPos, y: startPos.y - (distance / 2))
+        let targetPos = CGPoint(x: isMovingRight ? size.width - info.obstacleXPos : info.obstacleXPos, y: startPos.y - (distance))
         let moveAction = SKAction.move(to: targetPos, duration: size.width / info.foxSpeed)
         
         obstacle.run(moveAction, withKey: "foxMovement")
@@ -553,8 +571,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         addChild(branch)
     }
     
-    func spawnBranch(obstacleSize: CGSize, yPos: CGFloat) {
-        let xPos: CGFloat = Bool.random() ? info.obstacleXPos : size.width - info.obstacleXPos
+    func spawnBranch(obstacleSize: CGSize, yPos: CGFloat, xPos: CGFloat) {
         let texture: SKTexture = Bool.random() ? SKTexture(imageNamed: "branchRight") : SKTexture(imageNamed: "branchLeft")
         
         let branch = NJBranchNode(size: obstacleSize, position: CGPoint(x: xPos, y: yPos), texture: texture)
@@ -805,7 +822,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         //player hits fruit
         if (contactA == NJPhysicsCategory.player && contactB == NJPhysicsCategory.fruit) ||
             (contactA == NJPhysicsCategory.fruit && contactB == NJPhysicsCategory.player) {
-            if stateMachine.currentState is NJRunningState && !info.isFruitShoot {
+            if stateMachine.currentState is NJRunningState && !info.isFruitShoot && !info.playerIsInvincible {
                 if info.playerIsProtected {
                     toggleShield(protect: false)
                     animatePlayerBasedOnState()
@@ -890,7 +907,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         //player hits fox
         if (contactA == NJPhysicsCategory.player && contactB == NJPhysicsCategory.fox) ||
             (contactA == NJPhysicsCategory.fox && contactB == NJPhysicsCategory.player) {
-            if stateMachine.currentState is NJRunningState && !info.playerIsDisguised {
+            if stateMachine.currentState is NJRunningState && !info.playerIsInvincible {
                 if info.playerIsProtected {
                     toggleShield(protect: false)
                     animatePlayerBasedOnState()
@@ -1121,6 +1138,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     func foxPowerUp() {
         displayPowerUpText(type: "fox")
         info.isPoweredUp = true
+        info.playerIsInvincible = true
         AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
         playFoxPowerup()
         info.playerIsDisguised = true
@@ -1131,6 +1149,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
             self.animatePlayerBasedOnState()
             self.removePowerUpText()
             self.info.isPoweredUp = false
+            self.info.playerIsInvincible = false
         }
     }
     
