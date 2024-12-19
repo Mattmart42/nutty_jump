@@ -41,7 +41,7 @@ struct NJGameInfo {
     
     var fruitSpeed: CGFloat { return 700 * gameSpeed }
     var hawkSpeed: CGFloat { return 500 * gameSpeed }
-    var foxSpeed: CGFloat { return 840 * gameSpeed }
+    var foxSpeed: CGFloat { return 839 * gameSpeed }
     var nutSpeed: CGFloat { return 900 * gameSpeed }
     var foxStep: CGFloat { return 568 * heightScale }
     var playerSpeed: CGFloat {
@@ -60,7 +60,7 @@ struct NJGameInfo {
     var wallXPosLeft: CGFloat { return wallWidth / 2 }
     var wallXPosRight: CGFloat { return screenWidth - (wallWidth / 2) }
     
-    var obstacleXPos: CGFloat { return (50 * widthScale) }
+    var obstacleXPos: CGFloat { return (65 * widthScale) }
     var fruitXPos: CGFloat { return (65 * widthScale) }
     var nutXPos: CGFloat { return (60 * widthScale) }
     
