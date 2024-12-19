@@ -95,7 +95,7 @@ struct NJGameInfo {
     var continueButtonSize: CGSize { CGSize(width: 292 * uniformScale, height: 83 * uniformScale) }
     var gameOverScreenPos: CGPoint { CGPoint(x: screenWidth / 2, y: screenHeight / 2 + 80) }
     var continueButtonPos: CGPoint { CGPoint(x: screenWidth / 2, y: screenHeight / 2 - 300) }
-    var tapStartPos: CGPoint { CGPoint(x: screenWidth / 2, y: 110 * heightScale) }
+    var tapStartPos: CGPoint { CGPoint(x: screenWidth / 2, y: 95 * heightScale) }
     
     //MARK: Power-Up Tracking
     
