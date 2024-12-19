@@ -54,7 +54,6 @@ class NJGameContext: GameContext {
             NJFallingState(scene: gameScene, context: self),
             NJGameOverState(scene: gameScene, context: self),
             NJHawkState(scene: gameScene, context: self),
-            NJPauseState(scene: gameScene, context: self),
             ]
         )
     }

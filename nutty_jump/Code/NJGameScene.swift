@@ -19,9 +19,6 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     let scoreNode = NJScoreNode()
     var trackerNode: NJPowerUpTrackerNode!
     var equationNode: NJEquationNode!
-    var pauseNode: SKSpriteNode!
-    var playNode: SKSpriteNode!
-    var quitNode: SKSpriteNode!
     var backgroundNodes: [NJBackgroundNode] = []
     private var audioPlayer: AVAudioPlayer?
     
@@ -156,29 +153,6 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         equationNode = NJEquationNode(size: info.equationSize, position: info.equationPos, texture: SKTexture(imageNamed: "equation"))
         equationNode.zPosition = info.hudZPos
         addChild(equationNode)
-        
-        pauseNode?.removeFromParent()
-        pauseNode = SKSpriteNode(texture: SKTexture(imageNamed: "pause"), size: info.pauseNodeSize)
-        pauseNode.position = info.pauseNodePos
-        pauseNode.name = "PauseNode"
-        pauseNode.zPosition = info.hudZPos
-        addChild(pauseNode)
-        
-        playNode?.removeFromParent()
-        playNode = SKSpriteNode(texture: SKTexture(imageNamed: "play"), size: info.playNodeSize)
-        playNode.position = info.playNodePos
-        playNode.name = "PauseNode"
-        playNode.isHidden = true
-        playNode.zPosition = info.hudZPos
-        addChild(playNode)
-        
-        quitNode?.removeFromParent()
-        quitNode = SKSpriteNode(texture: SKTexture(imageNamed: "quit"), size: info.quitNodeSize)
-        quitNode.position = info.quitNodePos
-        quitNode.name = "QuitNode"
-        quitNode.isHidden = true
-        quitNode.zPosition = info.hudZPos
-        addChild(quitNode)
         
         for wall in ["leftWallTop", "leftWallBot", "rightWallTop", "rightWallBot", "ground", "player"] { self.childNode(withName: wall)?.removeFromParent() }
         
@@ -757,18 +731,6 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         } else if currentState is NJHawkState {
             print("cannot tap, hawk power-up active")
             
-        } else if currentState is NJPauseState {
-            if let touch = touches.first {
-                let location = touch.location(in: self)
-                if let node = atPoint(location) as? SKSpriteNode, node.name == "PauseNode" {
-                    play()
-                    return
-                }
-                if let node = atPoint(location) as? SKSpriteNode, node.name == "QuitNode" {
-                    quit()
-                    return
-                }
-            }
         } else {
             print("unknown state")
         }
@@ -1214,21 +1176,6 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
                 }
             }
         }
-    }
-    
-    func pause() {
-        guard let stateMachine = context?.stateMachine else { return }
-        stateMachine.enter(NJPauseState.self)
-    }
-    
-    func play() {
-        guard let stateMachine = context?.stateMachine else { return }
-        stateMachine.enter(NJRunningState.self)
-    }
-    
-    func quit() {
-        guard let stateMachine = context?.stateMachine else { return }
-        stateMachine.enter(NJGameOverState.self)
     }
     
     func reset() {

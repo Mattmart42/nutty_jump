@@ -33,7 +33,6 @@ class NJGameIdleState: GKState {
         scene.scoreNode.isHidden = true
         scene.trackerNode.isHidden = true
         scene.equationNode.isHidden = true
-        scene.pauseNode.isHidden = true
         setupIdleUI()
     }
     
@@ -44,7 +43,6 @@ class NJGameIdleState: GKState {
         scene.scoreNode.isHidden = false
         scene.trackerNode.isHidden = false
         scene.equationNode.isHidden = false
-        scene.pauseNode.isHidden = false
         removeIdleUI()
         scene.physicsWorld.contactDelegate = context.gameScene
         let delayAction = SKAction.wait(forDuration: 2.0)
