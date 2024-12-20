@@ -35,6 +35,6 @@ class NJJumpingState: GKState {
     
     private func playJumpingSound() {
         guard let scene else { return }
-        scene.run(SKAction.playSoundFileNamed("Sword.m4a", waitForCompletion: false))
+        scene.run(SKAction.playSoundFileNamed("NJSword.m4a", waitForCompletion: false))
     }
 }

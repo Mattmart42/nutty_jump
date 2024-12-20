@@ -56,7 +56,7 @@ class NJGameIdleState: GKState {
     }
     
     private func playMusic() {
-        guard let musicSoundURL = Bundle.main.url(forResource: "Music", withExtension: "m4a") else {
+        guard let musicSoundURL = Bundle.main.url(forResource: "NJMusic", withExtension: "m4a") else {
             print("Failed to find Music.mp3")
             return
         }
@@ -78,7 +78,7 @@ class NJGameIdleState: GKState {
     func setupIdleUI() {
         guard let scene else { return }
         
-        let titleNode = NJTitleNode(size: scene.info.titleScreenSize, position: scene.info.titleScreenPos, texture: SKTexture(imageNamed: "titleScreen"))
+        let titleNode = NJTitleNode(size: scene.info.titleScreenSize, position: scene.info.titleScreenPos, texture: SKTexture(imageNamed: "nj_titleScreen"))
         titleNode.name = "titleNode"
         titleNode.zPosition = scene.info.titleZPos
         scene.addChild(titleNode)

@@ -33,7 +33,7 @@ class NJRunningState: GKState {
     
     private func playRunningSound() {
         guard let scene else { return }
-        scene.run(SKAction.playSoundFileNamed("Running.mp3", waitForCompletion: false))
+        scene.run(SKAction.playSoundFileNamed("NJRunning.mp3", waitForCompletion: false))
     }
     
     override func willExit(to nextState: GKState) {

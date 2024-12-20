@@ -33,6 +33,6 @@ class NJHawkState: GKState {
     
     private func playHawkPowerup() {
         guard let scene else { return }
-        scene.run(SKAction.playSoundFileNamed("HawkPowerup.m4a", waitForCompletion: false))
+        scene.run(SKAction.playSoundFileNamed("NJHawkPowerup.m4a", waitForCompletion: false))
     }
 }

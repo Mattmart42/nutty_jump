@@ -44,7 +44,7 @@ class NJGameOverState: GKState {
     
     func setupGameOverUI() {
         guard let scene else { return }
-        let titleNode = NJTitleNode(size: scene.info.gameOverScreenSize, position: scene.info.gameOverScreenPos, texture: SKTexture(imageNamed: "gameOverScreen"))
+        let titleNode = NJTitleNode(size: scene.info.gameOverScreenSize, position: scene.info.gameOverScreenPos, texture: SKTexture(imageNamed: "nj_gameOverScreen"))
         titleNode.name = "gameOverScreen"
         titleNode.zPosition = scene.info.titleZPos
         scene.addChild(titleNode)
@@ -66,7 +66,7 @@ class NJGameOverState: GKState {
         scoreValue.zPosition = scene.info.titleZPos
         scene.addChild(scoreValue)
         
-        let continueButton = NJTitleNode(size: scene.info.continueButtonSize, position: scene.info.continueButtonPos, texture: SKTexture(imageNamed: "continueButton"))
+        let continueButton = NJTitleNode(size: scene.info.continueButtonSize, position: scene.info.continueButtonPos, texture: SKTexture(imageNamed: "nj_continueButton"))
         continueButton.name = "ContinueButton"
         continueButton.zPosition = scene.info.titleZPos
         scene.addChild(continueButton)

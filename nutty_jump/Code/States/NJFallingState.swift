@@ -71,6 +71,6 @@ class NJFallingState: GKState {
     
     private func playSquirrelDeath() {
         guard let scene else { return }
-        scene.run(SKAction.playSoundFileNamed("SquirrelDeath.m4a", waitForCompletion: false))
+        scene.run(SKAction.playSoundFileNamed("NJSquirrelDeath.m4a", waitForCompletion: false))
     }
 }

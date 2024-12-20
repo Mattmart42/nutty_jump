@@ -44,29 +44,29 @@ struct NJGameInfo {
     var hawkSpeed: CGFloat { return 500 * gameSpeed }
     var foxSpeed: CGFloat {
         if screenHeight == 667.0 {
-            if score > 4800 {
+            if score > 5000 {
                 return 680 * gameSpeed
             }
             return 1030 * gameSpeed
         } else if screenHeight == 852.0 {
-            if score > 4800 {
+            if score > 5000 {
                 return 556 * gameSpeed
             }
             return 840 * gameSpeed
         } else if screenHeight == 874.0 {
-            if score > 4800 {
+            if score > 5000 {
                 return 556 * gameSpeed
             }
             return 840 * gameSpeed
         }
-        if score > 4800 {
+        if score > 5000 {
             return 555 * gameSpeed
         }
         return 835 * gameSpeed
     }
     var nutSpeed: CGFloat { return 900 * gameSpeed }
     var foxStep: CGFloat {
-        if score > 4800 {
+        if score > 5000 {
             return 0.5 * screenHeight
         }
         return 0.333 * screenHeight
@@ -232,19 +232,19 @@ enum CollectibleType {
     
     var texture: SKTexture {
         switch self {
-        case .fruit: return SKTexture(imageNamed: "pinecone")
-        case .hawk: return SKTexture(imageNamed: "hawkRight")
-        case .fox: return SKTexture(imageNamed: "fox1")
-        case .empty: return SKTexture(imageNamed: "powerUpDefault")
+        case .fruit: return SKTexture(imageNamed: "nj_pinecone")
+        case .hawk: return SKTexture(imageNamed: "nj_hawkRight")
+        case .fox: return SKTexture(imageNamed: "nj_fox1")
+        case .empty: return SKTexture(imageNamed: "nj_powerUpDefault")
         }
     }
     
     var resultTexture: SKTexture {
         switch self {
-        case .fruit: return SKTexture(imageNamed: "shootTracker")
-        case .hawk: return SKTexture(imageNamed: "wingTracker")
-        case .fox: return SKTexture(imageNamed: "disguiseTracker")
-        case .empty: return SKTexture(imageNamed: "powerUpDefault")
+        case .fruit: return SKTexture(imageNamed: "nj_shootTracker")
+        case .hawk: return SKTexture(imageNamed: "nj_wingTracker")
+        case .fox: return SKTexture(imageNamed: "nj_disguiseTracker")
+        case .empty: return SKTexture(imageNamed: "nj_powerUpDefault")
         }
     }
     

@@ -90,8 +90,8 @@ class NJGameContext: GameContext {
     var audioPlayer: AVAudioPlayer?
 
     func playMusic() {
-        guard let musicSoundURL = Bundle.main.url(forResource: "Music", withExtension: "m4a") else {
-            print("Failed to find Music.m4a")
+        guard let musicSoundURL = Bundle.main.url(forResource: "NJMusic", withExtension: "m4a") else {
+            print("Failed to find NJMusic.m4a")
             return
         }
 

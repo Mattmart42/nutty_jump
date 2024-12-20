@@ -24,7 +24,7 @@ class NJScoreNode: SKNode {
     func setup(screenSize: CGSize, score: Int, nodePosition: CGPoint) {
         position = nodePosition
 
-        let backgroundNode = SKSpriteNode(texture: SKTexture(imageNamed: "score"))
+        let backgroundNode = SKSpriteNode(texture: SKTexture(imageNamed: "nj_score"))
         backgroundNode.size = info.scoreNodeSize
         addChild(backgroundNode)
         updateScore(with: score)
