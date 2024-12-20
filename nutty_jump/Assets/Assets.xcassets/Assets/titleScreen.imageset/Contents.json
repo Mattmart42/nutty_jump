@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "titleScreen.png",
+      "filename" : "Component 162.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "titleScreen@2x.png",
+      "filename" : "Component 162@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "titleScreen@3x.png",
+      "filename" : "Component 162@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

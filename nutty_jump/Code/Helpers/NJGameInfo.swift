@@ -44,33 +44,34 @@ struct NJGameInfo {
     var hawkSpeed: CGFloat { return 500 * gameSpeed }
     var foxSpeed: CGFloat {
         if screenHeight == 667.0 {
-            if score > 5000 {
+            if score > 4800 {
                 return 680 * gameSpeed
             }
             return 1030 * gameSpeed
         } else if screenHeight == 852.0 {
-            if score > 5000 {
-                return 560 * gameSpeed
+            if score > 4800 {
+                return 556 * gameSpeed
             }
             return 840 * gameSpeed
         } else if screenHeight == 874.0 {
-            if score > 5000 {
-                return 560 * gameSpeed
+            if score > 4800 {
+                return 556 * gameSpeed
             }
             return 840 * gameSpeed
         }
-        if score > 5000 {
+        if score > 4800 {
             return 555 * gameSpeed
         }
         return 835 * gameSpeed
     }
     var nutSpeed: CGFloat { return 900 * gameSpeed }
     var foxStep: CGFloat {
-        if score > 5000 {
+        if score > 4800 {
             return 0.5 * screenHeight
         }
         return 0.333 * screenHeight
     }
+    var foxAnimationTime: CGFloat { return 0.07 - (gameSpeed * 0.01) }
     var playerSpeed: CGFloat {
         if self.score >= 5000 {
             return 0.18 - (0.1 * 1.62)
@@ -92,7 +93,7 @@ struct NJGameInfo {
     var nutXPos: CGFloat { return (60 * widthScale) }
     
     var fruitSize: CGSize { CGSize(width: 40 * uniformScale, height: 50 * uniformScale) }
-    var foxSize: CGSize { CGSize(width: 76.98 * uniformScale, height: 50 * uniformScale) }
+    var foxSize: CGSize { CGSize(width: 100 * uniformScale, height: 57.14 * uniformScale) }
     var hawkSize: CGSize { CGSize(width: 50 * uniformScale, height: 71.99 * uniformScale) }
     var nutSize: CGSize { CGSize(width: 50 * uniformScale, height: 50 * uniformScale) }
     var defaultSize: CGSize { CGSize(width: 30 * uniformScale, height: 30 * uniformScale) }
@@ -109,18 +110,16 @@ struct NJGameInfo {
     
     var gameOverSize: CGSize { CGSize(width: 340 * uniformScale, height: 44 * uniformScale) }
     
-    var titleScreenSize: CGSize { CGSize(width: 393 * uniformScale, height: 741 * uniformScale) }
+    var titleScreenSize: CGSize { CGSize(width: 312 * uniformScale, height: 770 * uniformScale) }
+    var titleScreenPos: CGPoint { CGPoint(x: screenWidth / 2, y: screenHeight / 2 - (20 * heightScale)) }
     
     var gameOverScreenSize: CGSize { CGSize(width: 393 * uniformScale, height: 533 * uniformScale) }
     var continueButtonSize: CGSize { CGSize(width: 292 * uniformScale, height: 83 * uniformScale) }
     var gameOverScreenPos: CGPoint { CGPoint(x: screenWidth / 2, y: screenHeight / 2 + 80) }
     var continueButtonPos: CGPoint {
-        if screenHeight == 667.0 {
-            return CGPoint(x: screenWidth / 2, y: screenHeight / 2 - 250)
-        }
-        return CGPoint(x: screenWidth / 2, y: screenHeight / 2 - 300)
+        return CGPoint(x: screenWidth / 2, y: screenHeight / 2 - (300 * heightScale))
     }
-    var tapStartPos: CGPoint { CGPoint(x: screenWidth / 2, y: 95 * heightScale) }
+    var tapStartPos: CGPoint { CGPoint(x: screenWidth / 2, y: 70 * heightScale) }
     
     //MARK: Power-Up Tracking
     
@@ -165,7 +164,7 @@ struct NJGameInfo {
     }
     
     var fruitTrackerSize: CGSize { CGSize(width: 34 * uniformScale, height: 34 * uniformScale) }
-    var foxTrackerSize: CGSize { CGSize(width: 48.48 * uniformScale, height: 30 * uniformScale) }
+    var foxTrackerSize: CGSize { CGSize(width: 48 * uniformScale, height: 27.43 * uniformScale) }
     var hawkTrackerSize: CGSize { CGSize(width: 40 * uniformScale, height: 57.59 * uniformScale) }
     
     var fruitResultSize: CGSize { CGSize(width: 30 * uniformScale, height: 30 * uniformScale) }
@@ -228,7 +227,7 @@ enum CollectibleType {
         switch self {
         case .fruit: return SKTexture(imageNamed: "pinecone")
         case .hawk: return SKTexture(imageNamed: "hawkRight")
-        case .fox: return SKTexture(imageNamed: "foxRight1")
+        case .fox: return SKTexture(imageNamed: "fox1")
         case .empty: return SKTexture(imageNamed: "powerUpDefault")
         }
     }

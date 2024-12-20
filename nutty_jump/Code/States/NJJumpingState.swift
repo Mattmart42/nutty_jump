@@ -27,7 +27,7 @@ class NJJumpingState: GKState {
     override func didEnter(from previousState: GKState?) {
         guard let scene else { return }
         UIImpactFeedbackGenerator(style: .light).impactOccurred(intensity: 0.5)
-        print("did enter jumping state")
+        //print("did enter jumping state")
         
         scene.animatePlayerBasedOnState()
         playJumpingSound()

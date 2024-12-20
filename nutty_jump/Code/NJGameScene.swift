@@ -289,7 +289,30 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
             SKAction.sequence([
                 SKAction.run { [weak self] in
                     guard let self else { return }
-                    info.gameSpeed += 0.03
+                    if info.gameSpeed < 1.62 && info.score <= 7500 {
+                        info.gameSpeed += 0.03
+                    }
+                    if info.gameSpeed < 1.65 && info.score > 7500 {
+                        info.gameSpeed += 0.03
+                    }
+                    if info.gameSpeed < 1.68 && info.score > 10000 {
+                        info.gameSpeed += 0.03
+                    }
+                    if info.gameSpeed < 1.71 && info.score > 12500 {
+                        info.gameSpeed += 0.03
+                    }
+                    if info.gameSpeed < 1.74 && info.score > 15000 {
+                        info.gameSpeed += 0.03
+                    }
+                    if info.gameSpeed < 1.77 && info.score > 17500 {
+                        info.gameSpeed += 0.03
+                    }
+                    if info.gameSpeed < 1.80 && info.score > 20000 {
+                        info.gameSpeed += 0.03
+                    }
+                    if info.gameSpeed < 1.83 && info.score > 22500 {
+                        info.gameSpeed += 0.03
+                    }
                 },
                 SKAction.wait(forDuration: 3.0)
             ])
@@ -474,7 +497,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     func spawnFox(obstacleSize: CGSize, yPos: CGFloat, xPos: CGFloat) {
         spawnFoxBranch(obstacleSize: obstacleSize, yPos: yPos)
         
-        let obstacle = NJFoxNode(size: obstacleSize, position: CGPoint(x: xPos, y: yPos + info.branchHeight), texture: SKTexture(imageNamed: "foxLeft1"))
+        let obstacle = NJFoxNode(size: obstacleSize, position: CGPoint(x: xPos, y: yPos + info.branchHeight), texture: SKTexture(imageNamed: "fox1"))
         obstacle.name = "FoxNode"
         
         moveFoxDown(obstacle, startPos: CGPoint(x: xPos, y: yPos + info.branchHeight), distance: info.foxStep)
@@ -502,11 +525,15 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         
         if obstacle.action(forKey: "foxAnimation") == nil {
             let foxTextures = [
-                SKTexture(imageNamed: "foxLeft1"),
-                SKTexture(imageNamed: "foxLeft2"),
-                SKTexture(imageNamed: "foxLeft3")
+                SKTexture(imageNamed: "fox1"),
+                SKTexture(imageNamed: "fox2"),
+                SKTexture(imageNamed: "fox3"),
+                SKTexture(imageNamed: "fox4"),
+                SKTexture(imageNamed: "fox5"),
+                SKTexture(imageNamed: "fox6"),
+                SKTexture(imageNamed: "fox7")
             ]
-            let animationAction = SKAction.animate(with: foxTextures, timePerFrame: 0.1)
+            let animationAction = SKAction.animate(with: foxTextures, timePerFrame: info.foxAnimationTime)
             let repeatAnimation = SKAction.repeatForever(animationAction)
             obstacle.run(repeatAnimation, withKey: "foxAnimation")
         }
@@ -626,9 +653,9 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
 //    }
     
     func togglePlayerLocation() {
-        print("toggling")
-        print("currentPos: \(Int(currentPlayerXPos))")
-        print("rightPos): \(Int(info.playerXPosRight))")
+//        print("toggling")
+//        print("currentPos: \(Int(currentPlayerXPos))")
+//        print("rightPos): \(Int(info.playerXPosRight))")
         let isOnRightWall = Int(currentPlayerXPos) == Int(info.playerXPosRight)
         let targetPos = isOnRightWall ? leftWallPlayerPos : rightWallPlayerPos
         currentPlayerXPos = targetPos.x
@@ -1189,7 +1216,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     func despawn() {
         self.enumerateChildNodes(withName: "//*") { node, _ in
             if let specificNode = node as? NJFoxNode {
-                if specificNode.position.y < self.info.playerYPos - 1250 {
+                if specificNode.position.y < -50 || specificNode.position.x < 0 || specificNode.position.x > self.size.width {
                     specificNode.removeFromParent()
                     print("item despawned")
                 }

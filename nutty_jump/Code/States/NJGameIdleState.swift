@@ -73,7 +73,7 @@ class NJGameIdleState: GKState {
     func setupIdleUI() {
         guard let scene else { return }
         
-        let titleNode = NJTitleNode(size: scene.info.titleScreenSize, position: CGPoint(x: scene.size.width / 2, y: scene.size.height / 2), texture: SKTexture(imageNamed: "titleScreen"))
+        let titleNode = NJTitleNode(size: scene.info.titleScreenSize, position: scene.info.titleScreenPos, texture: SKTexture(imageNamed: "titleScreen"))
         titleNode.name = "titleNode"
         titleNode.zPosition = scene.info.titleZPos
         scene.addChild(titleNode)

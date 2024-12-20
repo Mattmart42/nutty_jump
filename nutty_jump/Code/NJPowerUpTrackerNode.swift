@@ -61,7 +61,7 @@ class NJPowerUpTrackerNode: SKNode {
         if currentDisplayedType != collectibleType {
             currentDisplayedType = collectibleType
             resultNode.texture = collectibleType.resultTexture
-            resultNode.size = collectibleType.size(for: info)
+            resultNode.size = collectibleType.resultSize(for: info)
             resultNode.isHidden = false
         }
     }

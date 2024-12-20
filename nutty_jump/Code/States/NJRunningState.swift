@@ -25,7 +25,7 @@ class NJRunningState: GKState {
     
     override func didEnter(from previousState: GKState?) {
         guard let scene else { return }
-        print("did enter running state")
+        //print("did enter running state")
         
         scene.animatePlayerBasedOnState()
         playRunningSound()
