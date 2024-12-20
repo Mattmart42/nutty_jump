@@ -25,11 +25,15 @@ class NJGameOverState: GKState {
         print("did enter game over state")
         guard let scene else { return }
         scene.physicsWorld.contactDelegate = nil
+        scene.removeAllActions()
         scene.scoreNode.removeFromParent()
         scene.trackerNode.removeFromParent()
         scene.equationNode.removeFromParent()
         setupGameOverUI()
         scene.isPaused = true
+        guard let feather = scene.childNode(withName: "feather") else { return }
+        feather.removeFromParent()
+        
     }
     
 //    override func willExit(to nextState: GKState) {

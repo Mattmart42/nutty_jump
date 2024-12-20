@@ -99,6 +99,12 @@ struct NJGameInfo {
     var defaultSize: CGSize { CGSize(width: 30 * uniformScale, height: 30 * uniformScale) }
     var shieldSize: CGSize { CGSize(width: 90 * uniformScale, height: 90 * uniformScale) }
     
+    var owlSize: CGSize { CGSize(width: 127.5 * uniformScale, height: 46.42 * uniformScale) }
+    var featherSize: CGSize { CGSize(width: 50 * uniformScale, height: 50 * uniformScale) }
+    var owlPos1: CGPoint { CGPoint(x: screenWidth / 2, y: screenHeight + (20 * heightScale)) }
+    var owlPos2: CGPoint { CGPoint(x: screenWidth / 2, y: screenHeight - (150 * heightScale)) }
+    var featherPos: CGPoint { CGPoint(x: screenWidth / 2, y: screenHeight - (160 * heightScale)) }
+    
     var scoreNodePos: CGPoint { CGPoint(x: screenWidth / 2, y: screenHeight - (80 * heightScale)) }
     var scoreNodeSize: CGSize { CGSize(width: 180 * uniformScale, height: 51 * uniformScale) }
     
@@ -183,6 +189,7 @@ struct NJGameInfo {
     var playerIsDisguised = false
     var isFruitShoot = false
     var isPoweredUp = false
+    var isBossSequence = false
     
     var fruitShootSpeed: CGFloat { return 1000 }
     var fruitShootDuration: CGFloat { return 5 }

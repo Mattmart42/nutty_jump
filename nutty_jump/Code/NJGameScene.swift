@@ -284,7 +284,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         childNode(withName: "fruitPowerUpText")?.removeFromParent()
     }
     
-    func runObstacles() {
+    func increaseSpeed() {
         let speedIncreaseAction = SKAction.repeatForever(
             SKAction.sequence([
                 SKAction.run { [weak self] in
@@ -318,21 +318,24 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
             ])
         )
         run(speedIncreaseAction, withKey: "speedIncreaseAction")
+    }
+    
+    func runObstacles() {
+        guard let stateMachine = context?.stateMachine else { return }
         
-        let spawnAction = SKAction.run { [weak self] in self?.spawnRandomObstacle() }
+        increaseSpeed()
+        
+        let spawnAction = SKAction.run {
+            if !self.info.isBossSequence {
+                self.spawnRandomObstacle()
+            }
+        }
         let delay = SKAction.wait(forDuration: info.obstacleSpawnRate)
         let spawnSequence = SKAction.sequence([spawnAction, delay])
         run(SKAction.repeatForever(spawnSequence), withKey: "spawnObstacles")
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + info.branchSpawnRate) {
-            let spawnBranch = SKAction.run { [weak self] in self?.spawnRandomBranch() }
-            let delayBranch = SKAction.wait(forDuration: self.info.branchSpawnRate)
-            let branchSequence = SKAction.sequence([spawnBranch, delayBranch])
-            self.run(SKAction.repeatForever(branchSequence))
-        }
-        
         let spawnAction2 = SKAction.run {
-            if self.info.score > 3000 {
+            if self.info.score > 3000 && !self.info.isBossSequence {
                 self.spawnRandomObstacle()
             }
         }
@@ -341,7 +344,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         run(SKAction.repeatForever(spawnSequence2), withKey: "spawnObstacles2")
         
         let spawnAction3 = SKAction.run {
-            if self.info.score > 5000 {
+            if self.info.score > 5000 && !self.info.isBossSequence {
                 self.spawnRandomObstacle()
             }
         }
@@ -349,9 +352,20 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         let spawnSequence3 = SKAction.sequence([spawnAction3, delay3])
         run(SKAction.repeatForever(spawnSequence3), withKey: "spawnObstacles3")
         
+        DispatchQueue.main.asyncAfter(deadline: .now() + info.branchSpawnRate) {
+            let spawnBranch = SKAction.run {
+                if !(stateMachine.currentState is NJGameOverState) && !(stateMachine.currentState is NJFallingState) && !self.info.isBossSequence {
+                    self.spawnRandomBranch()
+                }
+            }
+            let delayBranch = SKAction.wait(forDuration: self.info.branchSpawnRate)
+            let branchSequence = SKAction.sequence([spawnBranch, delayBranch])
+            self.run(SKAction.repeatForever(branchSequence))
+        }
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + info.nutSpawnRate) {
             let spawnNutAction = SKAction.run {
-                if !(self.info.playerIsProtected) {
+                if !(self.info.playerIsProtected) && !(stateMachine.currentState is NJGameOverState) && !(stateMachine.currentState is NJFallingState) {
                     self.spawnNut(obstacleSize: self.info.nutSize, yPos: self.size.height + (self.size.height * (50 / 852)))
                 }
             }
@@ -364,6 +378,13 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     override func update(_ currentTime: TimeInterval) {
         guard let context else { return }
         despawn()
+        
+        if info.score == 5000 {
+            bossSequence()
+        }
+        if info.score == 10000 {
+            bossSequence()
+        }
         
         if !(context.stateMachine?.currentState is NJGameIdleState) && !(context.stateMachine?.currentState is NJFallingState) && !(context.stateMachine?.currentState is NJGameOverState) && !info.isPaused {
             scrollScreen()
@@ -723,23 +744,12 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let stateMachine = context?.stateMachine,
-              let currentState = stateMachine.currentState,
-              let context else { return }
-        
-        
+              let currentState = stateMachine.currentState else { return }
         
         if currentState is NJGameIdleState {
             stateMachine.enter(NJRunningState.self)
             
         } else if currentState is NJRunningState {
-            if let touch = touches.first {
-                let location = touch.location(in: self)
-                if let node = atPoint(location) as? SKSpriteNode, node.name == "PauseNode" {
-                    pause()
-                    return
-                }
-            }
-            
             stateMachine.enter(NJJumpingState.self)
             togglePlayerLocation()
             
@@ -803,6 +813,14 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
 
     private func playFoxPowerup() {
         run(SKAction.playSoundFileNamed("FoxPowerup.mp3", waitForCompletion: false))
+    }
+    
+    private func playOwl() {
+        run(SKAction.playSoundFileNamed("Owl.mp3", waitForCompletion: false))
+    }
+    
+    private func playSword() {
+        run(SKAction.playSoundFileNamed("Sword.m4a", waitForCompletion: false))
     }
 
         
@@ -1180,6 +1198,89 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+    func bossSequence() {
+        info.isBossSequence = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+            self.spawnOwl()
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 7.0) {
+            self.getFeather()
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 7.5) {
+            self.getFeather()
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 8.0) {
+            self.getFeather()
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 8.5) {
+            self.getFeather()
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 9.0) {
+            self.getFeather()
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
+            self.despawnOwl()
+            self.info.isBossSequence = false
+        }
+    }
+    
+    func getFeather() {
+        guard let stateMachine = context?.stateMachine else { return }
+        let target1 = CGPoint(x: -150.0, y: 0)
+        let target2 = CGPoint(x: size.width * 0.25, y: 0)
+        let target3 = CGPoint(x: size.width * 0.5, y: 0)
+        let target4 = CGPoint(x: size.width * 0.75, y: 0)
+        let target5 = CGPoint(x: size.width + 150.0, y: 0)
+        let targets = [target1, target2, target3, target4, target5]
+        
+        let randomNumber = Int.random(in: 0...4)
+        var texture = "feather2"
+        if randomNumber < 2 { texture = "feather1" }
+        else if randomNumber > 3 { texture = "feather3" }
+        if !(stateMachine.currentState is NJGameOverState) {
+            self.owlShoot(target: targets[randomNumber], texture: texture)
+        }
+    }
+    
+    func spawnOwl() {
+        let owl = NJHawkNode(size: info.owlSize, position: info.owlPos1, texture: SKTexture(imageNamed: "owl"))
+        owl.name = "owl"
+        
+        let moveAction = SKAction.move(to: info.owlPos2, duration: 1.0)
+        
+        owl.run(moveAction)
+        owl.zPosition = info.obstacleZPos
+        addChild(owl)
+        playOwl()
+    }
+    
+    func despawnOwl() {
+        guard let owl = childNode(withName: "owl") else { return }
+        
+        let targetPos = CGPoint(x: size.width / 2, y: size.height + 50)
+        let moveAction = SKAction.move(to: targetPos, duration: 1.0)
+        
+        let removeAction = SKAction.removeFromParent()
+        
+        owl.run(SKAction.sequence([moveAction, removeAction]), withKey: "despawnOwl")
+    }
+    
+    func owlShoot(target: CGPoint, texture: String) {
+        let feather = NJBombNode(size: info.featherSize, position: info.featherPos, texture: SKTexture(imageNamed: texture))
+        feather.name = "feather"
+        let moveAction = SKAction.move(to: target, duration: 1.0)
+        let removeAction = SKAction.removeFromParent()
+        
+        //let rotateAction = SKAction.rotate(byAngle: 90.0, duration: 10.0)
+        
+        feather.run(SKAction.sequence([moveAction, removeAction]), withKey: "shootFeather")
+        //feather.run(SKAction.sequence([rotateAction]))
+        
+        feather.zPosition = info.obstacleZPos
+        addChild(feather)
+        playSword()
+    }
+    
     // MARK: - Other
     
     func displayScore() {
@@ -1226,6 +1327,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     
     func reset() {
         guard let context else { return }
+        context.stopMusic()
         self.removeAllChildren()
         self.removeAllActions()
         let newScene = NJGameScene(context: context, size: self.size, info: info)

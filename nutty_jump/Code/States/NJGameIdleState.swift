@@ -25,7 +25,7 @@ class NJGameIdleState: GKState {
     
     override func didEnter(from previousState: GKState?) {
         print("did enter idle state")
-        playMusic()
+        context?.playMusic()
         guard let scene else { return }
         scene.physicsWorld.contactDelegate = nil
         
@@ -68,6 +68,11 @@ class NJGameIdleState: GKState {
         } catch {
             print("Failed to play music: \(error)")
         }
+    }
+    
+    func stopMusic() {
+        audioPlayer?.stop()
+        audioPlayer = nil
     }
     
     func setupIdleUI() {
