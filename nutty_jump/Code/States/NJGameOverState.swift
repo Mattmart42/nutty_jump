@@ -25,11 +25,15 @@ class NJGameOverState: GKState {
         print("did enter game over state")
         guard let scene else { return }
         scene.physicsWorld.contactDelegate = nil
+        scene.removeAllActions()
         scene.scoreNode.removeFromParent()
         scene.trackerNode.removeFromParent()
         scene.equationNode.removeFromParent()
         setupGameOverUI()
         scene.isPaused = true
+        guard let feather = scene.childNode(withName: "feather") else { return }
+        feather.removeFromParent()
+        
     }
     
 //    override func willExit(to nextState: GKState) {
@@ -40,7 +44,7 @@ class NJGameOverState: GKState {
     
     func setupGameOverUI() {
         guard let scene else { return }
-        let titleNode = NJTitleNode(size: scene.info.gameOverScreenSize, position: scene.info.gameOverScreenPos, texture: SKTexture(imageNamed: "gameOverScreen"))
+        let titleNode = NJTitleNode(size: scene.info.gameOverScreenSize, position: scene.info.gameOverScreenPos, texture: SKTexture(imageNamed: "nj_gameOverScreen"))
         titleNode.name = "gameOverScreen"
         titleNode.zPosition = scene.info.titleZPos
         scene.addChild(titleNode)
@@ -62,11 +66,9 @@ class NJGameOverState: GKState {
         scoreValue.zPosition = scene.info.titleZPos
         scene.addChild(scoreValue)
         
-        let continueButton = NJTitleNode(size: scene.info.continueButtonSize, position: scene.info.continueButtonPos, texture: SKTexture(imageNamed: "continueButton"))
+        let continueButton = NJTitleNode(size: scene.info.continueButtonSize, position: scene.info.continueButtonPos, texture: SKTexture(imageNamed: "nj_continueButton"))
         continueButton.name = "ContinueButton"
         continueButton.zPosition = scene.info.titleZPos
         scene.addChild(continueButton)
-    }
-    
-    
+    } 
 }

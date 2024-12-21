@@ -9,12 +9,12 @@ import SpriteKit
 
 class NJPowerUpTrackerNode: SKNode {
     private let powerUpNodes: [SKSpriteNode]
-    private var defaultCollectible: CollectibleType
+    private var defaultCollectible: NJCollectibleType
     private let info: NJGameInfo
     private var resultNode: SKSpriteNode
-    private var currentDisplayedType: CollectibleType?
+    private var currentDisplayedType: NJCollectibleType?
 
-    init(size: CGSize, defaultCollectible: CollectibleType) {
+    init(size: CGSize, defaultCollectible: NJCollectibleType) {
         self.defaultCollectible = defaultCollectible
         let localInfo = NJGameInfo(screenSize: UIScreen.main.bounds.size)
         self.info = localInfo
@@ -45,7 +45,7 @@ class NJPowerUpTrackerNode: SKNode {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func updatePowerUpDisplay(for count: Int, with collectibleType: CollectibleType) {
+    func updatePowerUpDisplay(for count: Int, with collectibleType: NJCollectibleType) {
         for (index, node) in powerUpNodes.enumerated() {
             if index < count {
                 node.texture = collectibleType.texture
@@ -61,7 +61,7 @@ class NJPowerUpTrackerNode: SKNode {
         if currentDisplayedType != collectibleType {
             currentDisplayedType = collectibleType
             resultNode.texture = collectibleType.resultTexture
-            resultNode.size = collectibleType.size(for: info)
+            resultNode.size = collectibleType.resultSize(for: info)
             resultNode.isHidden = false
         }
     }

@@ -22,18 +22,18 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     var backgroundNodes: [NJBackgroundNode] = []
     private var audioPlayer: AVAudioPlayer?
     
-    let fruitAtlas = SKTextureAtlas(named: "FruitAtlas")
-    let backgroundAtlas = SKTextureAtlas(named: "BackgroundAtlas")
-    let playerAtlas = SKTextureAtlas(named: "PlayerAtlas")
+    let fruitAtlas = SKTextureAtlas(named: "NJFruitAtlas")
+    let backgroundAtlas = SKTextureAtlas(named: "NJBackgroundAtlas")
+    let playerAtlas = SKTextureAtlas(named: "NJPlayerAtlas")
     
-    let runRAtlas = SKTextureAtlas(named: "RunRAtlas")
-    let runRFAtlas = SKTextureAtlas(named: "RunRFAtlas")
-    let runLAtlas = SKTextureAtlas(named: "RunLAtlas")
-    let runLFAtlas = SKTextureAtlas(named: "RunLFAtlas")
-    let flyRAtlas = SKTextureAtlas(named: "FlyRAtlas")
-    let flyRFAtlas = SKTextureAtlas(named: "FlyRFAtlas")
-    let flyLAtlas = SKTextureAtlas(named: "FlyLAtlas")
-    let flyLFAtlas = SKTextureAtlas(named: "FlyLFAtlas")
+    let runRAtlas = SKTextureAtlas(named: "NJRunRAtlas")
+    let runRFAtlas = SKTextureAtlas(named: "NJRunRFAtlas")
+    let runLAtlas = SKTextureAtlas(named: "NJRunLAtlas")
+    let runLFAtlas = SKTextureAtlas(named: "NJRunLFAtlas")
+    let flyRAtlas = SKTextureAtlas(named: "NJFlyRAtlas")
+    let flyRFAtlas = SKTextureAtlas(named: "NJFlyRFAtlas")
+    let flyLAtlas = SKTextureAtlas(named: "NJFlyLAtlas")
+    let flyLFAtlas = SKTextureAtlas(named: "NJFlyLFAtlas")
     
     let leftWallPlayerPos: CGPoint
     let rightWallPlayerPos: CGPoint
@@ -145,22 +145,22 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         addChild(scoreNode)
         
         trackerNode?.removeFromParent()
-        trackerNode = NJPowerUpTrackerNode(size: info.trackerSize, defaultCollectible: CollectibleType.empty)
+        trackerNode = NJPowerUpTrackerNode(size: info.trackerSize, defaultCollectible: NJCollectibleType.empty)
         trackerNode.position = CGPoint(x: trackerNode.frame.width / 2, y: 40 + trackerNode.frame.height / 2)
         trackerNode.zPosition = info.hudZPos
         addChild(trackerNode)
         
         equationNode?.removeFromParent()
-        equationNode = NJEquationNode(size: info.equationSize, position: info.equationPos, texture: SKTexture(imageNamed: "equation"))
+        equationNode = NJEquationNode(size: info.equationSize, position: info.equationPos, texture: SKTexture(imageNamed: "nj_equation"))
         equationNode.zPosition = info.hudZPos
         addChild(equationNode)
         
         for wall in ["leftWallTop", "leftWallBot", "rightWallTop", "rightWallBot", "ground", "player"] { self.childNode(withName: wall)?.removeFromParent() }
         
         let leftWallTop = NJWallNode(size: CGSize(width: info.wallWidth, height: info.wallHeight),
-                                     position: CGPoint(x: info.wallXPosLeft, y: 0), texture: SKTexture(imageNamed: "leftWall"))
+                                     position: CGPoint(x: info.wallXPosLeft, y: 0), texture: SKTexture(imageNamed: "nj_leftWall"))
         let leftWallBot = NJWallNode(size: CGSize(width: info.wallWidth, height: info.wallHeight),
-                                     position: CGPoint(x: info.wallXPosLeft, y: info.wallHeight), texture: SKTexture(imageNamed: "leftWall"))
+                                     position: CGPoint(x: info.wallXPosLeft, y: info.wallHeight), texture: SKTexture(imageNamed: "nj_leftWall"))
         leftWallTop.name = "leftWallTop"
         leftWallBot.name = "leftWallBot"
         leftWallTop.zPosition = info.wallZPos
@@ -169,9 +169,9 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         addChild(leftWallBot)
         
         let rightWallTop = NJWallNode(size: CGSize(width: info.wallWidth, height: info.wallHeight),
-                                     position: CGPoint(x: info.wallXPosRight, y: 0), texture: SKTexture(imageNamed: "rightWall"))
+                                     position: CGPoint(x: info.wallXPosRight, y: 0), texture: SKTexture(imageNamed: "nj_rightWall"))
         let rightWallBot = NJWallNode(size: CGSize(width: info.wallWidth, height: info.wallHeight),
-                                position: CGPoint(x: info.wallXPosRight, y: info.wallHeight), texture: SKTexture(imageNamed: "rightWall"))
+                                position: CGPoint(x: info.wallXPosRight, y: info.wallHeight), texture: SKTexture(imageNamed: "nj_rightWall"))
         rightWallTop.name = "rightWallTop"
         rightWallBot.name = "rightWallBot"
         rightWallTop.zPosition = info.wallZPos
@@ -184,7 +184,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         ground.name = "ground"
         addChild(ground)
         
-        let player = NJPlayerNode(size: info.playerSize, position: rightWallPlayerPos, texture: SKTexture(imageNamed: "runR1"))
+        let player = NJPlayerNode(size: info.playerSize, position: rightWallPlayerPos, texture: SKTexture(imageNamed: "nj_runR1"))
         player.zPosition = info.playerZPos
         player.name = "player"
         addChild(player)
@@ -284,32 +284,58 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         childNode(withName: "fruitPowerUpText")?.removeFromParent()
     }
     
-    func runObstacles() {
+    func increaseSpeed() {
         let speedIncreaseAction = SKAction.repeatForever(
             SKAction.sequence([
                 SKAction.run { [weak self] in
                     guard let self else { return }
-                    info.gameSpeed += 0.03
+                    if info.gameSpeed < 1.62 && info.score <= 7500 {
+                        info.gameSpeed += 0.03
+                    }
+                    if info.gameSpeed < 1.65 && info.score > 7500 {
+                        info.gameSpeed += 0.03
+                    }
+                    if info.gameSpeed < 1.68 && info.score > 10000 {
+                        info.gameSpeed += 0.03
+                    }
+                    if info.gameSpeed < 1.71 && info.score > 12500 {
+                        info.gameSpeed += 0.03
+                    }
+                    if info.gameSpeed < 1.74 && info.score > 15000 {
+                        info.gameSpeed += 0.03
+                    }
+                    if info.gameSpeed < 1.77 && info.score > 17500 {
+                        info.gameSpeed += 0.03
+                    }
+                    if info.gameSpeed < 1.80 && info.score > 20000 {
+                        info.gameSpeed += 0.03
+                    }
+                    if info.gameSpeed < 1.83 && info.score > 22500 {
+                        info.gameSpeed += 0.03
+                    }
                 },
                 SKAction.wait(forDuration: 3.0)
             ])
         )
         run(speedIncreaseAction, withKey: "speedIncreaseAction")
+    }
+    
+    func runObstacles() {
+        guard let stateMachine = context?.stateMachine else { return }
         
-        let spawnAction = SKAction.run { [weak self] in self?.spawnRandomObstacle() }
+        increaseSpeed()
+        
+        let spawnAction = SKAction.run {
+            if !self.info.isBossSequence {
+                self.spawnRandomObstacle()
+            }
+        }
         let delay = SKAction.wait(forDuration: info.obstacleSpawnRate)
         let spawnSequence = SKAction.sequence([spawnAction, delay])
         run(SKAction.repeatForever(spawnSequence), withKey: "spawnObstacles")
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + info.branchSpawnRate) {
-            let spawnBranch = SKAction.run { [weak self] in self?.spawnRandomBranch() }
-            let delayBranch = SKAction.wait(forDuration: self.info.branchSpawnRate)
-            let branchSequence = SKAction.sequence([spawnBranch, delayBranch])
-            self.run(SKAction.repeatForever(branchSequence))
-        }
-        
         let spawnAction2 = SKAction.run {
-            if self.info.score > 3000 {
+            if self.info.score > 3000 && !self.info.isBossSequence {
                 self.spawnRandomObstacle()
             }
         }
@@ -318,7 +344,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         run(SKAction.repeatForever(spawnSequence2), withKey: "spawnObstacles2")
         
         let spawnAction3 = SKAction.run {
-            if self.info.score > 5000 {
+            if self.info.score > 5000 && !self.info.isBossSequence {
                 self.spawnRandomObstacle()
             }
         }
@@ -326,9 +352,20 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         let spawnSequence3 = SKAction.sequence([spawnAction3, delay3])
         run(SKAction.repeatForever(spawnSequence3), withKey: "spawnObstacles3")
         
+        DispatchQueue.main.asyncAfter(deadline: .now() + info.branchSpawnRate) {
+            let spawnBranch = SKAction.run {
+                if !(stateMachine.currentState is NJGameOverState) && !(stateMachine.currentState is NJFallingState) && !self.info.isBossSequence {
+                    self.spawnRandomBranch()
+                }
+            }
+            let delayBranch = SKAction.wait(forDuration: self.info.branchSpawnRate)
+            let branchSequence = SKAction.sequence([spawnBranch, delayBranch])
+            self.run(SKAction.repeatForever(branchSequence))
+        }
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + info.nutSpawnRate) {
             let spawnNutAction = SKAction.run {
-                if !(self.info.playerIsProtected) {
+                if !(self.info.playerIsProtected) && !(stateMachine.currentState is NJGameOverState) && !(stateMachine.currentState is NJFallingState) {
                     self.spawnNut(obstacleSize: self.info.nutSize, yPos: self.size.height + (self.size.height * (50 / 852)))
                 }
             }
@@ -340,7 +377,13 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     
     override func update(_ currentTime: TimeInterval) {
         guard let context else { return }
+        
         despawn()
+        
+        let bossMarks = [5000, 10000, 15000, 20000, 25000]
+        if bossMarks.contains(info.score) {
+            bossSequence()
+        }
         
         if !(context.stateMachine?.currentState is NJGameIdleState) && !(context.stateMachine?.currentState is NJFallingState) && !(context.stateMachine?.currentState is NJGameOverState) && !info.isPaused {
             scrollScreen()
@@ -429,7 +472,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     
     
     func spawnFruit(obstacleSize: CGSize, yPos: CGFloat, xPos: CGFloat) {
-        let texture = SKTexture(imageNamed: "pinecone")
+        let texture = SKTexture(imageNamed: "nj_pinecone")
         
         let obstacle = NJFruitNode(size: obstacleSize, position: CGPoint(x: xPos, y: yPos), texture: texture)
         let targetPos = CGPoint(x: xPos, y: 0)
@@ -464,7 +507,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         
         let removeAction = SKAction.removeFromParent()
         
-        let obstacle = xPos == info.obstacleXPos ? NJHawkNode(size: obstacleSize, position: CGPoint(x: xPos, y: yPos), texture: SKTexture(imageNamed: "hawkLeft")) : NJHawkNode(size: obstacleSize, position: CGPoint(x: xPos, y: yPos), texture: SKTexture(imageNamed: "hawkRight"))
+        let obstacle = xPos == info.obstacleXPos ? NJHawkNode(size: obstacleSize, position: CGPoint(x: xPos, y: yPos), texture: SKTexture(imageNamed: "nj_hawkLeft")) : NJHawkNode(size: obstacleSize, position: CGPoint(x: xPos, y: yPos), texture: SKTexture(imageNamed: "nj_hawkRight"))
         
         obstacle.run(SKAction.sequence([moveAction, circularMotion, endAction, removeAction]))
         obstacle.zPosition = info.obstacleZPos
@@ -474,7 +517,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     func spawnFox(obstacleSize: CGSize, yPos: CGFloat, xPos: CGFloat) {
         spawnFoxBranch(obstacleSize: obstacleSize, yPos: yPos)
         
-        let obstacle = NJFoxNode(size: obstacleSize, position: CGPoint(x: xPos, y: yPos + info.branchHeight), texture: SKTexture(imageNamed: "foxLeft1"))
+        let obstacle = NJFoxNode(size: obstacleSize, position: CGPoint(x: xPos, y: yPos + info.branchHeight), texture: SKTexture(imageNamed: "nj_fox1"))
         obstacle.name = "FoxNode"
         
         moveFoxDown(obstacle, startPos: CGPoint(x: xPos, y: yPos + info.branchHeight), distance: info.foxStep)
@@ -502,11 +545,15 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         
         if obstacle.action(forKey: "foxAnimation") == nil {
             let foxTextures = [
-                SKTexture(imageNamed: "foxLeft1"),
-                SKTexture(imageNamed: "foxLeft2"),
-                SKTexture(imageNamed: "foxLeft3")
+                SKTexture(imageNamed: "nj_fox1"),
+                SKTexture(imageNamed: "nj_fox2"),
+                SKTexture(imageNamed: "nj_fox3"),
+                SKTexture(imageNamed: "nj_fox4"),
+                SKTexture(imageNamed: "nj_fox5"),
+                SKTexture(imageNamed: "nj_fox6"),
+                SKTexture(imageNamed: "nj_fox7")
             ]
-            let animationAction = SKAction.animate(with: foxTextures, timePerFrame: 0.1)
+            let animationAction = SKAction.animate(with: foxTextures, timePerFrame: info.foxAnimationTime)
             let repeatAnimation = SKAction.repeatForever(animationAction)
             obstacle.run(repeatAnimation, withKey: "foxAnimation")
         }
@@ -527,37 +574,8 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         ]), withKey: "foxMovementWithCompletion")
     }
     
-//    func moveFoxDown(_ obstacle: NJFoxNode, startPos: CGPoint, distance: CGFloat) {
-//        let isMovingRight = startPos.x == info.obstacleXPos
-//        
-//        obstacle.xScale = isMovingRight ? 1.0 : -1.0
-//        
-//        if obstacle.action(forKey: "foxAnimation") == nil {
-//            let foxTextures = [
-//                SKTexture(imageNamed: "foxLeft1"),
-//                SKTexture(imageNamed: "foxLeft2"),
-//                SKTexture(imageNamed: "foxLeft3")
-//            ]
-//            let animationAction = SKAction.animate(with: foxTextures, timePerFrame: 0.1)
-//            let repeatAnimation = SKAction.repeatForever(animationAction)
-//            obstacle.run(repeatAnimation, withKey: "foxAnimation")
-//        }
-//        
-//        let targetPos = CGPoint(x: isMovingRight ? size.width - info.obstacleXPos : info.obstacleXPos, y: startPos.y - (distance / 2))
-//        
-//        let moveAction = SKAction.move(to: targetPos, duration: size.width / info.foxSpeed)
-//        
-//        obstacle.run(moveAction) {
-//            if targetPos.y > 0 {
-//                self.moveFoxDown(obstacle, startPos: targetPos, distance: distance)
-//            } else {
-//                obstacle.removeFromParent()
-//            }
-//        }
-//    }
-    
     func spawnFoxBranch(obstacleSize: CGSize, yPos: CGFloat) {
-        let branch = NJFoxBranchNode(size: CGSize(width: size.width, height: info.branchHeight), position: CGPoint(x: size.width / 2, y: yPos), texture: SKTexture(imageNamed: "foxBranch"))
+        let branch = NJFoxBranchNode(size: CGSize(width: size.width, height: info.branchHeight), position: CGPoint(x: size.width / 2, y: yPos), texture: SKTexture(imageNamed: "nj_foxBranch"))
         let branchTargetPos = CGPoint(x: size.width / 2, y: 0)
         let branchDistance = yPos - branchTargetPos.y
         let branchDuration = branchDistance / (info.scrollSpeed * info.fps)
@@ -572,7 +590,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func spawnBranch(obstacleSize: CGSize, yPos: CGFloat, xPos: CGFloat) {
-        let texture: SKTexture = Bool.random() ? SKTexture(imageNamed: "branchRight") : SKTexture(imageNamed: "branchLeft")
+        let texture: SKTexture = Bool.random() ? SKTexture(imageNamed: "nj_branchRight") : SKTexture(imageNamed: "nj_branchLeft")
         
         let branch = NJBranchNode(size: obstacleSize, position: CGPoint(x: xPos, y: yPos), texture: texture)
         let branchTargetPos = CGPoint(x: xPos, y: 0)
@@ -592,7 +610,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     func spawnNut(obstacleSize: CGSize, yPos: CGFloat) {
         let xPos: CGFloat = Bool.random() ? info.nutXPos : size.width - info.nutXPos
         
-        let obstacle = NJNutNode(size: obstacleSize, position: CGPoint(x: xPos, y: yPos), texture: SKTexture(imageNamed: "nut"))
+        let obstacle = NJNutNode(size: obstacleSize, position: CGPoint(x: xPos, y: yPos), texture: SKTexture(imageNamed: "nj_nut"))
         let targetPos = CGPoint(x: xPos, y: 0)
         let distance = yPos - targetPos.y
         let duration = distance / (info.scrollSpeed * info.fps)
@@ -626,9 +644,9 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
 //    }
     
     func togglePlayerLocation() {
-        print("toggling")
-        print("currentPos: \(Int(currentPlayerXPos))")
-        print("rightPos): \(Int(info.playerXPosRight))")
+//        print("toggling")
+//        print("currentPos: \(Int(currentPlayerXPos))")
+//        print("rightPos): \(Int(info.playerXPosRight))")
         let isOnRightWall = Int(currentPlayerXPos) == Int(info.playerXPosRight)
         let targetPos = isOnRightWall ? leftWallPlayerPos : rightWallPlayerPos
         currentPlayerXPos = targetPos.x
@@ -644,7 +662,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
               let player else { return }
         if currentState is NJFallingState {
             player.size = info.playerFlightSize
-            player.texture = SKTexture(imageNamed: "flyFall")
+            player.texture = SKTexture(imageNamed: "nj_flyFall")
             return
         }
         let atlasName: String
@@ -654,27 +672,27 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
 
         switch (info.playerIsDisguised, currentState) {
         case (true, is NJRunningState):
-            atlasName = isRightWall ? "RunRFAtlas" : "RunLFAtlas"
+            atlasName = isRightWall ? "NJRunRFAtlas" : "NJRunLFAtlas"
             size = info.playerSize
 
         case (true, is NJJumpingState):
-            atlasName = isRightWall ? "FlyLFAtlas" : "FlyRFAtlas"
+            atlasName = isRightWall ? "NJFlyLFAtlas" : "NJFlyRFAtlas"
             size = info.playerFlightSize
 
         case (false, is NJRunningState):
-            atlasName = isRightWall ? "RunRAtlas" : "RunLAtlas"
+            atlasName = isRightWall ? "NJRunRAtlas" : "NJRunLAtlas"
             size = info.playerSize
 
         case (false, is NJJumpingState):
-            atlasName = isRightWall ? "FlyLAtlas" : "FlyRAtlas"
+            atlasName = isRightWall ? "NJFlyLAtlas" : "NJFlyRAtlas"
             size = info.playerFlightSize
 
         case (false, is NJHawkState):
-            atlasName = "HawkModeAtlas"
+            atlasName = "NJHawkModeAtlas"
             size = info.hawkModeSize
 
         default:
-            atlasName = "RunRAtlas"
+            atlasName = "NJRunRAtlas"
             size = info.playerSize
         }
 
@@ -696,23 +714,12 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let stateMachine = context?.stateMachine,
-              let currentState = stateMachine.currentState,
-              let context else { return }
-        
-        
+              let currentState = stateMachine.currentState else { return }
         
         if currentState is NJGameIdleState {
             stateMachine.enter(NJRunningState.self)
             
         } else if currentState is NJRunningState {
-            if let touch = touches.first {
-                let location = touch.location(in: self)
-                if let node = atPoint(location) as? SKSpriteNode, node.name == "PauseNode" {
-                    pause()
-                    return
-                }
-            }
-            
             stateMachine.enter(NJJumpingState.self)
             togglePlayerLocation()
             
@@ -755,27 +762,35 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     
     // MARK: - Sounds    
     private func playFoxDeath() {
-        run(SKAction.playSoundFileNamed("FoxDeath.m4a", waitForCompletion: false))
+        run(SKAction.playSoundFileNamed("NJFoxDeath.m4a", waitForCompletion: false))
     }
     
     private func playHawkDeath() {
-        run(SKAction.playSoundFileNamed("HawkDeath.m4a", waitForCompletion: false))
+        run(SKAction.playSoundFileNamed("NJHawkDeath.m4a", waitForCompletion: false))
     }
     
     private func playPinecone() {
-        run(SKAction.playSoundFileNamed("Pinecone.m4a", waitForCompletion: false))
+        run(SKAction.playSoundFileNamed("NJPinecone.m4a", waitForCompletion: false))
     }
     
     private func playAcorn() {
-        run(SKAction.playSoundFileNamed("Acorn.m4a", waitForCompletion: false))
+        run(SKAction.playSoundFileNamed("NJAcorn.m4a", waitForCompletion: false))
     }
 
     private func playFruitShoot() {
-        run(SKAction.playSoundFileNamed("FruitShoot.m4a", waitForCompletion: false))
+        run(SKAction.playSoundFileNamed("NJFruitShoot.m4a", waitForCompletion: false))
     }
 
     private func playFoxPowerup() {
-        run(SKAction.playSoundFileNamed("FoxPowerup.mp3", waitForCompletion: false))
+        run(SKAction.playSoundFileNamed("NJFoxPowerup.mp3", waitForCompletion: false))
+    }
+    
+    private func playOwl() {
+        run(SKAction.playSoundFileNamed("NJOwl.mp3", waitForCompletion: false))
+    }
+    
+    private func playSword() {
+        run(SKAction.playSoundFileNamed("NJSword.mp3", waitForCompletion: false))
     }
 
         
@@ -853,7 +868,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
                         trackerNode.resetDisplay()
                         info.fruitsCollected += 1
                     }
-                    trackerNode.updatePowerUpDisplay(for: info.fruitsCollected, with: CollectibleType.fruit)
+                    trackerNode.updatePowerUpDisplay(for: info.fruitsCollected, with: NJCollectibleType.fruit)
                 }
             } else if stateMachine.currentState is NJHawkState {
                 let fruitNode = (contactA == NJPhysicsCategory.fruit) ? contact.bodyA.node : contact.bodyB.node
@@ -895,7 +910,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
                         trackerNode.resetDisplay()
                         info.hawksCollected += 1
                     }
-                    trackerNode.updatePowerUpDisplay(for: info.hawksCollected, with: CollectibleType.hawk)
+                    trackerNode.updatePowerUpDisplay(for: info.hawksCollected, with: NJCollectibleType.hawk)
                 }
             } else if stateMachine.currentState is NJHawkState {
                 let hawkNode = (contactA == NJPhysicsCategory.hawk) ? contact.bodyA.node : contact.bodyB.node
@@ -938,7 +953,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
                         trackerNode.resetDisplay()
                         info.foxesCollected += 1
                     }
-                    trackerNode.updatePowerUpDisplay(for: info.foxesCollected, with: CollectibleType.fox)
+                    trackerNode.updatePowerUpDisplay(for: info.foxesCollected, with: NJCollectibleType.fox)
                 }
             } else if stateMachine.currentState is NJHawkState {
                 let foxNode = (contactA == NJPhysicsCategory.fox) ? contact.bodyA.node : contact.bodyB.node
@@ -1008,7 +1023,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
             shield.targetNode = scene // Ensure particles remain in the scene
             shield.position = CGPoint(x: 0, y: 0) // Position at the bottom
             player.addChild(shield)
-            let shieldNode = SKSpriteNode(texture: SKTexture(imageNamed: "shield"), size: info.shieldSize)
+            let shieldNode = SKSpriteNode(texture: SKTexture(imageNamed: "nj_shield"), size: info.shieldSize)
             shieldNode.name = "playerShieldNode"
             player.addChild(shieldNode)
             return
@@ -1030,6 +1045,22 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
             
             // Optionally remove the shoot node as well (if it disappears on contact)
             shoot.removeFromParent()
+            
+            if let poof = SKEmitterNode(fileNamed: "NJEnemyDeath") {
+                poof.position = target.position
+                addChild(poof)
+                UIImpactFeedbackGenerator(style: .light).impactOccurred(intensity: 0.75)
+                
+                let stopEmission = SKAction.run { poof.particleBirthRate = 0 }
+                let waitBeforeStop = SKAction.wait(forDuration: 0.05)
+                let removeEmitter = SKAction.sequence([
+                    SKAction.wait(forDuration: TimeInterval(poof.particleLifetime)),
+                    SKAction.removeFromParent()
+                ])
+                
+                poof.run(SKAction.sequence([waitBeforeStop, stopEmission]))
+                poof.run(removeEmitter)
+            }
         }
     }
     
@@ -1045,7 +1076,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         displayPowerUpText(type: "fruit")
         info.isFruitShoot = true
         
-        let texture = SKTexture(imageNamed: "pinecone")
+        let texture = SKTexture(imageNamed: "nj_pinecone")
         let pinecone = NJFruitNode(size: info.fruitSize, position: CGPoint(x: 0, y: info.fruitSize.height), texture: texture)
         pinecone.name = "pineconeShooter"
         pinecone.zPosition = info.obstacleZPos
@@ -1091,7 +1122,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         
         let fruit = NJFruitShootNode(size: info.defaultSize, position: CGPoint(x: player.position.x, y: info.playerYPos + info.defaultSize.height + info.fruitSize.height), texture: randomTexture)
         
-        let targetPos = CGPoint(x: player.position.x, y: size.height + info.defaultSize.height - 10)
+        let targetPos = CGPoint(x: player.position.x, y: size.height - 10)
         
         let moveAction = SKAction.move(to: targetPos, duration: 1.0)
         let removeAction = SKAction.removeFromParent()
@@ -1153,6 +1184,113 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+    func bossSequence() {
+        guard let stateMachine = context?.stateMachine else { return }
+        
+        info.isBossSequence = true
+        
+        let target1 = CGPoint(x: -150.0, y: 0)
+        let target2 = CGPoint(x: size.width * 0.25, y: 0)
+        let target3 = CGPoint(x: size.width * 0.5, y: 0)
+        let target4 = CGPoint(x: size.width * 0.75, y: 0)
+        let target5 = CGPoint(x: size.width + 150.0, y: 0)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+            self.spawnOwl()
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 7.0) {
+            if !(stateMachine.currentState is NJGameOverState) {
+                self.owlShoot(target: target1, texture: "nj_feather1")
+            }
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 7.5) {
+            if !(stateMachine.currentState is NJGameOverState) {
+                self.owlShoot(target: target3, texture: "nj_feather2")
+            }
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 8.0) {
+            if !(stateMachine.currentState is NJGameOverState) {
+                self.owlShoot(target: target5, texture: "nj_feather3")
+            }
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 8.5) {
+            self.getFeather()
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 9.0) {
+            self.getFeather()
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 9.5) {
+            self.getFeather()
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
+            self.getFeather()
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 10.5) {
+            self.getFeather()
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 13.5) {
+            self.despawnOwl()
+            self.info.isBossSequence = false
+        }
+    }
+    
+    func getFeather() {
+        guard let stateMachine = context?.stateMachine else { return }
+        let target1 = CGPoint(x: -150.0, y: 0)
+        let target2 = CGPoint(x: size.width * 0.25, y: 0)
+        let target3 = CGPoint(x: size.width * 0.5, y: 0)
+        let target4 = CGPoint(x: size.width * 0.75, y: 0)
+        let target5 = CGPoint(x: size.width + 150.0, y: 0)
+        let targets = [target1, target2, target3, target4, target5]
+        
+        let randomNumber = Int.random(in: 0...4)
+        var texture = "nj_feather2"
+        if randomNumber < 2 { texture = "nj_feather1" }
+        else if randomNumber > 3 { texture = "nj_feather3" }
+        if !(stateMachine.currentState is NJGameOverState) {
+            self.owlShoot(target: targets[randomNumber], texture: texture)
+        }
+    }
+    
+    func spawnOwl() {
+        let owl = NJOwlNode(size: info.owlSize, position: info.owlPos1, texture: SKTexture(imageNamed: "nj_owl"))
+        owl.name = "owl"
+        
+        let moveAction = SKAction.move(to: info.owlPos2, duration: 1.0)
+        
+        owl.run(moveAction)
+        owl.zPosition = info.obstacleZPos
+        addChild(owl)
+        playOwl()
+    }
+    
+    func despawnOwl() {
+        guard let owl = childNode(withName: "owl") else { return }
+        
+        let targetPos = CGPoint(x: size.width / 2, y: size.height + 50)
+        let moveAction = SKAction.move(to: targetPos, duration: 1.0)
+        
+        let removeAction = SKAction.removeFromParent()
+        
+        owl.run(SKAction.sequence([moveAction, removeAction]), withKey: "despawnOwl")
+    }
+    
+    func owlShoot(target: CGPoint, texture: String) {
+        let feather = NJBombNode(size: info.featherSize, position: info.featherPos, texture: SKTexture(imageNamed: texture))
+        feather.name = "feather"
+        let moveAction = SKAction.move(to: target, duration: 1.0)
+        let removeAction = SKAction.removeFromParent()
+        
+        //let rotateAction = SKAction.rotate(byAngle: 90.0, duration: 10.0)
+        
+        feather.run(SKAction.sequence([moveAction, removeAction]), withKey: "shootFeather")
+        //feather.run(SKAction.sequence([rotateAction]))
+        
+        feather.zPosition = info.obstacleZPos
+        addChild(feather)
+        playSword()
+    }
+    
     // MARK: - Other
     
     func displayScore() {
@@ -1165,7 +1303,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         self.removeAllChildren()
         self.removeAllActions()
 
-        let titleNode = NJTitleNode(size: info.gameOverSize, position: CGPoint(x: size.width / 2, y: size.height / 2 + 100), texture: SKTexture(imageNamed: "gameOverWhite"))
+        let titleNode = NJTitleNode(size: info.gameOverSize, position: CGPoint(x: size.width / 2, y: size.height / 2 + 100), texture: SKTexture(imageNamed: "nj_gameOverWhite"))
         titleNode.name = "gameOver"
         addChild(titleNode)
         
@@ -1189,7 +1327,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     func despawn() {
         self.enumerateChildNodes(withName: "//*") { node, _ in
             if let specificNode = node as? NJFoxNode {
-                if specificNode.position.y < self.info.playerYPos - 1250 {
+                if specificNode.position.y < -50 || specificNode.position.x < 0 || specificNode.position.x > self.size.width {
                     specificNode.removeFromParent()
                     print("item despawned")
                 }
@@ -1199,6 +1337,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     
     func reset() {
         guard let context else { return }
+        context.stopMusic()
         self.removeAllChildren()
         self.removeAllActions()
         let newScene = NJGameScene(context: context, size: self.size, info: info)

@@ -7,6 +7,7 @@
 
 import Combine
 import GameplayKit
+import AVFAudio
 
 class NJGameContext: GameContext {
     var gameScene: NJGameScene? {
@@ -84,6 +85,28 @@ class NJGameContext: GameContext {
         scene?.enumerateChildNodes(withName: "//") { node, _ in
             node.isPaused = true
         }
+    }
+    
+    var audioPlayer: AVAudioPlayer?
+
+    func playMusic() {
+        guard let musicSoundURL = Bundle.main.url(forResource: "NJMusic", withExtension: "m4a") else {
+            print("Failed to find NJMusic.m4a")
+            return
+        }
+
+        do {
+            audioPlayer = try AVAudioPlayer(contentsOf: musicSoundURL)
+            audioPlayer?.numberOfLoops = -1
+            audioPlayer?.play()
+        } catch {
+            print("Failed to play music: \(error)")
+        }
+    }
+
+    func stopMusic() {
+        audioPlayer?.stop()
+        audioPlayer = nil
     }
 
 }

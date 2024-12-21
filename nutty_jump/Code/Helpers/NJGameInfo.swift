@@ -50,12 +50,12 @@ struct NJGameInfo {
             return 1030 * gameSpeed
         } else if screenHeight == 852.0 {
             if score > 5000 {
-                return 560 * gameSpeed
+                return 556 * gameSpeed
             }
             return 840 * gameSpeed
         } else if screenHeight == 874.0 {
             if score > 5000 {
-                return 560 * gameSpeed
+                return 556 * gameSpeed
             }
             return 840 * gameSpeed
         }
@@ -71,6 +71,7 @@ struct NJGameInfo {
         }
         return 0.333 * screenHeight
     }
+    var foxAnimationTime: CGFloat { return 0.07 - (gameSpeed * 0.01) }
     var playerSpeed: CGFloat {
         if self.score >= 5000 {
             return 0.18 - (0.1 * 1.62)
@@ -92,11 +93,17 @@ struct NJGameInfo {
     var nutXPos: CGFloat { return (60 * widthScale) }
     
     var fruitSize: CGSize { CGSize(width: 40 * uniformScale, height: 50 * uniformScale) }
-    var foxSize: CGSize { CGSize(width: 76.98 * uniformScale, height: 50 * uniformScale) }
+    var foxSize: CGSize { CGSize(width: 100 * uniformScale, height: 57.14 * uniformScale) }
     var hawkSize: CGSize { CGSize(width: 50 * uniformScale, height: 71.99 * uniformScale) }
     var nutSize: CGSize { CGSize(width: 50 * uniformScale, height: 50 * uniformScale) }
     var defaultSize: CGSize { CGSize(width: 30 * uniformScale, height: 30 * uniformScale) }
     var shieldSize: CGSize { CGSize(width: 90 * uniformScale, height: 90 * uniformScale) }
+    
+    var owlSize: CGSize { CGSize(width: 127.5 * uniformScale, height: 46.42 * uniformScale) }
+    var featherSize: CGSize { CGSize(width: 50 * uniformScale, height: 50 * uniformScale) }
+    var owlPos1: CGPoint { CGPoint(x: screenWidth / 2, y: screenHeight + (20 * heightScale)) }
+    var owlPos2: CGPoint { CGPoint(x: screenWidth / 2, y: screenHeight - (150 * heightScale)) }
+    var featherPos: CGPoint { CGPoint(x: screenWidth / 2, y: screenHeight - (160 * heightScale)) }
     
     var scoreNodePos: CGPoint { CGPoint(x: screenWidth / 2, y: screenHeight - (80 * heightScale)) }
     var scoreNodeSize: CGSize { CGSize(width: 180 * uniformScale, height: 51 * uniformScale) }
@@ -109,18 +116,16 @@ struct NJGameInfo {
     
     var gameOverSize: CGSize { CGSize(width: 340 * uniformScale, height: 44 * uniformScale) }
     
-    var titleScreenSize: CGSize { CGSize(width: 393 * uniformScale, height: 741 * uniformScale) }
+    var titleScreenSize: CGSize { CGSize(width: 312 * uniformScale, height: 770 * uniformScale) }
+    var titleScreenPos: CGPoint { CGPoint(x: screenWidth / 2, y: screenHeight / 2 - (20 * heightScale)) }
     
     var gameOverScreenSize: CGSize { CGSize(width: 393 * uniformScale, height: 533 * uniformScale) }
     var continueButtonSize: CGSize { CGSize(width: 292 * uniformScale, height: 83 * uniformScale) }
     var gameOverScreenPos: CGPoint { CGPoint(x: screenWidth / 2, y: screenHeight / 2 + 80) }
     var continueButtonPos: CGPoint {
-        if screenHeight == 667.0 {
-            return CGPoint(x: screenWidth / 2, y: screenHeight / 2 - 250)
-        }
-        return CGPoint(x: screenWidth / 2, y: screenHeight / 2 - 300)
+        return CGPoint(x: screenWidth / 2, y: screenHeight / 2 - (300 * heightScale))
     }
-    var tapStartPos: CGPoint { CGPoint(x: screenWidth / 2, y: 95 * heightScale) }
+    var tapStartPos: CGPoint { CGPoint(x: screenWidth / 2, y: 70 * heightScale) }
     
     //MARK: Power-Up Tracking
     
@@ -165,7 +170,7 @@ struct NJGameInfo {
     }
     
     var fruitTrackerSize: CGSize { CGSize(width: 34 * uniformScale, height: 34 * uniformScale) }
-    var foxTrackerSize: CGSize { CGSize(width: 48.48 * uniformScale, height: 30 * uniformScale) }
+    var foxTrackerSize: CGSize { CGSize(width: 48 * uniformScale, height: 27.43 * uniformScale) }
     var hawkTrackerSize: CGSize { CGSize(width: 40 * uniformScale, height: 57.59 * uniformScale) }
     
     var fruitResultSize: CGSize { CGSize(width: 30 * uniformScale, height: 30 * uniformScale) }
@@ -184,6 +189,7 @@ struct NJGameInfo {
     var playerIsDisguised = false
     var isFruitShoot = false
     var isPoweredUp = false
+    var isBossSequence = false
     
     var fruitShootSpeed: CGFloat { return 1000 }
     var fruitShootDuration: CGFloat { return 5 }
@@ -218,7 +224,7 @@ struct NJGameInfo {
     var hawkModeSize: CGSize { CGSize(width: 91 * uniformScale, height: 70 * uniformScale) }
 }
 
-enum CollectibleType {
+enum NJCollectibleType {
     case fruit
     case hawk
     case fox
@@ -226,19 +232,19 @@ enum CollectibleType {
     
     var texture: SKTexture {
         switch self {
-        case .fruit: return SKTexture(imageNamed: "pinecone")
-        case .hawk: return SKTexture(imageNamed: "hawkRight")
-        case .fox: return SKTexture(imageNamed: "foxRight1")
-        case .empty: return SKTexture(imageNamed: "powerUpDefault")
+        case .fruit: return SKTexture(imageNamed: "nj_pinecone")
+        case .hawk: return SKTexture(imageNamed: "nj_hawkRight")
+        case .fox: return SKTexture(imageNamed: "nj_fox1")
+        case .empty: return SKTexture(imageNamed: "nj_powerUpDefault")
         }
     }
     
     var resultTexture: SKTexture {
         switch self {
-        case .fruit: return SKTexture(imageNamed: "shootTracker")
-        case .hawk: return SKTexture(imageNamed: "wingTracker")
-        case .fox: return SKTexture(imageNamed: "disguiseTracker")
-        case .empty: return SKTexture(imageNamed: "powerUpDefault")
+        case .fruit: return SKTexture(imageNamed: "nj_shootTracker")
+        case .hawk: return SKTexture(imageNamed: "nj_wingTracker")
+        case .fox: return SKTexture(imageNamed: "nj_disguiseTracker")
+        case .empty: return SKTexture(imageNamed: "nj_powerUpDefault")
         }
     }
     

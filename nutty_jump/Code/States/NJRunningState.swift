@@ -25,7 +25,7 @@ class NJRunningState: GKState {
     
     override func didEnter(from previousState: GKState?) {
         guard let scene else { return }
-        print("did enter running state")
+        //print("did enter running state")
         
         scene.animatePlayerBasedOnState()
         playRunningSound()
@@ -33,7 +33,7 @@ class NJRunningState: GKState {
     
     private func playRunningSound() {
         guard let scene else { return }
-        scene.run(SKAction.playSoundFileNamed("Running.mp3", waitForCompletion: false))
+        scene.run(SKAction.playSoundFileNamed("NJRunning.mp3", waitForCompletion: false))
     }
     
     override func willExit(to nextState: GKState) {
