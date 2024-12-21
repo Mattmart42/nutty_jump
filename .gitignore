@@ -2,8 +2,8 @@
 
 *.xccheckout
 
-{Your_ProductName}.xcodeproj/xcuserdata/*
-{Your_ProductName}.xcodeproj/xcuserdata/*.xcbkptlist
+{nutty_jump}.xcodeproj/xcuserdata/*
+{nutty_jump}.xcodeproj/xcuserdata/*.xcbkptlist
 
 *.xcbkptlist
 **/.DS_Store
