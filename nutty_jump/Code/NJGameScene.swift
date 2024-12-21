@@ -790,7 +790,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     private func playSword() {
-        run(SKAction.playSoundFileNamed("NJSword.m4a", waitForCompletion: false))
+        run(SKAction.playSoundFileNamed("NJSword.mp3", waitForCompletion: false))
     }
 
         
@@ -1185,18 +1185,33 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func bossSequence() {
+        guard let stateMachine = context?.stateMachine else { return }
+        
         info.isBossSequence = true
+        
+        let target1 = CGPoint(x: -150.0, y: 0)
+        let target2 = CGPoint(x: size.width * 0.25, y: 0)
+        let target3 = CGPoint(x: size.width * 0.5, y: 0)
+        let target4 = CGPoint(x: size.width * 0.75, y: 0)
+        let target5 = CGPoint(x: size.width + 150.0, y: 0)
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
             self.spawnOwl()
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 7.0) {
-            self.getFeather()
+            if !(stateMachine.currentState is NJGameOverState) {
+                self.owlShoot(target: target1, texture: "nj_feather1")
+            }
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 7.5) {
-            self.getFeather()
+            if !(stateMachine.currentState is NJGameOverState) {
+                self.owlShoot(target: target3, texture: "nj_feather2")
+            }
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 8.0) {
-            self.getFeather()
+            if !(stateMachine.currentState is NJGameOverState) {
+                self.owlShoot(target: target5, texture: "nj_feather3")
+            }
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 8.5) {
             self.getFeather()
@@ -1204,7 +1219,16 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         DispatchQueue.main.asyncAfter(deadline: .now() + 9.0) {
             self.getFeather()
         }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 9.5) {
+            self.getFeather()
+        }
         DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
+            self.getFeather()
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 10.5) {
+            self.getFeather()
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 13.5) {
             self.despawnOwl()
             self.info.isBossSequence = false
         }
