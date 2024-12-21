@@ -145,7 +145,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
         addChild(scoreNode)
         
         trackerNode?.removeFromParent()
-        trackerNode = NJPowerUpTrackerNode(size: info.trackerSize, defaultCollectible: CollectibleType.empty)
+        trackerNode = NJPowerUpTrackerNode(size: info.trackerSize, defaultCollectible: NJCollectibleType.empty)
         trackerNode.position = CGPoint(x: trackerNode.frame.width / 2, y: 40 + trackerNode.frame.height / 2)
         trackerNode.zPosition = info.hudZPos
         addChild(trackerNode)
@@ -377,12 +377,11 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
     
     override func update(_ currentTime: TimeInterval) {
         guard let context else { return }
+        
         despawn()
         
-        if info.score == 5000 {
-            bossSequence()
-        }
-        if info.score == 10000 {
+        let bossMarks = [5000, 10000, 15000, 20000, 25000]
+        if bossMarks.contains(info.score) {
             bossSequence()
         }
         
@@ -869,7 +868,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
                         trackerNode.resetDisplay()
                         info.fruitsCollected += 1
                     }
-                    trackerNode.updatePowerUpDisplay(for: info.fruitsCollected, with: CollectibleType.fruit)
+                    trackerNode.updatePowerUpDisplay(for: info.fruitsCollected, with: NJCollectibleType.fruit)
                 }
             } else if stateMachine.currentState is NJHawkState {
                 let fruitNode = (contactA == NJPhysicsCategory.fruit) ? contact.bodyA.node : contact.bodyB.node
@@ -911,7 +910,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
                         trackerNode.resetDisplay()
                         info.hawksCollected += 1
                     }
-                    trackerNode.updatePowerUpDisplay(for: info.hawksCollected, with: CollectibleType.hawk)
+                    trackerNode.updatePowerUpDisplay(for: info.hawksCollected, with: NJCollectibleType.hawk)
                 }
             } else if stateMachine.currentState is NJHawkState {
                 let hawkNode = (contactA == NJPhysicsCategory.hawk) ? contact.bodyA.node : contact.bodyB.node
@@ -954,7 +953,7 @@ class NJGameScene: SKScene, SKPhysicsContactDelegate {
                         trackerNode.resetDisplay()
                         info.foxesCollected += 1
                     }
-                    trackerNode.updatePowerUpDisplay(for: info.foxesCollected, with: CollectibleType.fox)
+                    trackerNode.updatePowerUpDisplay(for: info.foxesCollected, with: NJCollectibleType.fox)
                 }
             } else if stateMachine.currentState is NJHawkState {
                 let foxNode = (contactA == NJPhysicsCategory.fox) ? contact.bodyA.node : contact.bodyB.node

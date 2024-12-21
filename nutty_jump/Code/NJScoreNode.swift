@@ -47,9 +47,3 @@ class NJScoreNode: SKNode {
         )
     }
 }
-
-extension NJScoreNode {
-    enum Constants {
-        static let size = CGSize(width: 140, height: 45)
-    }
-}

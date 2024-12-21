@@ -70,7 +70,5 @@ class NJGameOverState: GKState {
         continueButton.name = "ContinueButton"
         continueButton.zPosition = scene.info.titleZPos
         scene.addChild(continueButton)
-    }
-    
-    
+    } 
 }

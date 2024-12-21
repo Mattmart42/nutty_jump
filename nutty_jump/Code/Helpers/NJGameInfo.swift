@@ -224,7 +224,7 @@ struct NJGameInfo {
     var hawkModeSize: CGSize { CGSize(width: 91 * uniformScale, height: 70 * uniformScale) }
 }
 
-enum CollectibleType {
+enum NJCollectibleType {
     case fruit
     case hawk
     case fox
